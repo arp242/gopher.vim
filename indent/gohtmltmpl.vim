@@ -1,4 +1,4 @@
-if exists("b:did_indent")
+if exists('b:did_indent')
   finish
 endif
 
@@ -8,8 +8,7 @@ runtime! indent/html.vim
 setlocal indentexpr=GetGoHTMLTmplIndent(v:lnum)
 setlocal indentkeys+==else,=end
 
-" Only define the function once.
-if exists("*GetGoHTMLTmplIndent")
+if exists('*GetGoHTMLTmplIndent')
   finish
 endif
 
@@ -42,5 +41,3 @@ function! GetGoHTMLTmplIndent(lnum)
 
   return ind
 endfunction
-
-" vim: sw=2 ts=2 et

@@ -1,11 +1,4 @@
-" Copyright 2011 The Go Authors. All rights reserved.
-" Use of this source code is governed by a BSD-style
-" license that can be found in the LICENSE file.
-"
-" gotexttmpl.vim: Vim syntax file for Go templates.
-
-" Quit when a (custom) syntax file was already loaded
-if exists("b:current_syntax")
+if exists('b:current_syntax')
   finish
 endif
 
@@ -72,14 +65,12 @@ hi def link     gotplControl        Keyword
 hi def link     gotplFunctions      Function
 hi def link     goTplVariable       Special
 
-syn region gotplAction start="{{" end="}}" contains=@gotplLiteral,gotplControl,gotplFunctions,gotplVariable,goTplIdentifier display
-syn region gotplAction start="\[\[" end="\]\]" contains=@gotplLiteral,gotplControl,gotplFunctions,gotplVariable display
-syn region goTplComment start="{{\(- \)\?/\*" end="\*/\( -\)\?}}" display
+syn region gotplAction  start="{{"              end="}}" contains=@gotplLiteral,gotplControl,gotplFunctions,gotplVariable,goTplIdentifier display
+syn region gotplAction  start="\[\["            end="\]\]" contains=@gotplLiteral,gotplControl,gotplFunctions,gotplVariable display
+syn region goTplComment start="{{\(- \)\?/\*"   end="\*/\( -\)\?}}" display
 syn region goTplComment start="\[\[\(- \)\?/\*" end="\*/\( -\)\?\]\]" display
 
 hi def link gotplAction PreProc
 hi def link goTplComment Comment
 
-let b:current_syntax = "gotexttmpl"
-
-" vim: sw=2 ts=2 et
+let b:current_syntax = 'gotexttmpl'

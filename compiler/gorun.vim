@@ -1,7 +1,7 @@
 if exists('g:current_compiler')
   finish
 endif
-let g:current_compiler = 'go'
+let g:current_compiler = 'gorun'
 
 if exists(':CompilerSet') != 2
   command -nargs=* CompilerSet setlocal <args>
@@ -11,10 +11,10 @@ let s:save_cpo = &cpo
 set cpo-=C
 
 " TODO: build tags
-CompilerSet makeprg=go\ install
+let  &l:makeprg = 'go run ' . expand('%')
 let s:cmd = './cmd/' . fnamemodify(system('go list .')[:-2], ':t')
 if isdirectory(s:cmd)
-	let &l:makeprg .= ' ' . s:cmd
+	let &l:makeprg .= ' ' . s:d
 endif
 
 CompilerSet errorformat =%-G#\ %.%#                   " Ignore lines beginning with '#' ('# command-line-arguments' line sometimes appears?)

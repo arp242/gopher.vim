@@ -1,8 +1,8 @@
-if exists("b:current_syntax")
+if exists('b:current_syntax')
   finish
 endif
 
-if !exists("g:main_syntax")
+if !exists('g:main_syntax')
   let g:main_syntax = 'html'
 endif
 
@@ -12,6 +12,4 @@ unlet b:current_syntax
 
 syn cluster htmlPreproc add=gotplAction,goTplComment
 
-let b:current_syntax = "gohtmltmpl"
-
-" vim: sw=2 ts=2 et
+let b:current_syntax = 'gohtmltmpl'

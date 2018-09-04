@@ -1,7 +1,4 @@
-" gomod.vim: Vim syntax file for go.mod file
-"
-" Quit when a (custom) syntax file was already loaded
-if exists("b:current_syntax")
+if exists('b:current_syntax')
   finish
 endif
 
@@ -29,8 +26,8 @@ syntax region gomodComment  start="//" end="$" contains=@Spell
 highlight default link gomodComment Comment
 
 " make sure quoted import paths are higlighted
-syntax region gomodString start=+"+ skip=+\\\\\|\\"+ end=+"+ 
-highlight default link gomodString  String 
+syntax region gomodString start=+"+ skip=+\\\\\|\\"+ end=+"+
+highlight default link gomodString  String
 
 " replace operator is in the form of '=>'
 syntax match gomodReplaceOperator "\v\=\>"
@@ -42,4 +39,4 @@ syntax match gomodVersion "v\d\+\.\d\+\.\d\+"
 syntax match gomodVersion "v\d\+\.\d\+\.\d\+-.*"
 highlight default link gomodVersion Identifier
 
-let b:current_syntax = "gomod"
+let b:current_syntax = 'gomod'
