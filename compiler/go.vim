@@ -10,9 +10,12 @@ endif
 let s:save_cpo = &cpo
 set cpo-=C
 
-" TODO: build tags
 CompilerSet makeprg=go\ install
-let s:cmd = './cmd/' . fnamemodify(system('go list .')[:-2], ':t')
+
+" TODO: Add build tags.
+
+" Builds the ./cmd/<dirname> if it exists; it's a common pattern.
+let s:cmd = './cmd/' . expand('%:p:h:t')
 if isdirectory(s:cmd)
 	let &l:makeprg .= ' ' . s:cmd
 endif
