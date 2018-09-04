@@ -144,6 +144,9 @@ fun! s:vendor(force) abort
     return 0
   endif
 
+  " Clear message.
+  redraw!
+
   let s:ran_mod_vendor = 1
   return 1
 endfun
