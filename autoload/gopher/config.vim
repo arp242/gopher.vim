@@ -1,3 +1,8 @@
+" Flags to add to go install/test/etc. in 'makeprg'
+" Note: changing this at runtime has no effect! Change 'makeprg' directly
+" instead.
+let gopher#config#go_flags = get(g:, 'gopher_go_flags', '')
+
 " Add commands and mappings which are roughly compatible with vim-go.
 let gopher#config#vimgo_compat = get(g:, 'gopher_vimgo_compat', 0)
 
@@ -21,6 +26,6 @@ let gopher#config#highlight = get(g:, 'gopher_config_highlight', [
 let gopher#config#debug = get(g:, 'gopher_debug', [])
 
 " Report if the user enabled a debug flag.
-function! gopher#config#has_debug(flag)
+fun! gopher#config#has_debug(flag)
   return index(get(g:, 'gopher_debug', []), a:flag) >= 0
-endfunction
+endfun

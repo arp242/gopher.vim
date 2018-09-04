@@ -2,16 +2,10 @@ if exists('g:current_compiler')
   finish
 endif
 let g:current_compiler = 'gotest'
+let s:save_cpo = &cpoptions
+set cpoptions-=C
 
-if exists(':CompilerSet') != 2
-  command -nargs=* CompilerSet setlocal <args>
-endif
-
-let s:save_cpo = &cpo
-set cpo-=C
-
-" TODO: build tags
-CompilerSet makeprg=go\ test
+let &l:makeprg = 'go test ' . gopher#config#go_flags
 
 let s:goroot = system('go env GOROOT')[:-2]
 
@@ -21,9 +15,9 @@ let s:goroot = system('go env GOROOT')[:-2]
 let s:indent = '%\\%(    %\\)%#'
 
 " ignore `go test -v` output for starting tests
-let &l:errorformat = "%-G=== RUN   %.%#"
+let &l:errorformat = '%-G=== RUN   %.%#'
 " ignore `go test -v` output for passing tests
-let &l:errorformat .= ",%-G" . s:indent . "--- PASS: %.%#"
+let &l:errorformat .= ',%-G' . s:indent . '--- PASS: %.%#'
 
 " Match failure lines.
 "
@@ -32,7 +26,7 @@ let &l:errorformat .= ",%-G" . s:indent . "--- PASS: %.%#"
 "
 " e.g.:
 "   '--- FAIL: TestSomething (0.00s)'
-let &l:errorformat .= ",%G" . s:indent . "--- FAIL: %m (%.%#)"
+let &l:errorformat .= ',%G' . s:indent . '--- FAIL: %m (%.%#)'
 
 " Matches test output lines.
 "
@@ -40,13 +34,13 @@ let &l:errorformat .= ",%G" . s:indent . "--- FAIL: %m (%.%#)"
 " by the filename, a colon, the line number, another colon, a space, and the
 " message. e.g.:
 "   '\ttime_test.go:30: Likely problem: the time zone files have not been installed.'
-let &l:errorformat .= ",%A" . s:indent . "%\\t%\\+%f:%l: %m"
+let &l:errorformat .= ',%A' . s:indent . '%\t%\+%f:%l: %m'
 " also match lines that don't have a message (i.e. the message begins with a
 " newline or is the empty string):
 " e.g.:
 "     t.Errorf("\ngot %v; want %v", actual, expected)
 "     t.Error("")
-let &l:errorformat .= ",%A" . s:indent . "%\\t%\\+%f:%l: "
+let &l:errorformat .= ',%A' . s:indent . '%\t%\+%f:%l: '
 
 " Match the 2nd and later lines of multi-line output. These lines are
 " indented the number of spaces for the level of nesting of the test,
@@ -59,7 +53,7 @@ let &l:errorformat .= ",%A" . s:indent . "%\\t%\\+%f:%l: "
 " indicate that they're multiple lines of output, but in that case the lines
 " get concatenated in the quickfix list, which is not what users typically
 " want when writing a newline into their test output.
-let &l:errorformat .= ",%G" . s:indent . "%\\t%\\{2}%m"
+let &l:errorformat .= ',%G' . s:indent . '%\t%\{2}%m'
 
 " set the format for panics.
 
@@ -74,10 +68,10 @@ let &l:errorformat .= ",%+Gpanic: test timed out after %.%\\+"
 " `go test` recovers and tries to exit more cleanly. In that case, the panic
 " message is suffixed with ' [recovered]'. If the panic occurs in a
 " different goroutine, it will not be suffixed with ' [recovered]'.
-let &l:errorformat .= ",%+Afatal error: %.%# [recovered]"
-let &l:errorformat .= ",%+Apanic: %.%# [recovered]"
-let &l:errorformat .= ",%+Afatal error: %.%#"
-let &l:errorformat .= ",%+Apanic: %.%#"
+let &l:errorformat .= ',%+Afatal error: %.%# [recovered]'
+let &l:errorformat .= ',%+Apanic: %.%# [recovered]'
+let &l:errorformat .= ',%+Afatal error: %.%#'
+let &l:errorformat .= ',%+Apanic: %.%#'
 
 " Match address lines in stacktraces produced by panic.
 "
@@ -106,47 +100,47 @@ let &l:errorformat .= ",%-Cgoroutine %\\d%\\+ [running]:"
 " recovered and another panic is created, so the stack trace actually has
 " the line that caused the original panic a couple of addresses down the
 " stack.
-let &l:errorformat .= ",%-C" . s:stdlibaddress
+let &l:errorformat .= ',%-C' . s:stdlibaddress
 " Match address lines in the first matching goroutine. This means the panic
 " message will only be shown as the error message in the first address of
 " the running goroutine's stack.
-let &l:errorformat .= ",%Z" . s:panicaddress
+let &l:errorformat .= ',%Z' . s:panicaddress
 
 " Match and ignore panic address without being part of a multi-line message.
 " This is to catch those lines that come after the top most non-standard
 " library line in stack traces.
-let &l:errorformat .= ",%-G" . s:readyaddress
+let &l:errorformat .= ',%-G' . s:readyaddress
 
 " Match and ignore exit status lines (produced when go test panics) whether
 " part of a multi-line message or not, because these lines sometimes come
 " before and sometimes after panic stacktraces.
-let &l:errorformat .= ",%-Cexit status %[0-9]%\\+"
-"let &l:errorformat .= ",exit status %[0-9]%\\+"
+let &l:errorformat .= ',%-Cexit status %[0-9]%\+'
+let &l:errorformat .= ',exit status %[0-9]%\+'
 
 " Match and ignore exit failure lines whether part of a multi-line message
 " or not, because these lines sometimes come before and sometimes after
 " panic stacktraces.
-let &l:errorformat .= ",%-CFAIL%\\t%.%#"
-"let &l:errorformat .= ",FAIL%\\t%.%#"
+let &l:errorformat .= ',%-CFAIL%\t%.%#'
+let &l:errorformat .= ',FAIL%\t%.%#'
 
 " match compiler errors
 " These are very smilar to errors from test output, but lack leading tabs
 " for the first line of an error, and subsequent lines only have one tab
 " instead of two.
-let &l:errorformat .= ",%A%f:%l:%c: %m"
-let &l:errorformat .= ",%A%f:%l: %m"
+let &l:errorformat .= ',%A%f:%l:%c: %m'
+let &l:errorformat .= ',%A%f:%l: %m'
 " It would be nice if this weren't necessary, but panic lines from tests are
 " prefixed with a single leading tab, making them very similar to 2nd and
 " later lines of a multi-line compiler error. Swallow it so that it doesn't
 " cause a quickfix entry since the next entry can add a quickfix entry for
 " 2nd and later lines of a multi-line compiler error.
-let &l:errorformat .= ",%-C%\\tpanic: %.%#"
-let &l:errorformat .= ",%G%\\t%m"
+let &l:errorformat .= ',%-C%\tpanic: %.%#'
+let &l:errorformat .= ',%G%\t%m'
 
 " Match and ignore everything else in multi-line messages.
-let &l:errorformat .= ",%-C%.%#"
+let &l:errorformat .= ',%-C%.%#'
 " Match and ignore everything else not in a multi-line message:
-let &l:errorformat .= ",%-G%.%#"
+let &l:errorformat .= ',%-G%.%#'
 
-let &cpo = s:save_cpo
+let &cpoptions = s:save_cpo
 unlet s:save_cpo

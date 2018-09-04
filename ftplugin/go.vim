@@ -14,22 +14,22 @@ compiler go
 let b:undo_ftplugin = 'setl fo< com< cms<'
 
 " Motions
-onoremap <buffer> <silent> af :<C-u>call gopher#motion#func('a')<CR>
-xnoremap <buffer> <silent> af :<C-u>call gopher#motion#func('a')<CR>
-onoremap <buffer> <silent> if :<C-u>call gopher#motion#func('i')<CR>
-xnoremap <buffer> <silent> if :<C-u>call gopher#motion#func('i')<CR>
+onoremap <buffer> <silent> af :<C-u>call gopher#motion#function('a')<CR>
+xnoremap <buffer> <silent> af :<C-u>call gopher#motion#function('a')<CR>
+onoremap <buffer> <silent> if :<C-u>call gopher#motion#function('i')<CR>
+xnoremap <buffer> <silent> if :<C-u>call gopher#motion#function('i')<CR>
 
 onoremap <buffer> <silent> ac :<C-u>call gopher#motion#comment('a')<CR>
 xnoremap <buffer> <silent> ac :<C-u>call gopher#motion#comment('a')<CR>
 onoremap <buffer> <silent> ic :<C-u>call gopher#motion#comment('i')<CR>
 xnoremap <buffer> <silent> ic :<C-u>call gopher#motion#comment('i')<CR>
 
-nnoremap <buffer> <silent> ]] :<C-u>call gopher#motion#func_jump('n', 'next')<CR>
-nnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#func_jump('n', 'prev')<CR>
-onoremap <buffer> <silent> ]] :<C-u>call gopher#motion#func_jump('o', 'next')<CR>
-onoremap <buffer> <silent> [[ :<C-u>call gopher#motion#func_jump('o', 'prev')<CR>
-xnoremap <buffer> <silent> ]] :<C-u>call gopher#motion#func_jump('v', 'next')<CR>
-xnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#func_jump('v', 'prev')<CR>
+nnoremap <buffer> <silent> ]] :<C-u>call gopher#motion#jump('n', 'next')<CR>
+nnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('n', 'prev')<CR>
+onoremap <buffer> <silent> ]] :<C-u>call gopher#motion#jump('o', 'next')<CR>
+onoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('o', 'prev')<CR>
+xnoremap <buffer> <silent> ]] :<C-u>call gopher#motion#jump('v', 'next')<CR>
+xnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('v', 'prev')<CR>
 
 " Output or copy diagnostic information.
 command! -bang GopherInfo call gopher#internal#state('<bang>')
