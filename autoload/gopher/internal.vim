@@ -231,15 +231,18 @@ fun s:join_shell(l, ...) abort
   endtry
 endfun
 
-" Returns the byte offset for the cursor
-fun! gopher#internal#cursor_offset() abort
-  return gopher#internal#offset(line('.'), col('.'))
-endfunction
+" Returns the byte offset for the cursor.
+"
+" If the first argument is non-blank it will return filename:#offset
+fun! gopher#internal#cursor_offset(...) abort
+  let l:o = line2byte(line('.')) + (col('.') - 2)
 
-" Returns the byte offset for line and column
-fun! gopher#internal#offset(line, col) abort
-  return line2byte(a:line) + (a:col - 2)
-endfun
+  if len(a:000) > 0 && a:000[0]
+    return printf('%s:#%d', expand('%:p'), l:o)
+  endif
+
+  return l:o
+endfunction
 
 " Get all lines in the buffer as a a list.
 fun! gopher#internal#lines() abort
@@ -337,7 +340,7 @@ fun! gopher#internal#state(to_clipboard)
     endif
   endtry
 
-  if a:to_clipboard is# '!'
+  if a:to_clipboard
     let @+ = join(l:state, "\n")
   else
     for l:line in l:state

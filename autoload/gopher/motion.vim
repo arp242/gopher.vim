@@ -59,7 +59,7 @@ fun! gopher#motion#location(dir, cnt) abort
   endtry
 
   let l:loc = json_decode(l:out)
-  if type(l:loc) isnot v:t_dict|| !has_key(l:loc, 'fn')
+  if type(l:loc) isnot v:t_dict
     call gopher#internal#error(l:out)
     return 0
   endif
