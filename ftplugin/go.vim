@@ -31,8 +31,21 @@ onoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('o', 'prev')<CR>
 xnoremap <buffer> <silent> ]] :<C-u>call gopher#motion#jump('v', 'next')<CR>
 xnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('v', 'prev')<CR>
 
-" Output or copy diagnostic information.
 command! -bang GoDiag   call gopher#internal#diag(<bang>0)
+command!       GoSetup  call gopher#system#setup()
 
 " Rename identifier.
 command! -bang -nargs=? -complete=customlist,gopher#rename#complete GoRename call gopher#rename#do(<bang>0, <f-args>)
+
+command! -nargs=* GoTest call s:compile('gotest', <f-args>)
+command! -nargs=* GoMake call s:compile('go', <f-args>)
+"command! GoDef               call completor#do('definition')
+"command! GoDoc               call completor#do('doc')
+
+fun! s:compile(n, ...) abort
+  let l:c = b:current_compiler
+  exe 'compiler ' . a:n
+  exe 'lmake ' . join(a:000)
+  redraw!
+  exe 'compiler ' . l:c
+endfun

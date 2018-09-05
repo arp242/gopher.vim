@@ -9,6 +9,8 @@ endfun
 
 fun! gopher#rename#do(bang, ...) abort
   " No argument: toggle export.
+  " TODO: convert to camelCase if it's snake_case or PascalCase if it's
+  " Snake_case or ALLCAPS.
   if a:0 is 0
     let l:to = expand('<cword>') =~# '^[A-Z]'
           \ ? s:unexport(expand('<cword>'))
@@ -29,7 +31,8 @@ fun! gopher#rename#do(bang, ...) abort
   setl nomodifiable
 
   try
-    let [l:out, l:err] = gopher#internal#tool(['gorename', '-to', l:to,
+    " TODO: investigate async options.
+    let [l:out, l:err] = gopher#system#tool(['gorename', '-to', l:to,
           \ '-tags', get(g:, 'gopher_build_tags', ''),
           \ '-offset', gopher#internal#cursor_offset(1)
           \ ] + get(g:, 'gopher_gorename_flags', []))

@@ -37,7 +37,7 @@ endfun
 "
 " TODO: Should work for other top-level declarations, too.
 fun! gopher#motion#location(dir, cnt) abort
-  let [l:fname, l:tmp] = gopher#internal#tmpmod()
+  let [l:fname, l:tmp] = gopher#system#tmpmod()
 
   try
     let l:cmd = ['motion', '-format', 'vim',
@@ -47,7 +47,7 @@ fun! gopher#motion#location(dir, cnt) abort
           \ '-mode',   a:dir,
           \ ]
 
-    let [l:out, l:err] = gopher#internal#tool(l:cmd)
+    let [l:out, l:err] = gopher#system#tool(l:cmd)
     if l:err
       call gopher#internal#error(out)
       return
@@ -69,7 +69,7 @@ endfun
 
 " Select current comment block.
 fun! gopher#motion#comment(mode) abort
-  let [l:fname, l:tmp] = gopher#internal#tmpmod()
+  let [l:fname, l:tmp] = gopher#system#tmpmod()
 
   try
     let l:cmd = ['motion', '-format', 'json',
@@ -78,7 +78,7 @@ fun! gopher#motion#comment(mode) abort
           \ '-mode',   'comment',
           \ ]
 
-    let [l:out, l:err] = gopher#internal#tool(l:cmd)
+    let [l:out, l:err] = gopher#system#tool(l:cmd)
     if l:err
       call gopher#internal#error(l:out)
       return
@@ -160,7 +160,7 @@ endfun
 
 " Select a function in visual mode.
 function! gopher#motion#function(mode) abort
-  let [l:fname, l:tmp] = gopher#internal#tmpmod()
+  let [l:fname, l:tmp] = gopher#system#tmpmod()
 
   try
     let l:cmd = ['motion', '-mode', 'enclosing', '-parse-comments',
@@ -169,7 +169,7 @@ function! gopher#motion#function(mode) abort
           \ '-format', 'vim',
           \ ]
 
-    let [l:out, l:err] = gopher#internal#tool(l:cmd)
+    let [l:out, l:err] = gopher#system#tool(l:cmd)
     if l:err
       call gopher#internal#error(out)
       return
