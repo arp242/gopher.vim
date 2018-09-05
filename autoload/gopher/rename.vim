@@ -85,7 +85,7 @@ fun! s:errors(out, bang) abort
       continue
     endif
 
-    call setloclist(winnr(), [{
+    call setqflist(winnr(), [{
           \ 'type':     'E',
           \ 'filename': l:err[0],
           \ 'lnum':     l:err[1],
@@ -94,12 +94,12 @@ fun! s:errors(out, bang) abort
           \ }], 'a')
   endfor
 
-  if len(getloclist(winnr())) is 0
+  if len(getqflist(winnr())) is 0
     call gopher#internal#error(a:out)
     return
   endif
 
-  exe 'copen ' . len(getloclist(winnr()))
+  exe 'copen ' . len(getqflist(winnr()))
   if !a:bang
     cc 1
   endif
