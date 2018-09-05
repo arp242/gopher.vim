@@ -3,7 +3,7 @@ if exists('b:current_syntax')
 endif
 
 fun! s:has_setting(n)
-  return index(g:gopher#config#highlight, a:n) > -1
+  return index(g:gopher_highlight, a:n) > -1
 endfun
 
 syn case match

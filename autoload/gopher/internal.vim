@@ -279,7 +279,7 @@ fun! s:indent(out)
   return map(l:out, { i, v -> '    ' . l:v })
 endfun
 
-fun! gopher#internal#state(to_clipboard)
+fun! gopher#internal#diag(to_clipboard)
   let l:state = []
 
   " Disable 'shell' debug flag, as this will add a bunch of commands to history,
@@ -347,4 +347,8 @@ fun! gopher#internal#state(to_clipboard)
       echom l:line
     endfor
   endif
+endfun
+
+fun! gopher#internal#trim(s) abort
+  return substitute(a:s, '^[ \t\r\n]*\(.\{-}\)[ \t\r\n]*$', '\1', '')
 endfun

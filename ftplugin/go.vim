@@ -32,12 +32,7 @@ xnoremap <buffer> <silent> ]] :<C-u>call gopher#motion#jump('v', 'next')<CR>
 xnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('v', 'prev')<CR>
 
 " Output or copy diagnostic information.
-command! -bang GopherInfo   call gopher#internal#state(<bang>0)
+command! -bang GoDiag   call gopher#internal#diag(<bang>0)
 
 " Rename identifier.
 command! -bang -nargs=? -complete=customlist,gopher#rename#complete GoRename call gopher#rename#do(<bang>0, <f-args>)
-
-" Commands
-if gopher#config#vimgo_compat
-  call gopher#compat#init()
-endif

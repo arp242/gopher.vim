@@ -73,3 +73,18 @@ fun! Test_lines() abort
 
   call assert_equal(l:want+[''], l:out)
 endfun
+
+fun! Test_trim() abort
+  let l:tests = {
+        \ 'xx':                'xx',
+        \ '  xx':              'xx',
+        \ 'xx  ':              'xx',
+        \ "xx\n":              'xx',
+        \ "\txx\t\n":          'xx',
+        \ "x  x  \t   \n   ":  'x  x',
+        \ }
+
+  for l:k in keys(l:tests)
+    call assert_equal(l:tests[l:k], gopher#internal#trim(l:k), l:k)
+  endfor
+endfun
