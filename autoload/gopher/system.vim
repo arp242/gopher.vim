@@ -2,8 +2,8 @@ let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 let s:gotools = s:root . '/tools'         " Vendored Go tools.
 let s:gobin   = s:gotools . '/bin'
 
-" Shell command history; every item is a list with the exit code, time it took
-" to run, command that was run, and its output, in that order.
+" Command history; every item is a list with the exit code, time it took to run,
+" command that was run, and its output, in that order.
 let s:history = []
 
 " Prepend our GOBIN to the path so that external tools/plugins use binaries from
@@ -41,7 +41,7 @@ fun! gopher#system#setup() abort
   endfor
 endfun
 
-" Get shell history (only populated if 'shell' is in the g:gopher_debug)
+" Get command history (only populated if 'commands' is in the g:gopher_debug)
 " variable.
 fun! gopher#system#history()
   return s:history
@@ -75,7 +75,7 @@ fun! gopher#system#tmpmod()
 endfun
 
 " Run a vendored Go tool.
-fun! gopher#system#tool(cmd, ...) abort
+fun! gopher#system#tool(cmd) abort
   if type(a:cmd) isnot v:t_list
     call gopher#internal#error('must pass a list')
     return
@@ -89,11 +89,33 @@ fun! gopher#system#tool(cmd, ...) abort
   return gopher#system#run([l:bin] + a:cmd[1:])
 endfun
 
-" Run "cmd" in the shell. cmd must be a list, one argument per item. Every list
-" entry will be automatically shell-escaped
+" Run a vendored Go tool in the background.
+fun! gopher#system#tool_job(done, cmd) abort
+  if type(a:cmd) isnot v:t_list
+    call gopher#internal#error('must pass a list')
+    return
+  endif
+
+  let l:bin = s:tool(a:cmd[0])
+  if l:bin is? ''
+    call go#internal#error('unknown tool: "%s"')
+  endif
+
+  call gopher#system#job(a:done, [l:bin] + a:cmd[1:])
+endfun
+
+" Run an external command.
+"
+" async is a boolean flag to use the async API instead of system().
+"
+" done will be called when the command has finished with exit code and output as
+" a string.
+"
+" cmd must be a list, one argument per item. Every list entry will be
+" automatically shell-escaped
 "
 " Every other argument is passed to stdin.
-fun! gopher#system#run(cmd, ...) abort
+fun! gopher#system#run(cmd) abort
   if type(a:cmd) isnot v:t_list
     call gopher#internal#error('must pass a list')
     return
@@ -105,11 +127,12 @@ fun! gopher#system#run(cmd, ...) abort
     let l:shell = &shell
     let l:shellredir = &shellredir
 
-    if gopher#config#has_debug('shell')
+    if gopher#config#has_debug('commands')
       let l:start = reltime()
     endif
 
-    let l:out = call('system', [l:cmd] + a:000)
+    let l:out = call('system', [l:cmd])
+    let l:err = v:shell_error
   finally
     let &shell = l:shell
     let &shellredir = l:shellredir
@@ -120,18 +143,43 @@ fun! gopher#system#run(cmd, ...) abort
     let l:out = l:out[:-2]
   endif
 
-  if gopher#config#has_debug('shell')
-    " Full path is too noisy.
-    let l:debug_cmd = a:cmd
-    let l:debug_cmd[0] = fnamemodify(l:debug_cmd[0], ':t')
-    let s:history = add(s:history, [
-          \ v:shell_error,
-          \ s:since(l:start),
-          \ s:join_shell(l:debug_cmd),
-          \ l:out])
+  if gopher#config#has_debug('commands')
+    call s:hist(a:cmd, l:start, v:shell_error, l:out, 0)
   endif
 
-  return [l:out, v:shell_error]
+  return [l:out, l:err]
+endfun
+
+" Start a simple async job.
+"
+" cmd    Command as list.
+" done   Callback function, called with the arguments:
+"          exit  exit code
+"          out   stdout and stderr output as string, interleaved in correct
+"                order (hopefully).
+"
+" TODO: Neovim
+fun! gopher#system#job(done, cmd) abort
+  if type(a:cmd) isnot v:t_list
+    call gopher#internal#error('must pass a list')
+    return
+  endif
+
+  let l:state = {
+        \ 'out': '',
+        \ 'closed': 0,
+        \ 'exit': -1,
+        \ 'done': a:done,
+        \ 'start': reltime(),
+        \ 'cmd': a:cmd,
+        \ }
+
+  return job_start(a:cmd, {
+        \ 'exit_cb':  function('s:j_exit_cb', [], l:state),
+        \ 'out_cb':   function('s:j_out_cb', [], l:state),
+        \ 'err_cb':   function('s:j_err_cb', [], l:state),
+        \ 'close_cb': function('s:j_close_cb', [], l:state),
+        \})
 endfun
 
 " Get the full path to a tool name; download, compile and install it from the
@@ -188,7 +236,11 @@ fun! s:vendor(force) abort
     return 1
   endif
 
-  call gopher#internal#info('running "go mod vendor"; this may take a few seconds')
+  " Only show on initial setup; too much flashing otherwise!
+  if !isdirectory(s:gotools . '/vendor')
+    call gopher#internal#info('running "go mod vendor"; this may take a few seconds')
+  endif
+
   let l:out = system(printf('cd %s && go mod vendor', s:gotools))
   if v:shell_error
     echoerr l:out
@@ -200,6 +252,23 @@ fun! s:vendor(force) abort
 
   let s:ran_mod_vendor = 1
   return 1
+endfun
+
+" Add item to history.
+fun! s:hist(cmd, start, exit, out, job) abort
+    if !gopher#config#has_debug('commands')
+      return
+    endif
+
+    " Full path is too noisy.
+    let l:debug_cmd = a:cmd
+    let l:debug_cmd[0] = fnamemodify(l:debug_cmd[0], ':t')
+    let s:history = add(s:history, [
+          \ a:exit,
+          \ s:since(a:start),
+          \ s:join_shell(l:debug_cmd),
+          \ a:out,
+          \ a:job])
 endfun
 
 " Format time elapsed since start.
@@ -216,4 +285,30 @@ fun! s:join_shell(l, ...) abort
   finally
     let &shellslash = l:save
   endtry
+endfun
+
+fun! s:j_close_cb(ch) abort dict
+  let self.closed = 1
+
+  if self.exit > -1
+    call s:hist(self.cmd, self.start, self.exit, self.out, 1)
+    call self.done(self.exit, self.out)
+  endif
+endfun
+
+fun! s:j_exit_cb(job, exit) abort dict
+  let self.exit = a:exit
+
+  if self.closed
+    call s:hist(self.cmd, self.start, self.exit, self.out, 1)
+    call self.done(self.exit, self.out)
+  endif
+endfun
+
+fun! s:j_out_cb(ch, msg) abort dict
+  let self.out .= a:msg
+endfun
+
+fun! s:j_err_cb(ch, msg) abort dict
+  let self.out .= a:msg
 endfun

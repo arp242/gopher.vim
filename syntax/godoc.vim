@@ -3,7 +3,8 @@ if exists('b:current_syntax')
 endif
 
 syn case match
-syn match godocTitle "^\([A-Z][A-Z ]*\)$"
+
+syn match godocTitle /^\([A-Z][A-Z ]*\)$/
 
 command -nargs=+ HiLink hi def link <args>
 

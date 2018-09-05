@@ -13,59 +13,48 @@ fun! gopher#rename#do(bang, ...) abort
   " - snake_case -> snakeCase     (Convert snake_case while keeping export status)
   " - Snake_case -> SnakeCase
   " - Otherwise toggle export status.
-  "
   if a:0 is 0
     let l:to = gopher#rename#_auto_to(expand('<cword>'))
   else
     let l:to = a:1
   endif
 
-  if &modified
-    silent w
-  endif
-
-  " clear qlist.
+  call gopher#internal#write_all()
   cexpr []
 
   " Make sure the buffer can't be modified since gorename will write stuff to
   " disk, and overwrite the user's changes.
-  setl nomodifiable
+  " Set this for *all* buffers since gorename can modify multiple files.
+  call gopher#internal#bufdo('set nomodifiable')
+  let l:autoread = &autoread
+  set autoread
 
   try
-    " TODO: investigate async options.
-    let [l:out, l:err] = gopher#system#tool(['gorename', '-to', l:to,
-          \ '-tags', get(g:, 'gopher_build_tags', ''),
+    call gopher#system#tool_job(function('s:done'), [
+          \ 'gorename',
+          \ '-to',     l:to,
+          \ '-tags',   get(g:, 'gopher_build_tags', ''),
           \ '-offset', gopher#internal#cursor_offset(1)
           \ ] + get(g:, 'gopher_gorename_flags', []))
-    if l:err
-      call s:errors(l:out, a:bang)
-      return
-    endif
-
-    " Reload buffer.
-    silent edit
-  finally
-    set modifiable
+  catch
+    " Just so we don't leave the buffer in nomod state on errors, and it doesn't
+    " hurt to do twice.
+    call gopher#internal#bufdo('set modifiable')
+    let &autoread = l:autoread
   endtry
+endfun
 
-  call gopher#internal#info(l:out)
+fun! s:done(exit, out) abort
+  call gopher#internal#bufdo('set modifiable')
+
+  if a:exit > 0
+    return s:errors(a:out, '')
+  endif
+
+  call gopher#internal#info(a:out)
 endfun
 
 fun! s:errors(out, bang) abort
-  " gorename: -offset "/home/martin/go/src/a/a.go:#125": cannot parse file: /home/martin/go/src/a/a.go:18:2: expected 'IDENT', found 'EOF'
-  " gorename: -offset "/home/martin/go/src/a/a.go:#269": cannot parse file: /home/martin/go/src/a/a.go:17:1: expected declaration, found asde
-  "
-  " /home/martin/go/src/a/a.go:18:2: undeclared name: x
-  " /home/martin/go/src/a/a.go:19:2: undeclared name: x
-  " gorename: couldn't load packages due to errors: a
-  "
-  " gorename: -offset "/home/martin/go/src/a/dir1/asd.go:#38": no identifier at this position
-  "
-  " /home/martin/go/src/a/dir1/asd.go:5:6: renaming this func "QWEzxcasdzxc" to "x"
-  " /home/martin/go/src/a/dir1/dir1.go:5:6: <09>conflicts with func in same block
-  "
-  " /home/martin/go/src/a/dir1/asd.go:7:2: renaming this var "v" to "asd"
-  " /home/martin/go/src/a/dir1/asd.go:6:2: <09>conflicts with var in same block
   if a:out =~# '": no identifier at this position'
     call gopher#internal#error('gorename: no identifier at this position')
     return
@@ -81,8 +70,9 @@ fun! s:errors(out, bang) abort
     return
   endif
 
-  " TO DO: allow configuring of loclist/qflist, auto/open close .. maybe re-use
+  " TODO: allow configuring of loclist/qflist, auto/open close .. maybe re-use
   " ALE vars?
+  " TODO: QuickFixCmdPre and QuickFixCmdPost autocmds?
   for l:err in split(a:out, "\n")
     " Not a very useful line to add.
     if l:err =~# "^gorename: couldn't load packages due to errors:"
@@ -115,6 +105,8 @@ fun! s:errors(out, bang) abort
   endif
 endfun
 
+" Exported just for testing.
+" TODO: See if we can test this without exposing it.
 fun! gopher#rename#_auto_to(w)
   if a:w =~# '^\u\+$'
     return a:w[0] . tolower(a:w[1:])

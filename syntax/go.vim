@@ -80,11 +80,11 @@ syn cluster     goStringGroup     contains=goEscapeOctal,goEscapeC,goEscapeX,goE
 
 " Strings
 if s:has_setting('string-spell')
-  syn region      goString        start=/"/ end=/"/ contains=@goStringGroup,@Spell
-  syn region      goRawString     start=/`/ end=/`/ contains=@Spell
+  syn region    goString          start=/"/ end=/"/ contains=@goStringGroup,@Spell
+  syn region    goRawString       start=/`/ end=/`/ contains=@Spell
 else
-  syn region      goString        start=/"/ end=/"/ contains=@goStringGroup
-  syn region      goRawString     start=/`/ end=/`/
+  syn region    goString          start=/"/ end=/"/ contains=@goStringGroup
+  syn region    goRawString       start=/`/ end=/`/
 endif
 
 if s:has_setting('string-fmt')
@@ -134,7 +134,6 @@ endif
 " Single-line var, const, and import.
 syn match       goSingleDecl      /\(import\|var\|const\) [^(]\@=/ contains=goImport,goVar,goConst
 
-" Integers
 "
 "   <         # Word boundary
 "   -?        # Optional -
@@ -155,10 +154,10 @@ syn match       goFloat           /\v<-?\.\d+%([Ee][-+]?\d+)?>/
 
 " Complex numbers.
 if s:has_setting('complex')
-  syn match       goImaginary       /\v<-?\d+i>/
-  syn match       goImaginary       /\v<-?\d+[Ee][-+]?\d+i>/
-  syn match       goImaginaryFloat  /\v<-?\d+\.\d*%([Ee][-+]?\d+)?i>/
-  syn match       goImaginaryFloat  /\v<-?\.\d+%([Ee][-+]?\d+)?i>/
+  syn match     goImaginary       /\v<-?\d+i>/
+  syn match     goImaginary       /\v<-?\d+[Ee][-+]?\d+i>/
+  syn match     goImaginaryFloat  /\v<-?\d+\.\d*%([Ee][-+]?\d+)?i>/
+  syn match     goImaginaryFloat  /\v<-?\.\d+%([Ee][-+]?\d+)?i>/
 endif
 
 " One or more line comments that are followed immediately by a "package"

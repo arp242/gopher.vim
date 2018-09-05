@@ -42,14 +42,54 @@ fun! gopher#internal#lines() abort
   return l:buf
 endfun
 
+" List all Go buffers.
+fun! gopher#internal#buffers()
+  return filter(range(1, bufnr('$')), { i, v -> bufexists(l:v) && buflisted(l:v) && bufname(l:v)[-3:] is# '.go' })
+endfun
+
+" Run a command on every buffer and restore the position to the active buffer.
+fun! gopher#internal#bufdo(cmd)
+  let l:s = bufnr('%')
+  let l:lz = &lazyredraw
+
+  try
+    set lazyredraw  " Reduces a lot of flashing
+    for l:b in gopher#internal#buffers()
+      silent exe l:b . 'bufdo ' . a:cmd
+    endfor
+  finally
+    silent exe 'buffer ' . l:s
+    let &lazyredraw = l:lz
+  endtry
+endfun
+
+" Save all unwritten Go buffers.
+fun! gopher#internal#write_all()
+  let l:s = bufnr('%')
+  let l:lz = &lazyredraw
+
+  try
+    set lazyredraw  " Reduces a lot of flashing
+    for l:b in gopher#internal#buffers()
+      exe 'buffer ' . l:b
+      if &modified
+        silent w
+      endif
+    endfor
+  finally
+    silent exe 'buffer ' . l:s
+    let &lazyredraw = l:lz
+  endtry
+endfun
+
 " Get diagnostic information about gopher.vim
 fun! gopher#internal#diag(to_clipboard)
   let l:state = []
 
-  " Disable 'shell' debug flag, as this will add a bunch of commands to history,
+  " Disable 'commands' debug flag, as this will add a bunch of commands to history,
   " which is not very useful.
   let l:add_debug = 0
-  let l:i = index(get(g:, 'gopher_debug', []), 'shell')
+  let l:i = index(get(g:, 'gopher_debug', []), 'commands')
   if l:i > -1
     call remove(g:gopher_debug, l:i)
     let l:add_debug = 1
@@ -91,17 +131,21 @@ fun! gopher#internal#diag(to_clipboard)
     let l:state += s:indent(filter(split(execute('let'), "\n"), { i, v -> l:v =~# '^gopher_' }))
     let l:state = add(l:state, ' ')
 
-    " List shell history (if any).
-    let l:state = add(l:state, 'SHELL HISTORY')
+    " List command history (if any).
+    let l:state = add(l:state, 'COMMAND HISTORY')
     for l:h in gopher#system#history()
-      let l:state = add(l:state, '    $ ' . l:h[2])
+      if l:h[4]
+        let l:state = add(l:state, '    shell: ' . l:h[2])
+      else
+        let l:state = add(l:state, '    job: ' . l:h[2])
+      endif
       let l:state = add(l:state, printf('    exit %s; took %ss', l:h[0], l:h[1]))
       let l:state += s:indent(l:h[3])
       let l:state = add(l:state, ' ')
     endfor
   finally
     if l:add_debug
-      let g:gopher_debug = add(g:gopher_debug, 'shell')
+      let g:gopher_debug = add(g:gopher_debug, 'commands')
     endif
   endtry
 

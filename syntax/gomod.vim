@@ -4,39 +4,25 @@ endif
 
 syntax case match
 
-" match keywords
-syntax keyword gomodModule  module
-syntax keyword gomodRequire require
-syntax keyword gomodExclude exclude
-syntax keyword gomodReplace replace
+" Keywords.
+syn keyword     gomodKeywords     module require exclude replace
 
-" require, exclude and replace can be also grouped into block
-syntax region gomodRequire start='require (' end=')' transparent contains=gomodRequire,gomodVersion
-syntax region gomodExclude start='exclude (' end=')' transparent contains=gomodExclude,gomodVersion
-syntax region gomodReplace start='replace (' end=')' transparent contains=gomodReplace,gomodVersion
+" Comments are always in form of // ...
+syn region      gomodComment      start="//" end=/$/ contains=@Spell
 
-" set highlights
-highlight default link gomodModule  Keyword
-highlight default link gomodRequire Keyword
-highlight default link gomodExclude Keyword
-highlight default link gomodReplace Keyword
+" Replace operator.
+syn match       gomodReplace      /\v\=\>/
 
-" comments are always in form of // ...
-syntax region gomodComment  start="//" end="$" contains=@Spell
-highlight default link gomodComment Comment
+" Semver as 'v1.1.1' and versions as 'v.0.0.0-date-commit'.
+syn match       gomodVersion      /\vv\d+\.\d+\.\d+(-\d{14}-[0-9a-f]{12})?/
 
-" make sure quoted import paths are higlighted
-syntax region gomodString start=+"+ skip=+\\\\\|\\"+ end=+"+
-highlight default link gomodString  String
+" // indirect comments after version.
+syn match       gomodIndirect     " // indirect$"
 
-" replace operator is in the form of '=>'
-syntax match gomodReplaceOperator "\v\=\>"
-highlight default link gomodReplaceOperator Operator
-
-
-" highlight semver, note that this is very simple. But it works for now
-syntax match gomodVersion "v\d\+\.\d\+\.\d\+"
-syntax match gomodVersion "v\d\+\.\d\+\.\d\+-.*"
-highlight default link gomodVersion Identifier
+hi def link     gomodKeywords     Keyword
+hi def link     gomodComment      Comment
+hi def link     gomodReplace      Operator
+hi def link     gomodVersion      Identifier
+hi def link     gomodIndirect     Keyword
 
 let b:current_syntax = 'gomod'
