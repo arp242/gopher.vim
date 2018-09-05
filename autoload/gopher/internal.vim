@@ -98,23 +98,24 @@ fun! gopher#internal#diag(to_clipboard)
   try
     " Vim version.
     let l:state = add(l:state, 'VERSION')
-    let l:state += s:indent(split(execute('version'), "\n")[:1])
+    let l:state += s:indent(join(split(execute('version'), "\n")[:1], '; '))
 
     " Go version.
-    let [l:out, l:err] = gopher#system#run(['go', 'version'])
+    let [l:version, l:err] = gopher#system#run(['go', 'version'])
     if l:err
       let l:state = add(l:state, '    ERROR go version exit ' . l:err)
+      let l:version = ''
     endif
-    let l:state += s:indent(l:out)
 
     " GOPATH and GOROOT.
     let [l:out, l:err] = gopher#system#run(['go', 'env', 'GOPATH', 'GOROOT'])
     if l:err
+      let l:state += s:indent(l:version)
       let l:state = add(l:state, '    ERROR go env exit ' . l:err)
       let l:state += s:indent(l:out)
     else
-      let l:out = substitute('GOPATH=' . l:out, "\n", "\nGOROOT=", '')
-      let l:state += s:indent(l:out)
+      let l:out = substitute('GOPATH=' . l:out, "\n", '; GOROOT=', '')
+      let l:state += s:indent(l:version . '; ' . l:out)
     endif
 
     " gopher.vim version.
