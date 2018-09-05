@@ -33,3 +33,22 @@ fun! Test_restore_env() abort
   call assert_equal("quote '\"", $GOPHER_ENV1)
 endfun
 
+fun! Test_tmpmod() abort
+  exe 'cd ' g:test_tmpdir
+  try
+    e x
+    call setline(1, 'mod')
+
+    let [l:should_tmp, l:tmp1] = gopher#system#tmpmod()
+    call assert_equal(l:tmp1, 1, l:should_tmp)
+
+    silent w
+
+    let [l:should_me, l:tmp2] = gopher#system#tmpmod()
+    call assert_equal(l:tmp2, 0, l:should_me)
+  finally
+    call delete('x')
+    call delete(l:should_tmp)
+    call delete(l:should_me)
+  endtry
+endfun

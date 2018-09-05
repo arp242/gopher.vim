@@ -8,13 +8,14 @@ function! gopher#rename#complete(lead, cmdline, cursor) abort
 endfun
 
 fun! gopher#rename#do(bang, ...) abort
-  " No argument: toggle export.
-  " TODO: convert to camelCase if it's snake_case or PascalCase if it's
-  " Snake_case or ALLCAPS.
+  " No argument; try to make a sane decision:
+  " - ALLCAPS -> Allcaps
+  " - snake_case -> snakeCase     (Convert snake_case while keeping export status)
+  " - Snake_case -> SnakeCase
+  " - Otherwise toggle export status.
+  "
   if a:0 is 0
-    let l:to = expand('<cword>') =~# '^[A-Z]'
-          \ ? s:unexport(expand('<cword>'))
-          \ : s:export(expand('<cword>'))
+    let l:to = gopher#rename#_auto_to(expand('<cword>'))
   else
     let l:to = a:1
   endif
@@ -80,7 +81,7 @@ fun! s:errors(out, bang) abort
     return
   endif
 
-  " TODO: allow configuring of loclist/qflist, auto/open close .. maybe re-use
+  " TO DO: allow configuring of loclist/qflist, auto/open close .. maybe re-use
   " ALE vars?
   for l:err in split(a:out, "\n")
     " Not a very useful line to add.
@@ -114,8 +115,20 @@ fun! s:errors(out, bang) abort
   endif
 endfun
 
+fun! gopher#rename#_auto_to(w)
+  if a:w =~# '^\u\+$'
+    return a:w[0] . tolower(a:w[1:])
+  elseif a:w =~# '_'
+    return a:w =~# '^\u' ? s:export(a:w) : s:unexport(a:w)
+  else
+    return a:w =~# '^\u' ? s:unexport(a:w) : s:export(a:w)
+  endif
+endfun
+
 " Copied from tpope/vim-abolish.
 fun! s:unexport(word) abort
+  "let v:errors = add(v:errors, 'unexp ' . a:word)
+
   let l:word = substitute(a:word, '-', '_', 'g')
   if l:word !~# '_' && l:word =~# '\l'
     return substitute(l:word, '^.', '\l&', '')
@@ -125,6 +138,8 @@ fun! s:unexport(word) abort
 endfun
 
 fun! s:export(word) abort
+  "let v:errors = add(v:errors, 'exp ' . a:word)
+
   let l:word = s:unexport(a:word)
   return toupper(l:word[0]) . l:word[1:]
 endfun

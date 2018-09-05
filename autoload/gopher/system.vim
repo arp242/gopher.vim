@@ -1,5 +1,5 @@
 let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
-let s:gotools = s:root . '/tools'         " Repo with vendored Go tools.
+let s:gotools = s:root . '/tools'         " Vendored Go tools.
 let s:gobin   = s:gotools . '/bin'
 
 " Shell command history; every item is a list with the exit code, time it took
@@ -13,11 +13,11 @@ if s:gobin !=# $PATH
 endif
 
 " List of all tools we know about. The key is the binary name, the value is a
-" 2-tuple with the full package name a boolean to signal that go install has
+" 2-tuple with the full package name and a boolean to signal that go install has
 " been run this Vim session.
 let s:tools = {}
 
-" Build s:tools with binary -> pkg mapping from tools.go.
+" Build s:tools from tools.go.
 fun! s:init() abort
   for l:line in readfile(s:gotools . '/tools.go')
     if l:line !~# "^\t_ \""
@@ -47,7 +47,7 @@ fun! gopher#system#history()
   return s:history
 endfun
 
-" Restore an environment variable back its original value.
+" Restore an environment variable back to its original value.
 fun! gopher#system#restore_env(name, val)
   if a:val isnot? ''
     exe printf('let $%s = %s', a:name, s:escape_single_quote(a:val))
@@ -59,15 +59,19 @@ endfun
 " Write unsaved buffer to a temp file when modified, so tools that operate on
 " files can use that.
 "
+" The first return value is either the tmp file or the full path to the original
+" file (if not modified), the second return value signals that this is a tmp
+" file.
+"
 " Don't forget to delete the tmp file!
 fun! gopher#system#tmpmod()
   if &modified
     let l:tmp = tempname()
     call writefile(gopher#internal#lines(), l:tmp)
-    return [l:tmp, l:tmp]
+    return [l:tmp, 1]
   endif
 
-  return [expand('%:p'), '']
+  return [expand('%:p'), 0]
 endfun
 
 " Run a vendored Go tool.
@@ -178,17 +182,9 @@ fun! s:escape_single_quote(s)
 endfun
 
 let s:ran_mod_vendor = 0
-" Run go mod vendor; only need to run this once.
+" Run go mod vendor; only need to run this once per Vim session.
 fun! s:vendor(force) abort
   if s:ran_mod_vendor && !a:force
-    return 1
-  endif
-
-  " Assume that the existence of the directory means it's valid.
-  " TODO: we need to run this again after vim-go updated; I'm not sure what the
-  " best/fastest way to do that is; maybe just run it once per Vim instance?
-  if isdirectory(s:gotools . '/vendor') && !a:force
-    let s:ran_mod_vendor = 1
     return 1
   endif
 

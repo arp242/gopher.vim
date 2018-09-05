@@ -53,7 +53,7 @@ fun! gopher#motion#location(dir, cnt) abort
       return
     endif
   finally
-    if l:tmp isnot# ''
+    if l:tmp
       call delete(l:tmp)
     endif
   endtry
@@ -84,7 +84,7 @@ fun! gopher#motion#comment(mode) abort
       return
     endif
   finally
-    if l:tmp isnot# ''
+    if l:tmp
       call delete(l:tmp)
     endif
   endtry
@@ -175,7 +175,7 @@ function! gopher#motion#function(mode) abort
       return
     endif
   finally
-    if l:tmp isnot? ''
+    if l:tmp
       call delete(l:tmp)
     endif
   endtry
