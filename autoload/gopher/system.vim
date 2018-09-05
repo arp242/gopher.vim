@@ -8,7 +8,7 @@ let s:history = []
 
 " Prepend our GOBIN to the path so that external tools/plugins use binaries from
 " here.
-if s:gobin !=# $PATH
+if s:gobin !~# $PATH
   let $PATH = s:gobin . ':' . $PATH
 endif
 
@@ -158,6 +158,8 @@ endfun
 "          out   stdout and stderr output as string, interleaved in correct
 "                order (hopefully).
 "
+" TODO: Don't run multiple jobs that modify the buffer at the same time. For
+" some tools (like gorename) we need a global lock.
 " TODO: Neovim
 fun! gopher#system#job(done, cmd) abort
   if type(a:cmd) isnot v:t_list
@@ -166,12 +168,12 @@ fun! gopher#system#job(done, cmd) abort
   endif
 
   let l:state = {
-        \ 'out': '',
+        \ 'out':    '',
         \ 'closed': 0,
-        \ 'exit': -1,
-        \ 'done': a:done,
-        \ 'start': reltime(),
-        \ 'cmd': a:cmd,
+        \ 'exit':   -1,
+        \ 'start':  reltime(),
+        \ 'cmd':    a:cmd,
+        \ 'done':   a:done,
         \ }
 
   return job_start(a:cmd, {
