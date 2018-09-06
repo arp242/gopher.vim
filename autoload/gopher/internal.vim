@@ -43,12 +43,12 @@ fun! gopher#internal#lines() abort
 endfun
 
 " List all Go buffers.
-fun! gopher#internal#buffers()
+fun! gopher#internal#buffers() abort
   return filter(range(1, bufnr('$')), { i, v -> bufexists(l:v) && buflisted(l:v) && bufname(l:v)[-3:] is# '.go' })
 endfun
 
 " Run a command on every buffer and restore the position to the active buffer.
-fun! gopher#internal#bufdo(cmd)
+fun! gopher#internal#bufdo(cmd) abort
   let l:s = bufnr('%')
   let l:lz = &lazyredraw
 
@@ -64,7 +64,7 @@ fun! gopher#internal#bufdo(cmd)
 endfun
 
 " Save all unwritten Go buffers.
-fun! gopher#internal#write_all()
+fun! gopher#internal#write_all() abort
   let l:s = bufnr('%')
   let l:lz = &lazyredraw
 
@@ -83,7 +83,7 @@ fun! gopher#internal#write_all()
 endfun
 
 " Get diagnostic information about gopher.vim
-fun! gopher#internal#diag(to_clipboard)
+fun! gopher#internal#diag(to_clipboard) abort
   let l:state = []
 
   " Disable 'commands' debug flag, as this will add a bunch of commands to history,
@@ -159,7 +159,7 @@ fun! gopher#internal#diag(to_clipboard)
   endif
 endfun
 
-fun! s:indent(out)
+fun! s:indent(out) abort
   let l:out = a:out
   if type(l:out) is v:t_string
     let l:out = split(l:out, "\n")

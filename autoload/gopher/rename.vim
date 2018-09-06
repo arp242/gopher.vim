@@ -107,7 +107,7 @@ endfun
 
 " Exported just for testing.
 " TODO: See if we can test this without exposing it.
-fun! gopher#rename#_auto_to(w)
+fun! gopher#rename#_auto_to(w) abort
   if a:w =~# '^\u\+$'
     return a:w[0] . tolower(a:w[1:])
   elseif a:w =~# '_'

@@ -43,12 +43,12 @@ endfun
 
 " Get command history (only populated if 'commands' is in the g:gopher_debug)
 " variable.
-fun! gopher#system#history()
+fun! gopher#system#history() abort
   return s:history
 endfun
 
 " Restore an environment variable back to its original value.
-fun! gopher#system#restore_env(name, val)
+fun! gopher#system#restore_env(name, val) abort
   if a:val isnot? ''
     exe printf('let $%s = %s', a:name, s:escape_single_quote(a:val))
   else
@@ -64,7 +64,7 @@ endfun
 " file.
 "
 " Don't forget to delete the tmp file!
-fun! gopher#system#tmpmod()
+fun! gopher#system#tmpmod() abort
   if &modified
     let l:tmp = tempname()
     call writefile(gopher#internal#lines(), l:tmp)
@@ -227,7 +227,7 @@ fun! s:tool(name) abort
   return l:bin
 endfun
 
-fun! s:escape_single_quote(s)
+fun! s:escape_single_quote(s) abort
   return "'" . substitute(a:s, "'", "' . \"'\" . '", '') . "'"
 endfun
 

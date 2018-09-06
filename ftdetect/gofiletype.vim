@@ -18,15 +18,18 @@ function! s:gofiletype_post() abort
   let &g:fileencodings = s:current_fileencodings
 endfunction
 
-au BufNewFile  *.go setf go | setl fileencoding=utf-8 fileformat=unix
-au BufRead     *.go call s:gofiletype_pre()
-au BufReadPost *.go call s:gofiletype_post()
+augroup plugin-gopher
+  au BufNewFile  *.go setf go | setl fileencoding=utf-8 fileformat=unix
+  au BufRead     *.go call s:gofiletype_pre()
+  au BufReadPost *.go call s:gofiletype_post()
 
-au BufRead,BufNewFile *.tmpl set filetype=gohtmltmpl
+  au BufRead,BufNewFile *.tmpl set filetype=gohtmltmpl
 
-" Set the filetype if the first non-comment and non-blank line starts with
-" 'module <path>'.
-au BufNewFile,BufRead go.mod call s:gomod()
+  " Set the filetype if the first non-comment and non-blank line starts with
+  " 'module <path>'.
+  au BufNewFile,BufRead go.mod call s:gomod()
+augroup end
+
 fun! s:gomod()
   for l:i in range(1, line('$'))
     let l:l = getline(l:i)

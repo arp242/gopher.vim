@@ -32,18 +32,18 @@ function! GoIndent(lnum)
 
   let l:ind = l:previ
 
-  if l:prevl =~ '[({]\s*$'
-    " previous line opened a block
+  " previous line opened a block
+  if l:prevl =~# '[({]\s*$'
     let l:ind += shiftwidth()
   endif
+  " previous line is part of a switch statement
   if l:prevl =~# '^\s*\(case .*\|default\):$'
-    " previous line is part of a switch statement
     let l:ind += shiftwidth()
   endif
   " TODO: handle if the previous line is a label.
 
-  if l:thisl =~ '^\s*[)}]'
-    " this line closed a block
+  " this line closed a block
+  if l:thisl =~# '^\s*[)}]'
     let l:ind -= shiftwidth()
   endif
 
