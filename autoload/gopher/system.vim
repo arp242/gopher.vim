@@ -238,8 +238,10 @@ fun! s:vendor(force) abort
     return 1
   endif
 
+  let l:msg_shown = 0
   " Only show on initial setup; too much flashing otherwise!
   if !isdirectory(s:gotools . '/vendor')
+    let l:msg_shown = 1
     call gopher#internal#info('running "go mod vendor"; this may take a few seconds')
   endif
 
@@ -249,8 +251,9 @@ fun! s:vendor(force) abort
     return 0
   endif
 
-  " Clear message.
-  redraw!
+  if l:msg_shown
+    redraw!
+  endif
 
   let s:ran_mod_vendor = 1
   return 1
