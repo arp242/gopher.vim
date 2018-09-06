@@ -60,14 +60,21 @@ fun! s:errors(out, bang) abort
     return
   endif
 
-  if a:out =~# ': renaming this.*conflicts with'
+  " Errors?
+  " echom json_encode(a:out)
+  " "/home/martin/work/src/github.com/teamwork/deskapi/hub.go:50:5: renaming this var \"err\" to \"c\"/home/martin/work/src/github.com/teamwork/deskapi/hub.go:50:2: \tconflicts with var in same block"
+  "
+  " TODO: doesn't detect method renames as that has a different verbiage >_<
+  " renaming this method [..] would conflict with this method [..]
+  if a:out =~# ': renaming this.*\(would conflict\|conflicts with\)'
     let l:out = map(split(a:out, "\n"), { i, v -> split(l:v, ':')})
 
-    call gopher#internal#error(
-          \ gopher#internal#trim(join(l:out[0][3:]))
-          \ . ' ' .
-          \ gopher#internal#trim(join(l:out[1][3:])))
-    return
+    let l:err = gopher#internal#trim(join(l:out[0][3:]))
+    if len(l:out) > 1
+      let l:err .= ' ' . gopher#internal#trim(join(l:out[1][3:]))
+    endif
+
+    return gopher#internal#error(l:err)
   endif
 
   " TODO: allow configuring of loclist/qflist, auto/open close .. maybe re-use

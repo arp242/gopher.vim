@@ -3,7 +3,8 @@ let s:gotools = s:root . '/tools'         " Vendored Go tools.
 let s:gobin   = s:gotools . '/bin'
 
 " Command history; every item is a list with the exit code, time it took to run,
-" command that was run, and its output, in that order.
+" command that was run, its output, and a boolean to signal it was run from
+" #job(), in that order.
 let s:history = []
 
 " Prepend our GOBIN to the path so that external tools/plugins use binaries from
@@ -267,13 +268,16 @@ fun! s:hist(cmd, start, exit, out, job) abort
 
     " Full path is too noisy.
     let l:debug_cmd = a:cmd
-    let l:debug_cmd[0] = fnamemodify(l:debug_cmd[0], ':t')
+    let l:debug_cmd[0] = substitute(a:cmd[0], "'", '', '')
+    if l:debug_cmd[0][:len(s:gobin) - 1] is# s:gobin
+      let l:debug_cmd[0] = 's:gobin/' . l:debug_cmd[0][len(s:gobin) + 1:]
+    endif
     let s:history = add(s:history, [
           \ a:exit,
           \ s:since(a:start),
           \ s:join_shell(l:debug_cmd),
           \ a:out,
-          \ a:job])
+          \ !a:job])
 endfun
 
 " Format time elapsed since start.
