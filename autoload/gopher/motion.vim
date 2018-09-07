@@ -1,10 +1,7 @@
-" Jump to the next or previous function.
+" Jump to the next or previous top-level declaration.
 "
 " mode can be 'n', 'o', or 'v' for normal, operator-pending, or visual mode.
 " dir can be 'next' or 'prev'.
-"
-" TODO: I think it would make more sense to jump to next top-level declaration
-" (func, type, var, etc.)
 fun! gopher#motion#jump(mode, dir) abort
   " Get motion count; done here as some commands later on will reset it.
   " -1 because the index starts from 0 in motion.
@@ -19,52 +16,19 @@ fun! gopher#motion#jump(mode, dir) abort
     normal! gv
   endif
 
-  let l:loc = gopher#motion#location(a:dir, l:cnt)
-  if l:loc is 0
-    return
+  let l:f = 'Wn'
+  if a:dir is# 'prev'
+    let l:f .= 'b'
   endif
+
+  let l:loc = search('\v^(func|type|var|const)', l:f)
 
   " Jump to top or bottom of file if we're at the first or last function.
-  if type(l:loc) is v:t_dict && get(l:loc, 'err', '') is? 'no functions found'
+  if l:loc is 0
     exe 'keepjumps normal! ' . (a:dir is# 'next' ? 'G' : 'gg')
-    return
   endif
 
-  keepjumps call cursor(l:loc.fn.func.line, 1)
-endfun
-
-" Get the location of the previous or next function.
-"
-" TODO: Should work for other top-level declarations, too.
-fun! gopher#motion#location(dir, cnt) abort
-  let [l:fname, l:tmp] = gopher#system#tmpmod()
-
-  try
-    let l:cmd = ['motion', '-format', 'vim',
-          \ '-file',   l:fname,
-          \ '-offset', gopher#internal#cursor_offset(),
-          \ '-shift',  a:cnt,
-          \ '-mode',   a:dir,
-          \ ]
-
-    let [l:out, l:err] = gopher#system#tool(l:cmd)
-    if l:err
-      call gopher#internal#error(out)
-      return
-    endif
-  finally
-    if l:tmp
-      call delete(l:tmp)
-    endif
-  endtry
-
-  let l:loc = json_decode(l:out)
-  if type(l:loc) isnot v:t_dict
-    call gopher#internal#error(l:out)
-    return 0
-  endif
-
-  return l:loc
+  keepjumps call cursor(l:loc, 1)
 endfun
 
 " Select current comment block.
