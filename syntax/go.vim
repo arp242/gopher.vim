@@ -87,6 +87,9 @@ else
   syn region    goRawString       start=/`/ end=/`/
 endif
 
+" Struct tag name.
+syn match       goStructTagName   /\w\{-1,}:/ containedin=goRawString
+
 if s:has_setting('string-fmt')
   " [n] notation is valid for specifying explicit argument indexes
   " 1. literal % not preceded by a %.
@@ -216,6 +219,7 @@ hi def link goFormatSpecifier     goSpecialString
 
 hi def link goString              String
 hi def link goRawString           String
+hi def link goStructTagName       Keyword
 
 hi def link goCharacter           Character
 
