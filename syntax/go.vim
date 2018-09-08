@@ -101,9 +101,9 @@ if s:has_setting('string-fmt')
   syn match       goFormatSpecifier   /\
         \([^%]\(%%\)*\)\
         \@<=%[-#0 +]*\
-        \v%(%(%([\d+])?\*)|\d+)?\m\
-        \v%(\.%(%(%([\d+])?\*)|\d+)?)?\m\
-        \v%([\d+])?[vTtbcdoqxXUeEfFgGsp]\m/ contained containedin=goString,goRawString
+        \v%(%(%([\d+])?\*)|\d+)?\
+        \v%(\.%(%(%([\d+])?\*)|\d+)?)?\
+        \v%([\d+])?[vTtbcdoqxXUeEfFgGsp]/ contained containedin=goString,goRawString
 endif
 
 " Character.
@@ -135,7 +135,7 @@ else
 endif
 
 " Single-line var, const, and import.
-syn match       goSingleDecl      /\(import\|var\|const\) [^(]\@=/ contains=goImport,goVar,goConst
+syn match       goSingleDecl      /^\s*\(import\|var\|const\) [^(]\@=/ contains=goImport,goVar,goConst
 
 "
 "   <         # Word boundary

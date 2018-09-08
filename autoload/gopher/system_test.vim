@@ -34,7 +34,6 @@ fun! Test_restore_env() abort
 endfun
 
 fun! Test_tmpmod() abort
-  exe 'cd ' g:test_tmpdir
   try
     e x
     call setline(1, 'mod')
