@@ -88,7 +88,7 @@ else
 endif
 
 " Struct tag name.
-syn match       goStructTagName   /\w\{-1,}:/ containedin=goRawString
+syn match       goStructTagName   /\w\{-1,}:/ contained containedin=goRawString
 
 if s:has_setting('string-fmt')
   " [n] notation is valid for specifying explicit argument indexes
