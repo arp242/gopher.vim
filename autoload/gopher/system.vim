@@ -76,9 +76,13 @@ fun! gopher#system#tmpmod() abort
 endfun
 
 " Run a vendored Go tool.
-fun! gopher#system#tool(cmd) abort
+fun! gopher#system#tool(cmd, ...) abort
   if type(a:cmd) isnot v:t_list
-    call gopher#internal#error('must pass a list')
+    call gopher#internal#error('gopher#system#tool: must pass a list')
+    return
+  endif
+  if len(a:000) > 1
+    call gopher#internal#error('gopher#system#tool: can only pass one optional argument')
     return
   endif
 
@@ -87,7 +91,8 @@ fun! gopher#system#tool(cmd) abort
     return [printf('unknown tool: "%s"', a:cmd[0]), 1]
   endif
 
-  return gopher#system#run([l:bin] + a:cmd[1:])
+  "return gopher#system#run([l:bin] + a:cmd[1:])
+  return call('gopher#system#run', [[l:bin] + a:cmd[1:]] + a:000)
 endfun
 
 " Run a vendored Go tool in the background.
@@ -115,10 +120,14 @@ endfun
 " cmd must be a list, one argument per item. Every list entry will be
 " automatically shell-escaped
 "
-" Every other argument is passed to stdin.
-fun! gopher#system#run(cmd) abort
+" An optional second argument is passed to stdin.
+fun! gopher#system#run(cmd, ...) abort
   if type(a:cmd) isnot v:t_list
-    call gopher#internal#error('must pass a list')
+    call gopher#internal#error('gopher#system#run: must pass a list')
+    return
+  endif
+  if len(a:000) > 1
+    call gopher#internal#error('gopher#system#run: can only pass one optional argument')
     return
   endif
 
@@ -132,7 +141,7 @@ fun! gopher#system#run(cmd) abort
       let l:start = reltime()
     endif
 
-    let l:out = call('system', [l:cmd])
+    let l:out = call('system', [l:cmd] + a:000)
     let l:err = v:shell_error
   finally
     let &shell = l:shell
@@ -261,6 +270,7 @@ fun! s:vendor(force) abort
 endfun
 
 " Add item to history.
+" TODO: add information about stdin too.
 fun! s:hist(cmd, start, exit, out, job) abort
     if !gopher#config#has_debug('commands')
       return

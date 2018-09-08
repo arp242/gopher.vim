@@ -37,6 +37,13 @@ command!       GoSetup  call gopher#system#setup()
 " Rename identifier.
 command! -bang -nargs=? -complete=customlist,gopher#rename#complete GoRename call gopher#rename#do(<bang>0, <f-args>)
 
+" Modify struct tags
+" TODO: think of a better command interface for this.
+" :GoTags asd
+" :GoTags -rm asd
+command! -nargs=* -range GoAddTags    call gopher#tags#add(<line1>, <line2>, <count>, <f-args>)
+command! -nargs=* -range GoRemoveTags call gopher#tags#remove(<line1>, <line2>, <count>, <f-args>)
+
 command! -nargs=* GoTest call s:compile('gotest', <f-args>)
 command! -nargs=* GoMake call s:compile('go', <f-args>)
 "command! GoDef               call completor#do('definition')

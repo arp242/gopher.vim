@@ -2,12 +2,14 @@ let s:root = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 
 " Output an error message to the screen. The message can be either a list or a
 " string; every line will be echomsg'd separately.
+" TODO: run print() on strings.
 fun! gopher#internal#error(msg) abort
   call s:echo(a:msg, 'ErrorMsg')
 endfun
 
 " Output an informational message to the screen. The message can be either a
 " list or a string; every line will be echomsg'd separately.
+" TODO: run print() on strings.
 fun! gopher#internal#info(msg) abort
   call s:echo(a:msg, 'Debug')
 endfun
