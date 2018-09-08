@@ -27,9 +27,10 @@ Go 1.11 and a fairly new version of Vim (probably 8.0.something).
 
 ---
 
-- [ALE][ALE]                 – Syntax checking; `gofmt`/`goimports`.
-- [vim-makejob][makejob]     – Async `:make`.
-- [completor.vim][completor] – Code completion, go to definition, go doc.
+- [ALE][ALE]             – Syntax checking; `gofmt`/`goimports`; integration
+                           with [go-langserver][go-langserver] for "go to
+                           definition", completion.
+- [vim-makejob][makejob] – Async `:make`.
 
 Configuration:
 
@@ -46,14 +47,6 @@ Configuration:
           \ . ' --enable=lll --line-length=120'
     let g:ale_go_gometalinter_options = '--disable-all --tests' . g:gometalinter_fast . ' --enable=golint'
 
-    " completor.vim
-    let g:completor_auto_trigger = 0
-    augroup my_go
-      autocmd!
-      autocmd Filetype go nnoremap <buffer> K  :call completor#do('doc')<CR>
-      autocmd Filetype go nnoremap <buffer> gd :call completor#do('definition')<CR>
-    augroup end
-
-[completor]: https://github.com/maralla/completor.vim
+[go-langsever]: https://github.com/sourcegraph/go-langserver
 [ALE]: https://github.com/w0rp/ale/
 [makejob]: https://github.com/djmoch/vim-makejob
