@@ -25,10 +25,10 @@ onoremap <buffer> <silent> ic :<C-u>call gopher#motion#comment('i')<CR>
 xnoremap <buffer> <silent> ic :<C-u>call gopher#motion#comment('i')<CR>
 
 nnoremap <buffer> <silent> ]] :<C-u>call gopher#motion#jump('n', 'next')<CR>
-nnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('n', 'prev')<CR>
 onoremap <buffer> <silent> ]] :<C-u>call gopher#motion#jump('o', 'next')<CR>
-onoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('o', 'prev')<CR>
 xnoremap <buffer> <silent> ]] :<C-u>call gopher#motion#jump('v', 'next')<CR>
+nnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('n', 'prev')<CR>
+onoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('o', 'prev')<CR>
 xnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('v', 'prev')<CR>
 
 command! -bang GoDiag   call gopher#internal#diag(<bang>0)
