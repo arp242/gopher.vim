@@ -18,6 +18,25 @@ fun! Test_run() abort
   call assert_equal('one two"', l:out)
 endfun
 
+fun! Test_job() abort
+  let l:done_called = 0
+  fun! s:done(exit, out) abort closure
+    let l:done_called = 1
+    call assert_equal(0, a:exit)
+    call assert_equal('one two"', a:out)
+  endfun
+
+  let l:job = gopher#system#job(function('s:done'), ['echo', 'one', 'two"'])
+
+  let l:s =  gopher#system#job_wait(l:job)
+  if l:s is# 'fail'
+    return Error('job status is fail')
+  endif
+
+  sleep 50m  " Give time to call s:done
+  call assert_equal(1, l:done_called)
+endfun
+
 fun! Test_restore_env() abort
   let $GOPHER_ENV1 = 'w00t'
   let $GOPHER_ENV2 = 'w00t'
@@ -50,4 +69,24 @@ fun! Test_tmpmod() abort
     call delete(l:should_tmp)
     call delete(l:should_me)
   endtry
+endfun
+
+fun! Test_setup() abort
+  " Just call it to make sure it doesn't error out.
+  call gopher#system#setup()
+endfun
+
+fun! Test_history() abort
+  " Debug off.
+  let l:h = gopher#system#history()
+  call assert_equal(l:h, [])
+
+  call gopher#system#_hist(['ls', '/'], reltime(), 0, "/bin\n/etc\n/root", 0)
+  let l:h = gopher#system#history()
+  call assert_equal(l:h, [])
+
+  let g:gopher_debug = ['commands']
+  call gopher#system#_hist(['ls', '/'], reltime(), 0, "/bin\n/etc\n/root", 0)
+  let l:h = gopher#system#history()
+  call assert_equal(1, len(l:h))
 endfun

@@ -91,7 +91,6 @@ fun! gopher#system#tool(cmd, ...) abort
     return [printf('unknown tool: "%s"', a:cmd[0]), 1]
   endif
 
-  "return gopher#system#run([l:bin] + a:cmd[1:])
   return call('gopher#system#run', [[l:bin] + a:cmd[1:]] + a:000)
 endfun
 
@@ -137,7 +136,7 @@ fun! gopher#system#run(cmd, ...) abort
     let l:shell = &shell
     let l:shellredir = &shellredir
 
-    if gopher#config#has_debug('commands')
+    if gopher#internal#has_debug('commands')
       let l:start = reltime()
     endif
 
@@ -153,8 +152,8 @@ fun! gopher#system#run(cmd, ...) abort
     let l:out = l:out[:-2]
   endif
 
-  if gopher#config#has_debug('commands')
-    call s:hist(a:cmd, l:start, v:shell_error, l:out, 0)
+  if gopher#internal#has_debug('commands')
+    call gopher#system#_hist(a:cmd, l:start, v:shell_error, l:out, 0)
   endif
 
   return [l:out, l:err]
@@ -192,6 +191,19 @@ fun! gopher#system#job(done, cmd) abort
         \ 'err_cb':   function('s:j_err_cb', [], l:state),
         \ 'close_cb': function('s:j_close_cb', [], l:state),
         \})
+endfun
+
+" Wait for a job to finish. Note that the exit_cb or close_cb may still be
+" running after this returns!
+" It will return the job status ("fail" or "dead").
+fun! gopher#system#job_wait(job) abort
+  while 1
+    let l:s = job_status(a:job)
+    if l:s isnot# 'run'
+      return l:s
+    end
+    sleep 50m
+  endwhile
 endfun
 
 " Get the full path to a tool name; download, compile and install it from the
@@ -271,8 +283,8 @@ endfun
 
 " Add item to history.
 " TODO: add information about stdin too.
-fun! s:hist(cmd, start, exit, out, job) abort
-    if !gopher#config#has_debug('commands')
+fun! gopher#system#_hist(cmd, start, exit, out, job) abort
+    if !gopher#internal#has_debug('commands')
       return
     endif
 
@@ -310,7 +322,7 @@ fun! s:j_close_cb(ch) abort dict
   let self.closed = 1
 
   if self.exit > -1
-    call s:hist(self.cmd, self.start, self.exit, self.out, 1)
+    call gopher#system#_hist(self.cmd, self.start, self.exit, self.out, 1)
     call self.done(self.exit, self.out)
   endif
 endfun
@@ -319,7 +331,7 @@ fun! s:j_exit_cb(job, exit) abort dict
   let self.exit = a:exit
 
   if self.closed
-    call s:hist(self.cmd, self.start, self.exit, self.out, 1)
+    call gopher#system#_hist(self.cmd, self.start, self.exit, self.out, 1)
     call self.done(self.exit, self.out)
   endif
 endfun

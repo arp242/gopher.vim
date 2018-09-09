@@ -34,14 +34,7 @@ endfunction
 
 " Get all lines in the buffer as a a list.
 fun! gopher#internal#lines() abort
-  let l:buf = getline(1, '$')
-
-  if &l:fileformat is? 'dos'
-    " TODO: line2byte() depend on 'fileformat' option, so if fileformat is
-    " 'dos', 'buf' must include '\r'.
-    let l:buf = map(l:buf, 'v:val . "\r"')
-  endif
-  return l:buf
+  return getline(1, '$')
 endfun
 
 " List all Go buffers.
@@ -82,6 +75,11 @@ fun! gopher#internal#write_all() abort
     silent exe 'buffer ' . l:s
     let &lazyredraw = l:lz
   endtry
+endfun
+
+" Report if the user enabled a debug flag.
+fun! gopher#internal#has_debug(flag) abort
+  return index(g:gopher_debug, a:flag) >= 0
 endfun
 
 " Get diagnostic information about gopher.vim

@@ -1,21 +1,23 @@
 scriptencoding utf-8
 
 fun! Test_error() abort
+  mess clear
+
   call gopher#internal#error('string')
   call gopher#internal#error(['list1', 'list2'])
 
   let l:m = split(execute(':message'), "\n")
-  mess clear
 
   call assert_equal(['gopher.vim: string', 'gopher.vim: list1', 'gopher.vim: list2'], l:m[1:])
 endfun
 
 fun! Test_info() abort
+  mess clear
+
   call gopher#internal#info('string')
   call gopher#internal#info(['list1', 'list2'])
 
   let l:m = split(execute(':message'), "\n")
-  mess clear
 
   call assert_equal(['gopher.vim: string', 'gopher.vim: list1', 'gopher.vim: list2'], l:m[1:])
 endfun
@@ -27,15 +29,26 @@ fun! Test_cursor_offset() abort
 
   let l:out = gopher#internal#cursor_offset()
   call assert_equal(8, l:out)
+
+  let l:out = gopher#internal#cursor_offset(1)
+  call assert_equal(':#8', l:out)
+
+  silent w off
+  let l:out = gopher#internal#cursor_offset(1)
+  call assert_equal(g:test_tmpdir . '/off:#8', l:out)
 endfun
 
 fun! Test_lines() abort
   new
   let l:want = ['aaa', 'bbb']
-
   call append(0, l:want)
-  let l:out = gopher#internal#lines()
 
+  let l:out = gopher#internal#lines()
+  call assert_equal(l:want+[''], l:out)
+
+  set fileformat=dos
+  silent w lines
+  let l:out = gopher#internal#lines()
   call assert_equal(l:want+[''], l:out)
 endfun
 
@@ -52,4 +65,9 @@ fun! Test_trim() abort
   for l:k in keys(l:tests)
     call assert_equal(l:tests[l:k], gopher#internal#trim(l:k), l:k)
   endfor
+endfun
+
+fun! Test_diag() abort
+  " Just make sure it doesn't error out.
+  silent call gopher#internal#diag(0)
 endfun
