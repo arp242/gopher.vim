@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/Carpetsmoker/gopher.vim.svg?branch=master)](https://travis-ci.org/Carpetsmoker/gopher.vim)
+[![codecov](https://codecov.io/gh/Carpetsmoker/gopher.vim/branch/master/graph/badge.svg)](https://codecov.io/gh/Carpetsmoker/gopher.vim)
+
 gopher.vim is an experimental Vim plugin for the Go programming language.
 
 It is a testbed for some ideas I have; some may get merged back in to vim-go,

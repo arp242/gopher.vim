@@ -1,0 +1,48 @@
+language: go
+go:
+  - 1.11.x
+notifications:
+  email: false
+cache:
+  directories:
+    - "$HOME/vim"
+
+install: |
+  # Move plugin to more logical location.
+  cd ~
+  mkdir -p ~/.vim/pack/plugin/start
+  mv /home/travis/gopath/src/github.com/Carpetsmoker/gopher.vim ~/.vim/pack/plugin/start
+
+  (
+    set -euC
+
+    # Install Vim if there it doesn't exist yet.
+    if [ ! -e "$HOME/vim/bin/vim" ]; then
+      #git clone -q --depth 1 --branch "v8.0.1000" https://github.com/vim/vim $HOME/vim-src
+      git clone -q --depth 1 --branch "v8.1.0333" https://github.com/vim/vim $HOME/vim-src
+      ( cd $HOME/vim-src && ./configure --prefix $HOME/vim --with-features=huge --disable-gui )
+      ( cd $HOME/vim-src && make install )
+    fi
+
+    # testing.vim
+    pip install --user -q vim-vint covimerage codecov pathlib
+    git clone -q --depth 1 https://github.com/Carpetsmoker/testing.vim.git $HOME/testing.vim
+
+    # Lint tools
+    pack="$HOME/vim/share/vim/vim80/pack/dist/start"
+    mkdir -p "$pack"
+    [ -d "$pack/vim-vimhelplint" ] || git clone -q --depth 1 https://github.com/machakann/vim-vimhelplint "$pack/vim-vimhelplint"
+    [ -d "$pack/vim-vimlparser" ]  || git clone -q --depth 1 https://github.com/ynkdir/vim-vimlparser     "$pack/vim-vimlparser"
+    [ -d "$pack/vim-vimlint" ]     || git clone -q --depth 1 https://github.com/syngan/vim-vimlint        "$pack/vim-vimlint"
+  )
+
+# TODO https://github.com/fatih/vim-go/blob/master/scripts/lint
+script: |
+  (
+    cd ~/.vim/pack/plugin/start/gopher.vim
+    PATH="$HOME/vim/bin:$PATH" $HOME/testing.vim/test -p coverage.xml ./...
+    set -euC
+  )
+
+after_success: |
+  codecov -X search gcov pycov -f coverage.xml --required
