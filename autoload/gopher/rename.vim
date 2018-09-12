@@ -20,7 +20,7 @@ fun! gopher#rename#do(bang, ...) abort
   endif
 
   call gopher#internal#write_all()
-  cexpr []
+  call setqflist([])
 
   " Make sure the buffer can't be modified since gorename will write stuff to
   " disk, and overwrite the user's changes.

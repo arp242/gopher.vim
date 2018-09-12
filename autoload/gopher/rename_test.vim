@@ -1,7 +1,4 @@
 fun! Test_error() abort
-  " gorename: -offset "/home/martin/go/src/a/a.go:#125": cannot parse file: /home/martin/go/src/a/a.go:18:2: expected 'IDENT', found 'EOF'
-  " gorename: -offset "/home/martin/go/src/a/a.go:#269": cannot parse file: /home/martin/go/src/a/a.go:17:1: expected declaration, found asde
-  "
   " /home/martin/go/src/a/a.go:18:2: undeclared name: x
   " /home/martin/go/src/a/a.go:19:2: undeclared name: x
   " gorename: couldn't load packages due to errors: a
@@ -24,12 +21,21 @@ fun! Test_error() abort
             \ 'text': ' expected ''IDENT'', found ''EOF'''
             \ }],
         \},
+        \{
+        \ 'in': "gorename: -offset \"/home/martin/go/src/a/a.go:#269\": cannot parse file: /home/martin/go/src/a/a.go:17:1: expected declaration, found asde",
+        \ 'want': [{
+            \ 'lnum': 17, 'bufnr': 2, 'col': 1,
+            \ 'pattern': '',
+            \ 'valid': 1, 'vcol': 0, 'nr': 0, 'type': 'E', 'module': '',
+            \ 'text': ' expected declaration, found asde'
+            \ }],
+        \}
   \]
 
   for l:tt in l:tests
     call gopher#rename#_errors(l:tt.in, 0)
 
-    let l:out = getqflist()
-    call assert_equal(l:tt.want, l:out)
+    call assert_equal(l:tt.want, getqflist())
+    call setqflist([])
   endfor
 endfun
