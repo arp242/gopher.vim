@@ -45,4 +45,7 @@ script: |
   )
 
 after_success: |
-  codecov -X search gcov pycov -f coverage.xml --required
+  (
+    cd ~/.vim/pack/plugin/start/gopher.vim
+    codecov -X search gcov pycov -f coverage.xml --required
+  )
