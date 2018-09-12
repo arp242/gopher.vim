@@ -19,30 +19,34 @@ if exists('*GoIndent')
 endif
 
 function! GoIndent(lnum)
-  let l:prevlnum = prevnonblank(a:lnum-1)
-  " Top of file
-  if l:prevlnum == 0
+  let l:prevlnum = prevnonblank(a:lnum - 1)
+
+  " Top of file.
+  if l:prevlnum is 0
     return 0
   endif
 
-  " grab the previous and current line, stripping comments.
+  " Grab the previous and current line, stripping comments.
   let l:prevl = substitute(getline(l:prevlnum), '//.*$', '', '')
   let l:thisl = substitute(getline(a:lnum), '//.*$', '', '')
   let l:previ = indent(l:prevlnum)
 
   let l:ind = l:previ
 
-  " previous line opened a block
+  " Previous line opened a ( or { block.
   if l:prevl =~# '[({]\s*$'
     let l:ind += shiftwidth()
-  endif
-  " previous line is part of a switch statement
-  if l:prevl =~# '^\s*\(case .*\|default\):$'
+  " Previous line is part of a switch statement.
+  elseif l:prevl =~# '^\s*\(case .\+\|default\):$'
     let l:ind += shiftwidth()
+  " Previous line was 'if ...' ending with operator.
+  "elseif l:prevl =~# '^\s*if .\{-}\(||\|&&\)$'
+  "  let l:ind += shiftwidth()
   endif
+
   " TODO: handle if the previous line is a label.
 
-  " this line closed a block
+  " This line closed a block.
   if l:thisl =~# '^\s*[)}]'
     let l:ind -= shiftwidth()
   endif
