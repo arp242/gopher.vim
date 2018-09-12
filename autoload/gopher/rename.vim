@@ -48,13 +48,13 @@ fun! s:done(exit, out) abort
   call gopher#internal#bufdo('set modifiable')
 
   if a:exit > 0
-    return s:errors(a:out, '')
+    return gopher#rename#_errors(a:out, '')
   endif
 
   call gopher#internal#info(a:out)
 endfun
 
-fun! s:errors(out, bang) abort
+fun! gopher#rename#_errors(out, bang) abort
   if a:out =~# '": no identifier at this position'
     call gopher#internal#error('gorename: no identifier at this position')
     return
@@ -92,7 +92,7 @@ fun! s:errors(out, bang) abort
       continue
     endif
 
-    call setqflist(winnr(), [{
+    call setqflist([{
           \ 'type':     'E',
           \ 'filename': l:err[0],
           \ 'lnum':     l:err[1],
@@ -101,12 +101,12 @@ fun! s:errors(out, bang) abort
           \ }], 'a')
   endfor
 
-  if len(getqflist(winnr())) is 0
+  if len(getqflist()) is 0
     call gopher#internal#error(a:out)
     return
   endif
 
-  exe 'copen ' . len(getqflist(winnr()))
+  exe 'copen ' . len(getqflist())
   if !a:bang
     cc 1
   endif

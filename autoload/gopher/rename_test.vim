@@ -13,4 +13,23 @@ fun! Test_error() abort
   "
   " /home/martin/go/src/a/dir1/asd.go:7:2: renaming this var "v" to "asd"
   " /home/martin/go/src/a/dir1/asd.go:6:2: <09>conflicts with var in same block
+
+  let l:tests = [
+        \{
+        \ 'in': "gorename: -offset \"/home/martin/go/src/a/a.go:#125\": cannot parse file: /home/martin/go/src/a/a.go:18:2: expected 'IDENT', found 'EOF'",
+        \ 'want': [{
+            \ 'lnum': 18, 'bufnr': 2, 'col': 2,
+            \ 'pattern': '',
+            \ 'valid': 1, 'vcol': 0, 'nr': 0, 'type': 'E', 'module': '',
+            \ 'text': ' expected ''IDENT'', found ''EOF'''
+            \ }],
+        \},
+  \]
+
+  for l:tt in l:tests
+    call gopher#rename#_errors(l:tt.in, 0)
+
+    let l:out = getqflist()
+    call assert_equal(l:tt.want, l:out)
+  endfor
 endfun
