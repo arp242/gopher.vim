@@ -2,6 +2,10 @@ if exists('b:current_syntax')
   finish
 endif
 
+" Ideally this would be in the ftplugin too, but that's loaded after the syntax
+" file. I think this is probably the best location?
+call gopher#init#config()
+
 fun! s:has_setting(n)
   return index(g:gopher_highlight, a:n) > -1
 endfun

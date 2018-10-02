@@ -3,6 +3,7 @@ if exists('b:did_ftplugin')
 endif
 let b:did_ftplugin = 1
 
+call gopher#init#version()
 setlocal formatoptions-=t
 
 setlocal comments=s1:/*,mb:*,ex:*/,://
