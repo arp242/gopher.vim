@@ -135,9 +135,14 @@ fun! gopher#system#run(cmd, ...) abort
   try
     let l:shell = &shell
     let l:shellredir = &shellredir
+    let l:shellcmdflag = &shellcmdflag
 
     if gopher#internal#has_debug('commands')
       let l:start = reltime()
+    endif
+
+    if !gopher#internal#platform('win') && executable('/bin/sh')
+      set shell=/bin/sh shellredir=>%s\ 2>&1 shellcmdflag=-c
     endif
 
     let l:out = call('system', [l:cmd] + a:000)
@@ -145,6 +150,7 @@ fun! gopher#system#run(cmd, ...) abort
   finally
     let &shell = l:shell
     let &shellredir = l:shellredir
+    let &shellcmdflag = l:shellcmdflag
   endtry
 
   " Remove trailing newline from output; it's rarely useful, and often annoying.

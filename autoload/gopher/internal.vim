@@ -82,6 +82,19 @@ fun! gopher#internal#has_debug(flag) abort
   return index(g:gopher_debug, a:flag) >= 0
 endfun
 
+" Check if this is the requested OS.
+"
+" Supports 'win', 'unix'.
+fun! gopher#internal#platform(n) abort
+  if a:n is? 'win'
+    return has('win16') || has('win32') || has('win64')
+  elseif a:n is? 'unix'
+    return has('unix')
+  endif
+
+  call gopher#internal#error('gopher#internal#platform: unknown parameter: ' . a:n)
+endfun
+
 " Get diagnostic information about gopher.vim
 fun! gopher#internal#diag(to_clipboard) abort
   let l:state = []
