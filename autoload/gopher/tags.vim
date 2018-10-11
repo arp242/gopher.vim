@@ -103,6 +103,7 @@ func s:create_cmd(args) abort
   let l:cmd = ['gomodifytags']
   call extend(cmd, ['-format', 'json'])
   call extend(cmd, ['-file', a:args.fname])
+  call extend(cmd, ['-transform', 'camelcase'])
   "TODO call extend(cmd, ['-transform', l:modifytags_transform])
 
   if has_key(a:args, 'modified')
