@@ -13,7 +13,7 @@ fun! gopher#init#version()
 
   " Ensure people have Go installed correctly.
   let l:v = system('go version')
-  if v:shell_error > 0 || l:v !~# '^go version go1\.\d\d .\+/.\+$'
+  if v:shell_error > 0 || l:v !~# '^go version go1\.\d\d\(\.\d\) .\+/.\+$'
     let l:msg = "Go doesn't seem installed correctly? 'go version' failed with:\n" . l:v
   " Ensure sure people have Go 1.11.
   elseif str2nr(l:v[15:], 10) < 11
