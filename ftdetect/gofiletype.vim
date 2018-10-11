@@ -23,7 +23,8 @@ augroup plugin-gopher
   au BufRead     *.go call s:gofiletype_pre()
   au BufReadPost *.go call s:gofiletype_post()
 
-  au BufRead,BufNewFile *.tmpl set filetype=gohtmltmpl
+  au BufRead,BufNewFile *.tmpl  set filetype=gohtmltmpl
+  au BufRead,BufNewFile *.slide set filetype=gopresent
 
   " Set the filetype if the first non-comment and non-blank line starts with
   " 'module <path>'.
