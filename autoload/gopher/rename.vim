@@ -30,7 +30,7 @@ fun! gopher#rename#do(bang, ...) abort
   set autoread
 
   try
-    call gopher#system#tool_job(function('s:done'), [
+    call gopher#system#tool_job({e, o -> s:done(l:e, l:o, l:autoread)}, [
           \ 'gorename',
           \ '-to',     l:to,
           \ '-tags',   get(g:, 'gopher_build_tags', ''),
@@ -44,7 +44,9 @@ fun! gopher#rename#do(bang, ...) abort
   endtry
 endfun
 
-fun! s:done(exit, out) abort
+fun! s:done(exit, out, autoread) abort
+  checktime
+  let &autoread = a:autoread
   call gopher#internal#bufdo('set modifiable')
 
   if a:exit > 0
