@@ -37,6 +37,27 @@ fun! gopher#internal#lines() abort
   return getline(1, '$')
 endfun
 
+" Report if the current buffer is a Go test file.
+fun! gopher#internal#is_test() abort
+  return expand('%')[-8:] is# '_test.go'
+endfun
+
+" Get the package path for the file in the current buffer.
+" TODO: cache results?
+fun! gopher#internal#package() abort
+  let [l:out, l:err] = gopher#system#run(['go', 'list', expand('%:p:h')])
+  if l:err
+    call gopher#internal#error(l:out)
+    return ''
+  endif
+  return l:out
+endfun
+
+" Get path to file in current buffer as package/path/file.go
+fun! gopher#internal#packagepath() abort
+  return gopher#internal#package() . '/' . expand('%:t')
+endfun
+
 " List all Go buffers.
 fun! gopher#internal#buffers() abort
   return filter(range(1, bufnr('$')), { i, v -> bufexists(l:v) && buflisted(l:v) && bufname(l:v)[-3:] is# '.go' })

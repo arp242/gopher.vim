@@ -45,8 +45,9 @@ command! -bang -nargs=? -complete=customlist,gopher#rename#complete GoRename cal
 command! -nargs=* -range GoAddTags    call gopher#tags#add(<line1>, <line2>, <count>, <f-args>)
 command! -nargs=* -range GoRemoveTags call gopher#tags#remove(<line1>, <line2>, <count>, <f-args>)
 
-command! -nargs=* GoTest call s:compile('gotest', <f-args>)
-command! -nargs=* GoMake call s:compile('go', <f-args>)
+command! -nargs=* GoTest     call s:compile('gotest', <f-args>)
+command! -nargs=* GoMake     call s:compile('go', <f-args>)
+command! -nargs=* GoCoverage call gopher#coverage#do()
 "command! GoDef               call completor#do('definition')
 "command! GoDoc               call completor#do('doc')
 
