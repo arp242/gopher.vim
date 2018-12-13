@@ -105,9 +105,9 @@ if s:has_setting('string-fmt')
   syn match       goFormatSpecifier   /\
         \([^%]\(%%\)*\)\
         \@<=%[-#0 +]*\
-        \v%(%(%([\d+])?\*)|\d+)?\
-        \v%(\.%(%(%([\d+])?\*)|\d+)?)?\
-        \v%([\d+])?[vTtbcdoqxXUeEfFgGsp]/ contained containedin=goString,goRawString
+        \v%(%(%(\[\d+])?\*)|\d+)?\
+        \v%(\.%(%(%(\[\d+])?\*)|\d+)?)?\
+        \v%(\[\d+])?[vTtbcdoqxXUeEfFgGsp]/ contained containedin=goString,goRawString
 endif
 
 " Character.
