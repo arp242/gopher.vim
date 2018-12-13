@@ -1,5 +1,5 @@
 let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
-let s:gotools = s:root . '/tools'         " Vendored Go tools.
+let s:gotools = s:root . '/tools'         " Our Go tools.
 let s:gobin   = s:gotools . '/bin'
 
 " Command history; every item is a list with the exit code, time it took to run,
@@ -31,9 +31,9 @@ fun! s:init() abort
 endfun
 call s:init()
 
-" Setup vendor and install all tools.
+" Setup modules and install all tools.
 fun! gopher#system#setup() abort
-  if !s:vendor(1)
+  if !s:download(1)
     return
   endif
 
@@ -75,7 +75,7 @@ fun! gopher#system#tmpmod() abort
   return [expand('%:p'), 0]
 endfun
 
-" Run a vendored Go tool.
+" Run a known Go tool.
 fun! gopher#system#tool(cmd, ...) abort
   if type(a:cmd) isnot v:t_list
     call gopher#internal#error('gopher#system#tool: must pass a list')
@@ -94,7 +94,7 @@ fun! gopher#system#tool(cmd, ...) abort
   return call('gopher#system#run', [[l:bin] + a:cmd[1:]] + a:000)
 endfun
 
-" Run a vendored Go tool in the background.
+" Run a known Go tool in the background.
 fun! gopher#system#tool_job(done, cmd) abort
   if type(a:cmd) isnot v:t_list
     call gopher#internal#error('must pass a list')
@@ -228,7 +228,7 @@ fun! s:tool(name) abort
     return l:bin
   endif
 
-  if !s:vendor(0)
+  if !s:download(0)
     return
   endif
 
@@ -238,7 +238,7 @@ fun! s:tool(name) abort
     let $GOBIN = s:gobin
     let $GO111MODULE = 'on'  " In case user set to 'off'
 
-    let l:out = system(printf('cd %s && go install ./vendor/%s',
+    let l:out = system(printf('cd %s && go install %s',
       \ shellescape(s:gotools), shellescape(l:tool[0])))
     if v:shell_error
       call gopher#internal#error(l:out)
@@ -259,31 +259,24 @@ fun! s:escape_single_quote(s) abort
   return "'" . substitute(a:s, "'", "' . \"'\" . '", '') . "'"
 endfun
 
-let s:ran_mod_vendor = 0
-" Run go mod vendor; only need to run this once per Vim session.
-fun! s:vendor(force) abort
-  if s:ran_mod_vendor && !a:force
+let s:ran_mod_download = 0
+" Run go mod download; only need to run this once per Vim session.
+fun! s:download(force) abort
+  if s:ran_mod_download && !a:force
     return 1
   endif
 
-  let l:msg_shown = 0
-  " Only show on initial setup; too much flashing otherwise!
-  if !isdirectory(s:gotools . '/vendor')
-    let l:msg_shown = 1
-    call gopher#internal#info('running "go mod vendor"; this may take a few seconds')
-  endif
-
-  let l:out = system(printf('cd %s && go mod vendor', s:gotools))
+  call gopher#internal#info('running "go mod download"; this may take a few seconds')
+  let l:out = system(printf('cd %s && go mod download', s:gotools))
   if v:shell_error
     echoerr l:out
     return 0
   endif
 
-  if l:msg_shown
-    redraw!
-  endif
+  " Clear message.
+  redraw!
 
-  let s:ran_mod_vendor = 1
+  let s:ran_mod_download = 1
   return 1
 endfun
 
