@@ -10,6 +10,8 @@ setlocal comments=s1:/*,mb:*,ex:*/,://
 setlocal commentstring=//\ %s
 setlocal foldmethod=syntax
 setlocal noexpandtab
+setlocal equalprg=goimports
+setlocal formatprg=goimports
 compiler go
 
 let b:undo_ftplugin = 'setl fo< com< cms<'
@@ -58,3 +60,14 @@ fun! s:compile(n, ...) abort
   redraw!
   exe 'compiler ' . l:c
 endfun
+
+" Format buffer on write.
+
+" Motion for entire buffer.
+" TODO: perhaps map before use and unmap after?
+onoremap f :<c-u>normal! mzggVG<cr>`z
+
+augroup gopher.vim
+	au!
+	autocmd BufWritePre *.go normal gqf
+augroup end
