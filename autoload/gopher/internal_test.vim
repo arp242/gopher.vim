@@ -1,4 +1,5 @@
 scriptencoding utf-8
+call gopher#init#config()
 
 fun! Test_error() abort
   mess clear
@@ -6,8 +7,7 @@ fun! Test_error() abort
   call gopher#internal#error('string')
   call gopher#internal#error(['list1', 'list2'])
 
-  let l:m = split(execute(':message'), "\n")
-
+  let l:m = split(execute(':messages'), "\n")
   call assert_equal(['gopher.vim: string', 'gopher.vim: list1', 'gopher.vim: list2'], l:m[1:])
 endfun
 
@@ -17,8 +17,7 @@ fun! Test_info() abort
   call gopher#internal#info('string')
   call gopher#internal#info(['list1', 'list2'])
 
-  let l:m = split(execute(':message'), "\n")
-
+  let l:m = split(execute(':messages'), "\n")
   call assert_equal(['gopher.vim: string', 'gopher.vim: list1', 'gopher.vim: list2'], l:m[1:])
 endfun
 

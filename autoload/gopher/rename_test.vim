@@ -1,3 +1,6 @@
+scriptencoding utf-8
+call gopher#init#config()
+
 fun! Test_error() abort
   " /home/martin/go/src/a/a.go:18:2: undeclared name: x
   " /home/martin/go/src/a/a.go:19:2: undeclared name: x

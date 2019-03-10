@@ -7,8 +7,7 @@ package tools
 import (
 	_ "github.com/fatih/gomodifytags"
 	_ "github.com/fatih/motion"
-	_ "github.com/mdempsky/gocode"
-	_ "github.com/zmb3/gogetdoc"
+	_ "github.com/saibing/bingo"
 	_ "golang.org/x/tools/cmd/goimports"
 	_ "golang.org/x/tools/cmd/gorename"
 	_ "golang.org/x/tools/cmd/guru"

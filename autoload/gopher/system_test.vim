@@ -1,11 +1,14 @@
+scriptencoding utf-8
+call gopher#init#config()
+
 fun! Test_tool() abort
-  let [l:out, l:err] = gopher#system#tool(['gogetdoc'])
+  let [l:out, l:err] = gopher#system#tool(['guru'])
   if !l:err
     call add(v:errors, printf('l:err is not set: %s', l:out))
     return
   endif
 
-  call assert_equal('missing required -pos flag', l:out)
+  call assert_equal("Run 'guru -help' for more information.", l:out)
 endfun
 
 fun! Test_run() abort
@@ -73,7 +76,7 @@ endfun
 
 fun! Test_setup() abort
   " Just call it to make sure it doesn't error out.
-  call gopher#system#setup()
+  silent call gopher#system#setup()
 endfun
 
 fun! Test_history() abort
