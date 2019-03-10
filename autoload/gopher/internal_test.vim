@@ -66,6 +66,13 @@ fun! Test_trim() abort
   endfor
 endfun
 
+fun! Benchmark_trim() abort
+  let l:s = '  hello  '
+  for i in range(0, g:bench_n)
+    call gopher#internal#trim(l:s)
+  endfor
+endfun
+
 fun! Test_diag() abort
   " Just make sure it doesn't error out.
   silent call gopher#internal#diag(0)
