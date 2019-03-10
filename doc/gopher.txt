@@ -1,0 +1,10 @@
+gopher.vim: the Go programming language
+
+==============================================================================
+INTRODUCTION                                                          *gopher*
+
+gopher.vim is an experimental Vim plugin for the Go programming language.
+
+It is currenly undocumented while the feature set is still being decided.
+
+vim:tw=78:ts=8:ft=help:norl:expandtab

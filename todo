@@ -1,0 +1,16 @@
+https://github.com/natebosch/vim-lsc/issues/53
+
+Configuration:
+
+    " ALE
+    let g:ale_fixers  = {'go': ['goimports']}
+    let g:ale_linters = {'go': ['go build', 'gometalinter']}
+
+    let g:gometalinter_fast = ''
+          \ . ' --enable=vet'
+          \ . ' --enable=errcheck'
+          \ . ' --enable=ineffassign'
+          \ . ' --enable=goimports'
+          \ . ' --enable=misspell'
+          \ . ' --enable=lll --line-length=120'
+    let g:ale_go_gometalinter_options = '--disable-all --tests' . g:gometalinter_fast . ' --enable=golint'
