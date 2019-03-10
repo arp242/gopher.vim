@@ -37,11 +37,11 @@ syn keyword     goBoolean         true false nil iota
 
 " Comments blocks.
 syn keyword     goTodo            contained TODO FIXME XXX BUG
-syn region      goComment         start="//" end="$"    contains=goCompilerDir,goGenerate,goBuildTag,goTodo,@Spell
+syn region      goComment         start="//" end="$"    contains=goCompilerDir,goGenerate,goDirectiveErr,goBuildTag,goTodo,@Spell
 
 if s:has_setting('fold-comment')
   syn region    goComment         start="/\*" end="\*/" contains=goTodo,@Spell fold
-  syn match     goComment         "\v(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goBuildTag,goTodo,@Spell fold
+  syn match     goComment         "\v(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goDirectiveErr,goBuildTag,goTodo,@Spell fold
 else
   syn region    goComment         start="/\*" end="\*/" contains=goTodo,@Spell
 endif
@@ -58,6 +58,9 @@ syn region      goGenerate        contained matchgroup=goGenerateKW start="^//go
 " TODO: support line directives.
 syn match       goCompilerDir     display contained
       \ "\v^//go:(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)$"
+
+" Adding a space between the // and go: is an error.
+syn region      goDirectiveErr    contained matchgroup=Error start="^// go:\w\+" end="$"
 
 " Build tags; standard build tags from cmd/dist/build.go and go doc go/build.
 syn match   goBuildKeyword        display contained "+build"
@@ -172,6 +175,8 @@ endif
 " matched as comments to avoid looking like working build constraints.
 " The he, me, and re options let the "package" itself be highlighted by
 " the usual rules.
+
+" TODO: runs out of memory in mattn/gtk
 exe 'syn region  goPackageComment    start=/\v(\/\/.*\n)+\s*package/'
       \ . ' end=/\v\n\s*package/he=e-7,me=e-7,re=e-7'
       \ . ' contains=goTodo,@Spell'
