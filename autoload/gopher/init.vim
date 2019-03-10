@@ -36,8 +36,14 @@ fun! gopher#init#version()
   endif
 endfun
 
+let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
+
 " Initialize config values.
 fun! gopher#init#config()
+  " Ensure that the tools dir is in the PATH and takes precedence over other
+  " (possibly outdated) tools.
+  let $PATH = s:root . '/tools/bin:' . $PATH
+
   " Builds tags to add to most commands.
   let g:gopher_build_tags = get(g:, 'gopher_build_tags', '')
 
