@@ -66,8 +66,8 @@ syn region      goDirectiveErr    contained matchgroup=Error start="^// go:\w\+"
 syn match   goBuildKeyword        display contained "+build"
 syn keyword goStdBuildTags        contained
       \ 386 amd64 amd64p32 arm arm64 mips mipsle mips64 mips64le ppc64 ppc64le
-      \ riscv64 s390x wasm darwin dragonfly js linux android solaris freebsd
-      \ nacl netbsd openbsd plan9 windows gc gccgo cgo race
+      \ riscv64 s390x wasm darwin dragonfly hurd js linux android solaris
+      \ freebsd nacl netbsd openbsd plan9 windows gc gccgo cgo race
 syn match   goVersionBuildTags    contained /\v<go1\.(10|11|1|2|3|4|5|6|7|8|9)>/
 
 " The rs=s+2 option lets the \s*+build portion be part of the inner region
@@ -142,9 +142,8 @@ else
 endif
 
 " Single-line var, const, and import.
-syn match       goSingleDecl      /^\s*\(import\|var\|const\) [^(]\@=/ contains=goImport,goVar,goConst
+syn match       goSingleDecl      /\v(^\s*)@<=(import|var|const) [^(]/me=e-2 contains=goImport,goVar,goConst
 
-"
 "   <         # Word boundary
 "   -?        # Optional -
 "   \d+       # Any amount of digits

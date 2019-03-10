@@ -5,7 +5,7 @@ let g:current_compiler = 'go'
 let s:save_cpo = &cpoptions
 set cpoptions-=C
 
-let &l:makeprg = 'go install ' . g:gopher_go_flags
+let &l:makeprg = 'go install ' . get(g:, 'gopher_go_flags', '')
 
 " Builds the ./cmd/<dirname> if it exists; it's a common pattern.
 let s:cmd = './cmd/' . expand('%:p:h:t')
