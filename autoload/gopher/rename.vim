@@ -7,7 +7,7 @@ function! gopher#rename#complete(lead, cmdline, cursor) abort
         \ { i, v -> strpart(l:v, 0, len(a:lead)) is# a:lead })
 endfun
 
-fun! gopher#rename#do(bang, ...) abort
+fun! gopher#rename#do(...) abort
   " No argument; try to make a sane decision:
   " - ALLCAPS -> Allcaps
   " - snake_case -> snakeCase     (Convert snake_case while keeping export status)
@@ -56,7 +56,7 @@ fun! s:done(exit, out, autoread) abort
   call gopher#internal#info(a:out)
 endfun
 
-fun! gopher#rename#_errors(out, bang) abort
+fun! gopher#rename#_errors(out) abort
   if a:out =~# '": no identifier at this position'
     call gopher#internal#error('gorename: no identifier at this position')
     return
@@ -106,11 +106,6 @@ fun! gopher#rename#_errors(out, bang) abort
   if len(getqflist()) is 0
     call gopher#internal#error(a:out)
     return
-  endif
-
-  exe 'copen ' . len(getqflist())
-  if !a:bang
-    cc 1
   endif
 endfun
 

@@ -38,7 +38,7 @@ command! -bang GoDiag   call gopher#internal#diag(<bang>0)
 command!       GoSetup  call gopher#system#setup()
 
 " Rename identifier.
-command! -bang -nargs=? -complete=customlist,gopher#rename#complete GoRename call gopher#rename#do(<bang>0, <f-args>)
+command! -nargs=? -complete=customlist,gopher#rename#complete GoRename call gopher#rename#do(<f-args>)
 
 " Modify struct tags
 " TODO: think of a better command interface for this.
@@ -47,27 +47,4 @@ command! -bang -nargs=? -complete=customlist,gopher#rename#complete GoRename cal
 command! -nargs=* -range GoAddTags    call gopher#tags#add(<line1>, <line2>, <count>, <f-args>)
 command! -nargs=* -range GoRemoveTags call gopher#tags#remove(<line1>, <line2>, <count>, <f-args>)
 
-command! -nargs=* GoTest     call s:compile('gotest', <f-args>)
-command! -nargs=* GoMake     call s:compile('go', <f-args>)
 command! -nargs=* GoCoverage call gopher#coverage#do()
-"command! GoDef               call completor#do('definition')
-"command! GoDoc               call completor#do('doc')
-
-fun! s:compile(n, ...) abort
-  let l:c = b:current_compiler
-  exe 'compiler ' . a:n
-  exe 'lmake ' . join(a:000)
-  redraw!
-  exe 'compiler ' . l:c
-endfun
-
-" Format buffer on write.
-
-" Motion for entire buffer.
-" TODO: perhaps map before use and unmap after?
-onoremap f :<c-u>normal! mzggVG<cr>`z
-
-augroup gopher.vim
-	au!
-	autocmd BufWritePre *.go normal gqf
-augroup end

@@ -1,10 +1,89 @@
-gopher.vim: the Go programming language
+gopher.vim: plugin for the Go programming language
 
 ==============================================================================
 INTRODUCTION                                                          *gopher*
 
 gopher.vim is an experimental Vim plugin for the Go programming language.
 
-It is currenly undocumented while the feature set is still being decided.
+This plugin requires Go 1.11 or newer; older versions will not work as the
+internal vendoring uses modules.
 
-vim:tw=78:ts=8:ft=help:norl:expandtab
+NOTE: see the README for some information to get started; this is only a
+reference.
+
+==============================================================================
+COMMANDS                                                     *gopher-commands*
+
+:GoSetup                                                            *:GoSetup*
+
+        Make sure all dependent tools are downloaded and installed. Normally
+        this is done automatically after you start Vim so it's not required to
+        run it.
+        It's still useful to run as post-install/update hook, so you don't
+        have to wait for stuff to install or update on first usage.
+
+:GoDiag[!]                                                           *:GoDiag*
+
+        Print diagnostic information. Also see |g:gopher_debug|.
+
+        When the [!] is included the output will be copied to the clipboard
+        (|quote+| register).
+
+:GoRename [new-ident]                                              *:GoRename*
+
+        Rename the identifier under the cursor.
+
+        if [new-ident] is omitted the new identifier is based on the following
+        rules:
+
+          - All caps identifiers are CamelCased (FOO_BAR -> FooBar).
+          - Exported are unexported (FooBar -> fooBar).
+          - Unexported are exported (fooBar -> FooBar).
+
+        Tab completion includes the exported and unexported version.
+
+*:GoCoverage*
+
+        Undocumented; may disappear if I can find a good generic plugin (or
+        I may write one myself).
+
+*:GoAddTags* *:GoRemoveTags*
+
+        Undocumented; interface will probably change.
+
+==============================================================================
+OPTIONS                                                       *gopher-options*
+
+*g:gopher_build_tags* = `''`
+
+        Space-separated list of built tags.
+        TODO: listify.
+
+*g:gopher_go_flags* = `printf('-tags "%s"', g:gopher_build_tags)`
+
+        Flags to add to all `go` commands.
+
+*g:gopher_debug* = `[]`
+
+        Debugging options.
+
+        commands    Records all shell commands; use |:GoDiag| to view.
+
+*g:gopher_highlight* = `['string-spell', 'string-fmt']`
+
+        List of syntax highlighting options; supported options:
+
+        complex                  Highlight complex numbers; disabled by
+                                 default as it's comparatively resource
+                                 intensive and not frequently used.
+        string-fmt               Highlight formatting specifiers in strings.
+        string-spell             Enable spell checking in strings.
+
+        fold-block               `{` .. `}` blocks.
+        fold-comment             Any comment other than the package comment.
+        fold-import              `import` block.
+        fold-pkg-comment         The package comment.
+        fold-varconst            `var` and `const` blocks.
+
+
+vim:tw=78:ts=8:sts=8:sw=8:ft=help:norl:expandtab

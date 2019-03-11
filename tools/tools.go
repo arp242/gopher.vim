@@ -7,6 +7,7 @@ package tools
 import (
 	_ "github.com/fatih/gomodifytags"
 	_ "github.com/fatih/motion"
+	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
 	_ "github.com/saibing/bingo"
 	_ "golang.org/x/tools/cmd/goimports"
 	_ "golang.org/x/tools/cmd/gorename"
@@ -16,7 +17,4 @@ import (
 	// "github.com/josharian/impl"
 	// "honnef.co/go/tools/cmd/keyify"
 	// "github.com/koron/iferr"
-	//
-	// https://github.com/alecthomas/gometalinter/issues/521
-	//_ "github.com/alecthomas/gometalinter"
 )

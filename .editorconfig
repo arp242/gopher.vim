@@ -15,3 +15,6 @@ indent_size = 4
 [go.mod]
 indent_style = tab
 indent_size = 4
+
+[*.markdown]
+indent_size = 4
