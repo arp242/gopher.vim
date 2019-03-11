@@ -4,7 +4,7 @@ scriptencoding utf-8
 call gopher#init#config()
 
 fun! Test_basic() abort
-    call TestSyntax(g:test_packdir . "/syntax/test/basic.go",
+    call TestSyntax(g:test_packdir . '/syntax/test/basic.go',
         \ [
         \ [['goPackage', 1, 8]],
         \ [],
@@ -18,7 +18,7 @@ fun! Test_basic() abort
 endfun
 
 fun! Test_fmt() abort
-    call TestSyntax(g:test_packdir . "/syntax/test/fmt.go",
+    call TestSyntax(g:test_packdir . '/syntax/test/fmt.go',
         \ [
         \ [['goPackage', 1, 8]],
         \ [],

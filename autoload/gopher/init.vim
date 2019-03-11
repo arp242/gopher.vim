@@ -3,16 +3,16 @@ fun! gopher#init#version_check(v) abort
 endfun
 
 " Check if the requires Vim/Neovim/Go versions are installed.
-fun! gopher#init#version()
+fun! gopher#init#version() abort
   let l:msg = ''
 
   " Make sure it's using a new-ish version of Vim.
   if has('nvim') && !has('nvim-0.2.0')
     let l:msg = 'gopher.vim requires Neovim 0.2.0 or newer'
-  " Why this version? Because it's the version that's about a year old at the
+  " Why this version? Because it's the version that's about two years old at the
   " time of writing, which is a more than reasonable time period to support.
-  elseif v:version < 800 || (v:version == 800 && !has('patch1200'))
-    let l:msg = 'gopher.vim requires Vim 8.0.1200 or newer'
+  elseif v:version < 800 || (v:version == 800 && !has('patch0400'))
+    let l:msg = 'gopher.vim requires Vim 8.0.0400 or newer'
   endif
 
   " Ensure people have Go installed correctly.
@@ -39,7 +39,7 @@ endfun
 let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 
 " Initialize config values.
-fun! gopher#init#config()
+fun! gopher#init#config() abort
   " Ensure that the tools dir is in the PATH and takes precedence over other
   " (possibly outdated) tools.
   let $PATH = s:root . '/tools/bin:' . $PATH

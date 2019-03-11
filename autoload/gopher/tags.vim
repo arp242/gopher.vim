@@ -54,7 +54,7 @@ function! gopher#tags#run(start, end, offset, mode, fname, ...) abort
 endfunc
 
 " Write output to the buffer.
-func s:write_out(out) abort
+func! s:write_out(out) abort
   " not a json output
   " TODO: This check sucks.
   if a:out[0] !=# '{'
@@ -92,7 +92,7 @@ endfunc
 
 
 " create_cmd returns a dict that contains the command to execute gomodifytags
-func s:create_cmd(args) abort
+func! s:create_cmd(args) abort
   let l:start    = a:args.start
   let l:end      = a:args.end
   let l:offset   = a:args.offset

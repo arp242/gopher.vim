@@ -1,5 +1,5 @@
 " Highlights.
-fun! s:hi()
+fun! s:hi() abort
   hi def      goCoverageCovered    guibg=#dfffdf
   hi def      goCoverageUncover    guibg=#ffdfdf
 endfun
