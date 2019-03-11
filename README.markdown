@@ -5,13 +5,15 @@ gopher.vim is an experimental Vim plugin for the Go programming language.
 
 Goals:
 
+- Vendor external dependencies in the plugin.
+
 - Off-load functionality to native Vim features or generic plugins when they
   offer a good user experience.
 
 - Ensure that included commands are well-tested to work with as many possible
   scenarios as possible.
 
-this plugins **requires** Go 1.11 or newer and a fairly new version of Vim
+This plugins **requires** Go 1.11 or newer and a fairly new version of Vim
 (probably 8.0.something) or Neovim.
 
 Companion plugins
@@ -24,7 +26,8 @@ time.
 - [vim-lsc](https://github.com/natebosch/vim-lsc) – LanguageServer client.
   Alternatives:
   [ALE](https://github.com/w0rp/ale),
-  [coc.nvim](https://github.com/neoclide/coc.nvim)
-  [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
+  [coc.nvim](https://github.com/neoclide/coc.nvim),
+  [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim),
+  [vim-lsp](https://github.com/prabirshrestha/vim-lsp).
 
 - [vim-makejob](https://github.com/djmoch/vim-makejob) – Async `:make`.
