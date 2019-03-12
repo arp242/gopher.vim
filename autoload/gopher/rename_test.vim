@@ -36,7 +36,7 @@ fun! Test_error() abort
   \]
 
   for l:tt in l:tests
-    call gopher#rename#_errors(l:tt.in)
+    call gopher#rename#_errors_(l:tt.in)
     "call assert_equal(l:tt.want, getqflist())
     "call setqflist([])
   endfor

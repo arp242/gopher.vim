@@ -5,20 +5,24 @@ fun! Test_error() abort
   mess clear
 
   call gopher#internal#error('string')
+  call gopher#internal#error('%d %s', 666, 'fmt')
   call gopher#internal#error(['list1', 'list2'])
 
   let l:m = split(execute(':messages'), "\n")
-  call assert_equal(['gopher.vim: string', 'gopher.vim: list1', 'gopher.vim: list2'], l:m[1:])
+  call assert_equal(['gopher.vim: string', 'gopher.vim: 666 fmt', 'gopher.vim: list1', 'gopher.vim: list2'], l:m[1:])
+  mess clear
 endfun
 
 fun! Test_info() abort
   mess clear
 
   call gopher#internal#info('string')
+  call gopher#internal#error('%d %s', 666, 'fmt')
   call gopher#internal#info(['list1', 'list2'])
 
   let l:m = split(execute(':messages'), "\n")
-  call assert_equal(['gopher.vim: string', 'gopher.vim: list1', 'gopher.vim: list2'], l:m[1:])
+  call assert_equal(['gopher.vim: string', 'gopher.vim: 666 fmt', 'gopher.vim: list1', 'gopher.vim: list2'], l:m[1:])
+  mess clear
 endfun
 
 fun! Test_cursor_offset() abort

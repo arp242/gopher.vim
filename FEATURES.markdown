@@ -1,15 +1,16 @@
-Overview of features, compared to vim-go.
+Quick overview of features, compared to vim-go.
 
 See [README.markdown](README.markdown) for more detailed information to get
-started; this is just a quick overview.
+started and `:help gopher` for the full reference manual. This is just a quick
+overview.
 
     BULDING
 
-    :GoBuildTags                  Set g:gopher_build_tags
+    :GoBuildTags                  let g:gopher_build_tags = [..]
     :GoInstall                    :compiler go     | :make
     :GoTest                       :compiler gotest | :make
     :GoTestCompile                :make -c
-    :GoTestFunc                   :make -run
+    :GoTestFunc                   :make -run ..
 
     :GoBuild                      :setl makeprg=go\ build
     :GoGenerate                   :setl makeprg=go\ generate
@@ -49,8 +50,8 @@ started; this is just a quick overview.
     :GoInfo
     Completion
 
-    :GoFiles                      :!go list ...; rare enough to not need a command on its own, IMHO
-    :GoDeps                       Idem
+    :GoFiles                      :!go list ...; probably rare enough to not need a command on its own.
+    :GoDeps
 
     :GoCoverage                   :CoCoverage; would be a good candidte for an external plugin, but
                                                I can't find any good ones.
@@ -65,22 +66,23 @@ started; this is just a quick overview.
 
     CODE MODIFICATION
 
-    :GoRename                     Works more or less as before.
+    :GoRename                     :GoRename (LSP should be able to do this eventually but it kind of
+                                             sucks right now, and my implementation seems to work a
+                                             lot better).
 
-    :GoAddTags                    Works more or less as before.
-    :GoRemoveTags
+    :GoAddTags                    :GoTags
+    :GoRemoveTags                 :GoTags -rm
 
     OTHER
 
     motions ([[, ]], etc.)        Implemented, but different from vim-go.
     text objects (af, etc.)       Works as vim-go
-    :GoPath                       :let $GOPATH = ...
+    :GoPath                       :let $GOPATH = '..'
     :GoTemplateAutoCreateToggle   Easy to use an autocmd.
 
-    :GoAlternate                  TODO: find generic plugin (there's got to be one?)
+    NOT IMPLEMENTED (YET)
 
-    NOT IMPLEMENTED YET
-
+    :GoAlternate
     :GoAutoTypeInfoToggle
     :GoCallees
     :GoCallers
@@ -98,6 +100,7 @@ started; this is just a quick overview.
     :GoImport
     :GoImportAs
     :GoKeyify
+    :GoPlay
     :GoPointsTo
     :GoReferrers
     :GoSameIds
@@ -105,7 +108,6 @@ started; this is just a quick overview.
     :GoSameIdsClear
     :GoSameIdsToggle
     :GoWhicherrs
-    :GoPlay
 
     N/A
 

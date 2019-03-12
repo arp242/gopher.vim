@@ -17,7 +17,7 @@ fun! gopher#motion#jump(mode, dir) abort
 
   let l:save = winsaveview()
   for l:i in range(l:count)
-    let l:loc = search('\v^(func|type|var|const)', 'W' . (a:dir is# 'prev' ? 'b' : ''))
+    let l:loc = search('\v^(func|type|var|const|import)', 'W' . (a:dir is# 'prev' ? 'b' : ''))
 
     if l:loc > 0
       continue

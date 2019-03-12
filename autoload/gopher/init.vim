@@ -44,32 +44,13 @@ fun! gopher#init#config() abort
   " (possibly outdated) tools.
   let $PATH = s:root . '/tools/bin:' . $PATH
 
-  " Builds tags to add to most commands.
-  let g:gopher_build_tags = get(g:, 'gopher_build_tags', [])
-
-  " Flags to add to go install/test/etc. in 'makeprg'
-  " Note: changing this at runtime has no effect! Change 'makeprg' directly
-  " instead.
-  let g:gopher_go_flags = gopher#internal#add_build_tags(get(g:, 'gopher_go_flags'))
-
-  " Syntax highlighting options; possible values:
-  "
-  " string-spell       Spell check inside strings.
-  " string-fmt         Highlight format specifiers inside strings.
-  " complex            Highlight complex numbers (off by default as it's a bit
-  "                    slow and not used very frequently).
-  " fold-block         { .. } blocks.
-  " fold-import        import block.
-  " fold-varconst      var ( .. ) and const ( .. ) blocks.
-  " fold-pkg-comment   The package comment.
-  " fold-comment       Any comment that is not the package comment.
-  let g:gopher_highlight = get(g:, 'gopher_highlight', [
-        \ 'string-spell', 'string-fmt'])
-
-  " Debug flags; possible values:
-  "
-  " shell     record history of shell commands.
-  let g:gopher_debug = get(g:, 'gopher_debug', [])
+  " Set defaults.
+  let g:gopher_build_tags    = get(g:, 'gopher_build_tags', [])
+  let g:gopher_go_flags      = gopher#internal#add_build_tags(get(g:, 'gopher_go_flags'))
+  let g:gopher_highlight     = get(g:, 'gopher_highlight', ['string-spell', 'string-fmt'])
+  let g:gopher_debug         = get(g:, 'gopher_debug', [])
+  let g:gopher_tag_transform = get(g:, 'gopher_tag_transform', 'snakecase')
+  let g:gopher_tag_default   = get(g:, 'gopher_tag_default', 'json')
 
   "g:gopher_gorename_flags
 endfun

@@ -44,11 +44,5 @@ command! -nargs=* -complete=customlist,gopher#coverage#complete GoCoverage call 
 " Rename identifier.
 command! -nargs=? -complete=customlist,gopher#rename#complete GoRename call gopher#rename#do(<f-args>)
 
-
-
 " Modify struct tags
-" TODO: think of a better command interface for this.
-" :GoTags asd
-" :GoTags -rm asd
-command! -nargs=* -range GoAddTags    call gopher#tags#add(<line1>, <line2>, <count>, <f-args>)
-command! -nargs=* -range GoRemoveTags call gopher#tags#remove(<line1>, <line2>, <count>, <f-args>)
+command! -nargs=* -range GoTags call gopher#tags#modify(<line1>, <line2>, <count>, <f-args>)

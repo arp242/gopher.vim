@@ -14,7 +14,7 @@ fun! gopher#rename#do(...) abort
   " - Snake_case -> SnakeCase
   " - Otherwise toggle export status.
   if a:0 is 0
-    let l:to = gopher#rename#_auto_to(expand('<cword>'))
+    let l:to = gopher#rename#_auto_to_(expand('<cword>'))
   else
     let l:to = a:1
   endif
@@ -49,13 +49,13 @@ fun! s:done(exit, out, autoread) abort
   call gopher#buf#doall('set modifiable')
 
   if a:exit > 0
-    return gopher#rename#_errors(a:out, '')
+    return gopher#rename#_errors_(a:out, '')
   endif
 
   call gopher#internal#info(a:out)
 endfun
 
-fun! gopher#rename#_errors(out) abort
+fun! gopher#rename#_errors_(out) abort
   if a:out =~# '": no identifier at this position'
     call gopher#internal#error('gorename: no identifier at this position')
     return
@@ -108,9 +108,7 @@ fun! gopher#rename#_errors(out) abort
   endif
 endfun
 
-" Exported just for testing.
-" TODO: See if we can test this without exposing it.
-fun! gopher#rename#_auto_to(w) abort
+fun! gopher#rename#_auto_to_(w) abort
   if a:w =~# '^\u\+$'
     return a:w[0] . tolower(a:w[1:])
   elseif a:w =~# '_'

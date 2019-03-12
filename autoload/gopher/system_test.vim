@@ -84,12 +84,12 @@ fun! Test_history() abort
   let l:h = gopher#system#history()
   call assert_equal(l:h, [])
 
-  call gopher#system#_hist(['ls', '/'], reltime(), 0, "/bin\n/etc\n/root", 0)
+  call gopher#system#_hist_(['ls', '/'], reltime(), 0, "/bin\n/etc\n/root", 0)
   let l:h = gopher#system#history()
   call assert_equal(l:h, [])
 
   let g:gopher_debug = ['commands']
-  call gopher#system#_hist(['ls', '/'], reltime(), 0, "/bin\n/etc\n/root", 0)
+  call gopher#system#_hist_(['ls', '/'], reltime(), 0, "/bin\n/etc\n/root", 0)
   let l:h = gopher#system#history()
   call assert_equal(1, len(l:h))
 endfun

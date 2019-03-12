@@ -1,9 +1,9 @@
-gopher.vim: plugin for the Go programming language
+gopher.txt: plugin for the Go programming language
 
 ==============================================================================
 INTRODUCTION                                                          *gopher*
 
-gopher.vim is an experimental Vim plugin for the Go programming language.
+gopher.vim is a Vim plugin for the Go programming language.
 
 This plugin requires Go 1.11 or newer; older versions will not work as the
 internal vendoring uses modules.
@@ -12,25 +12,108 @@ NOTE: see the README for some information to get started; this is only a
 reference.
 
 ==============================================================================
+MOTIONS                                                       *gopher-motions*
+
+                                                     *gopher-v_]]* *gopher-]]*
+]]                      [count] top-level declarations forward.
+                        A top-level declaration is a `func`, `type`, `var`,
+                        `const`, or `import`.
+
+                        In |ft-gopresent| files it jumps [count] sections
+                        forward.
+
+                                                     *gopher-v_[[* *gopher-[[*
+[[                      [count] top-level declarations backwards. In
+                        |ft-gopresent| it jumps [count] sections backwards.
+
+==============================================================================
+TEXT OBJECTS                                             *gopher-text-objects*
+
+                                                     *gopher-v_af* *gopher-af*
+af                      "a function", select the complete function body and
+                        any preceding documentation comment (if any).
+
+                                                     *gopher-v_if* *gopher-if*
+if                      "inner function", select the contents of a function,
+                        but not the function signature.
+
+                                                     *gopher-v_ac* *gopher-ac*
+ac                      "a comment", select the entire comment, including the
+                        comment characters themselves.
+
+                                                     *gopher-v_ic* *gopher-ic*
+ic                      "inner comment", select the content of the function
+                        but exclude the start and end markers.
+
+==============================================================================
+FILETYPES                                                   *gopher-filetypes*
+
+                                                                       *ft-go*
+go~
+                                                          *g:gopher_highlight*
+        The `g:gopher_highlight` setting controls various options for the go
+        syntax highlighting. Supported options:
+
+                complex                Highlight complex numbers; disabled by
+                                       default as it's fairly expensive and
+                                       not frequently used.
+                string-fmt             Highlight fmt formatting specifiers.
+                string-spell           Enable spell checking in strings.
+
+        Options to control folding:
+
+                fold-block             `{` .. `}` blocks.
+                fold-comment           Any comment except the package comment.
+                fold-import            `import` block.
+                fold-pkg-comment       The package comment.
+                fold-varconst          `var` and `const` blocks.
+
+        The default is `['string-spell', 'string-fmt']`
+
+                                                             *gopher-compiler*
+        Several compilers are supported; you can select one with the
+        |:compiler| command.
+
+                go                      |'makeprg'| defaults to `go install`
+                                        but `go build` or `go run` also work.
+                gotest                  `go test`
+                golint                  `golangci-lint`
+
+                                                                    *ft-gomod*
+gomod~
+                        go.mod file; there are no options.
+
+                                                                *ft-gopresent*
+gopresent~
+                        go present slide:
+                        https://godoc.org/golang.org/x/tools/present
+
+                        Only highlights the basics and adds |gopher-[[| and
+                        |gopher-]]| motions.
+
+                                               *ft-gotexttmpl* *ft-gohtmltmpl*
+gotexttmpl gohtmltmpl~
+                        text/template and html/template. gohtmltmpl loads the
+                        standard html syntax highlighting, but they are
+                        otherwise identical.
+
+==============================================================================
 COMMANDS                                                     *gopher-commands*
 
 :GoSetup                                                            *:GoSetup*
-
-        Make sure all dependent tools are downloaded and installed. Normally
+        Make sure all dependent tools are downloaded and compiled. Normally
         this is done automatically after you start Vim so it's not required to
-        run it.
-        It's still useful to run as post-install/update hook, so you don't
-        have to wait for stuff to install or update on first usage.
+        manually run it.
+        It's may still be useful to run as post-install/update hook, so you
+        don't have to wait for stuff to install or update on first usage.
 
 :GoDiag[!]                                                           *:GoDiag*
-
         Print diagnostic information. Also see |g:gopher_debug|.
 
         When the [!] is included the output will be copied to the clipboard
         (|quote+| register).
 
 :GoRename [new-ident]                                              *:GoRename*
-
         Rename the identifier under the cursor.
 
         if [new-ident] is omitted the new identifier is based on the following
@@ -43,7 +126,6 @@ COMMANDS                                                     *gopher-commands*
         Tab completion includes the exported and unexported version.
 
 :GoCoverage [flags]                                              *:GoCoverage*
-
         Run `go test -cover` and highlight lines reported as covered and
         uncovered.
 
@@ -68,19 +150,45 @@ COMMANDS                                                     *gopher-commands*
                         au Syntax go hi goCoverageUncover guibg=brown
                 augroup end <
 
-*:GoAddTags* *:GoRemoveTags*
+:{range}GoTags [flags]                                               *:GoTags*
+        Add, modify, or remove struct tags. Will only apply to the fields in
+        {range} if it's given, or applied to all fields in the struct if it's
+        omitted.
 
-        Undocumented; interface will probably change.
+        All tags in [flags] will be added. A tag can be followed by a `,`
+        (comma) and an option to add the option, or set to a
+
+        Tags can be removed by using `-rm tag`; options can be removed by
+        using `-rm tag,opt`
+
+        The value of |g:gopher_tag_default| is used if no [flags] is given.
+
+        Examples: >
+
+                :GoTags json                  Add tag "json"
+                :GoTags json,omitempty        Add tag with omitempty, or add
+                                              omitempty for fields where it
+                                              already exists.
+                :GoTags json,omitempty db     Add two tags
+
+                :GoTags -rm json              Remove a tag
+                :GoTags -rm json,omitempty    Remove the omitempty option
+                :GoTags -rm json -rm db       Remove two tags
+                :GoTags -rm                   Remove all tags
+
+                :GoAddTags sometag=foo        Set the tag sometag to the
+                                              string foo.
+
+                :GoTags json -rm yaml         Combine add and rm
+<
 
 ==============================================================================
 OPTIONS                                                       *gopher-options*
 
 *g:gopher_build_tags* = `[]`
+        List of build tags added to all commands that support it.
 
-        List of build tags added to all commands.
-
-*g:gopher_go_flags* = `printf('-tags "%s"', g:gopher_build_tags)`
-
+*g:gopher_go_flags* = `printf('-tags "%s"', join(g:gopher_build_tags, ' '))`
         Flags to add to all `go` commands.
 
         TODO: rename to g:gopher_build_flags, or something. As this is mainly
@@ -90,26 +198,22 @@ OPTIONS                                                       *gopher-options*
         tags.
 
 *g:gopher_debug* = `[]`
-
-        Debugging options.
+        List of debugging options:
 
         commands    Records all shell commands; use |:GoDiag| to view.
 
-*g:gopher_highlight* = `['string-spell', 'string-fmt']`
+*g:gopher_tag_default* = `json`
+        Default tag for |:GoTags| when no parameters are given. Can be any
+        valid set of arguments for |:GoTags| (e.g. `json,omitempty -rm yaml`).
 
-        List of syntax highlighting options; supported options:
+*g:gopher_tag_transform* = `'snakecase'`
+        Transform the struct field name when adding a tag with |:GoTags|.
 
-        complex                  Highlight complex numbers; disabled by
-                                 default as it's comparatively resource
-                                 intensive and not frequently used.
-        string-fmt               Highlight formatting specifiers in strings.
-        string-spell             Enable spell checking in strings.
+        Supported vaiues:
 
-        fold-block               `{` .. `}` blocks.
-        fold-comment             Any comment other than the package comment.
-        fold-import              `import` block.
-        fold-pkg-comment         The package comment.
-        fold-varconst            `var` and `const` blocks.
+                snakecase        FooBar -> foo_bar
+                camelcase        FooBar -> fooBar
+                [empty string]   No transformation; FooBar -> FooBar
 
 
 vim:tw=78:ts=8:sts=8:sw=8:ft=help:norl:expandtab

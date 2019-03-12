@@ -159,7 +159,7 @@ fun! gopher#system#run(cmd, ...) abort
   endif
 
   if gopher#internal#has_debug('commands')
-    call gopher#system#_hist(a:cmd, l:start, v:shell_error, l:out, 0)
+    call gopher#system#_hist_(a:cmd, l:start, v:shell_error, l:out, 0)
   endif
 
   return [l:out, l:err]
@@ -282,7 +282,7 @@ endfun
 
 " Add item to history.
 " TODO: add information about stdin too.
-fun! gopher#system#_hist(cmd, start, exit, out, job) abort
+fun! gopher#system#_hist_(cmd, start, exit, out, job) abort
     if !gopher#internal#has_debug('commands')
       return
     endif
@@ -321,7 +321,7 @@ fun! s:j_close_cb(ch) abort dict
   let self.closed = 1
 
   if self.exit > -1
-    call gopher#system#_hist(self.cmd, self.start, self.exit, self.out, 1)
+    call gopher#system#_hist_(self.cmd, self.start, self.exit, self.out, 1)
     call self.done(self.exit, self.out)
   endif
 endfun
@@ -330,7 +330,7 @@ fun! s:j_exit_cb(job, exit) abort dict
   let self.exit = a:exit
 
   if self.closed
-    call gopher#system#_hist(self.cmd, self.start, self.exit, self.out, 1)
+    call gopher#system#_hist_(self.cmd, self.start, self.exit, self.out, 1)
     call self.done(self.exit, self.out)
   endif
 endfun
