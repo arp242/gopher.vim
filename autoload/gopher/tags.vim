@@ -42,7 +42,7 @@ function! gopher#tags#run(start, end, offset, mode, fname, ...) abort
   " gopher.vim: line selection is invalid
   " TODO: Doesn't replace correct text when buffer is modified in visual mode.
   " TODO: simplify by allowing a list in tool()
-  let l:stdin = join(gopher#internal#lines(), "\n")
+  let l:stdin = join(gopher#buf#lines(), "\n")
   let l:stdin = expand('%') . "\n" . strlen(l:stdin) . "\n" . l:stdin
   let [l:out, l:err] = gopher#system#tool(l:result.cmd, l:stdin)
   if l:err != 0

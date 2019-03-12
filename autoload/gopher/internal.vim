@@ -14,11 +14,6 @@ fun! gopher#internal#info(msg) abort
   call s:echo(a:msg, 'Debug')
 endfun
 
-" Trim leading and trailing whitespace from a string.
-fun! gopher#internal#trim(s) abort
-  return substitute(a:s, '^[ \t\r\n]*\(.\{-}\)[ \t\r\n]*$', '\1', '')
-endfun
-
 " Returns the byte offset for the cursor.
 "
 " If the first argument is non-blank it will return filename:#offset
@@ -32,11 +27,6 @@ fun! gopher#internal#cursor_offset(...) abort
   return l:o
 endfunction
 
-" Get all lines in the buffer as a a list.
-fun! gopher#internal#lines() abort
-  return getline(1, '$')
-endfun
-
 " Report if the current buffer is a Go test file.
 fun! gopher#internal#is_test() abort
   return expand('%')[-8:] is# '_test.go'
@@ -47,55 +37,19 @@ endfun
 fun! gopher#internal#package() abort
   let [l:out, l:err] = gopher#system#run(['go', 'list', expand('%:p:h')])
   if l:err
+    if gopher#str#has_suffix(l:out, 'cannot import absolute path')
+      let l:out = 'cannot determine module path (outside GOPATH, no go.mod)'
+    endif
     call gopher#internal#error(l:out)
     return ''
   endif
+
   return l:out
 endfun
 
 " Get path to file in current buffer as package/path/file.go
 fun! gopher#internal#packagepath() abort
   return gopher#internal#package() . '/' . expand('%:t')
-endfun
-
-" List all Go buffers.
-fun! gopher#internal#buffers() abort
-  return filter(range(1, bufnr('$')), { i, v -> bufexists(l:v) && buflisted(l:v) && bufname(l:v)[-3:] is# '.go' })
-endfun
-
-" Run a command on every buffer and restore the position to the active buffer.
-fun! gopher#internal#bufdo(cmd) abort
-  let l:s = bufnr('%')
-  let l:lz = &lazyredraw
-
-  try
-    set lazyredraw  " Reduces a lot of flashing
-    for l:b in gopher#internal#buffers()
-      silent exe l:b . 'bufdo ' . a:cmd
-    endfor
-  finally
-    silent exe 'buffer ' . l:s
-    let &lazyredraw = l:lz
-  endtry
-endfun
-
-" Save all unwritten Go buffers.
-fun! gopher#internal#write_all() abort
-  let l:s = bufnr('%')
-  let l:lz = &lazyredraw
-
-  try
-    set lazyredraw  " Reduces a lot of flashing
-    for l:b in gopher#internal#buffers()
-      exe 'buffer ' . l:b
-      if &modified
-        silent w
-      endif
-    endfor
-  finally
-    silent exe 'buffer ' . l:s
-    let &lazyredraw = l:lz
-  endtry
 endfun
 
 " Report if the user enabled a debug flag.
@@ -114,6 +68,34 @@ fun! gopher#internal#platform(n) abort
   endif
 
   call gopher#internal#error('gopher#internal#platform: unknown parameter: ' . a:n)
+endfun
+
+let s:special = ['go', 'test']
+
+" Add g:gopher_build_tags to the flag_list; will be merged with existing tags
+" (if any).
+fun! gopher#internal#add_build_tags(flag_list) abort
+  if get(g:, 'gopher_build_tags', []) == []
+    return a:flag_list
+  endif
+
+  let l:last_flag = 0
+  for l:i in range(len(a:flag_list))
+    if a:flag_list[l:i][0] is# '-' || index(s:special, a:flag_list[l:i]) > -1
+      let l:last_flag = l:i
+    endif
+
+    if a:flag_list[l:i] is# '-tags'
+      let l:tags = uniq(split(gopher#str#trim(a:flag_list[l:i+1], "\"'"), ' ') + g:gopher_build_tags)
+      return a:flag_list[:l:i]
+            \ + ['"' . join(l:tags, ' ') . '"']
+            \ +  a:flag_list[l:i+2:]
+    endif
+  endfor
+
+  return a:flag_list[:l:last_flag]
+        \ + ['-tags', '"' . join(g:gopher_build_tags, ' ') . '"']
+        \ + a:flag_list[l:last_flag+1:]
 endfun
 
 " Get diagnostic information about gopher.vim

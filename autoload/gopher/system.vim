@@ -68,7 +68,7 @@ endfun
 fun! gopher#system#tmpmod() abort
   if &modified
     let l:tmp = tempname()
-    call writefile(gopher#internal#lines(), l:tmp)
+    call writefile(gopher#buf#lines(), l:tmp)
     return [l:tmp, 1]
   endif
 

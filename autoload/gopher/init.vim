@@ -45,12 +45,12 @@ fun! gopher#init#config() abort
   let $PATH = s:root . '/tools/bin:' . $PATH
 
   " Builds tags to add to most commands.
-  let g:gopher_build_tags = get(g:, 'gopher_build_tags', '')
+  let g:gopher_build_tags = get(g:, 'gopher_build_tags', [])
 
   " Flags to add to go install/test/etc. in 'makeprg'
   " Note: changing this at runtime has no effect! Change 'makeprg' directly
   " instead.
-  let g:gopher_go_flags = get(g:, 'gopher_go_flags', '-tags "' . g:gopher_build_tags . '"')
+  let g:gopher_go_flags = gopher#internal#add_build_tags(get(g:, 'gopher_go_flags'))
 
   " Syntax highlighting options; possible values:
   "

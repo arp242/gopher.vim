@@ -19,13 +19,13 @@ fun! gopher#rename#do(...) abort
     let l:to = a:1
   endif
 
-  call gopher#internal#write_all()
+  call gopher#buf#write_all()
   call setqflist([])
 
   " Make sure the buffer can't be modified since gorename will write stuff to
   " disk, and overwrite the user's changes.
   " Set this for *all* buffers since gorename can modify multiple files.
-  call gopher#internal#bufdo('set nomodifiable')
+  call gopher#buf#doall('set nomodifiable')
   let l:autoread = &autoread
   set autoread
 
@@ -33,13 +33,12 @@ fun! gopher#rename#do(...) abort
     call gopher#system#tool_job({e, o -> s:done(l:e, l:o, l:autoread)}, [
           \ 'gorename',
           \ '-to',     l:to,
-          \ '-tags',   get(g:, 'gopher_build_tags', ''),
           \ '-offset', gopher#internal#cursor_offset(1)
-          \ ] + get(g:, 'gopher_gorename_flags', []))
+          \ ] + gopher#internal#add_build_tags(get(g:, 'gopher_gorename_flags', [])))
   catch
     " Just so we don't leave the buffer in nomod state on errors, and it doesn't
     " hurt to do twice.
-    call gopher#internal#bufdo('set modifiable')
+    call gopher#buf#doall('set modifiable')
     let &autoread = l:autoread
   endtry
 endfun
@@ -47,7 +46,7 @@ endfun
 fun! s:done(exit, out, autoread) abort
   checktime
   let &autoread = a:autoread
-  call gopher#internal#bufdo('set modifiable')
+  call gopher#buf#doall('set modifiable')
 
   if a:exit > 0
     return gopher#rename#_errors(a:out, '')
@@ -71,9 +70,9 @@ fun! gopher#rename#_errors(out) abort
   if a:out =~# ': renaming this.*\(would conflict\|conflicts with\)'
     let l:out = map(split(a:out, "\n"), { i, v -> split(l:v, ':')})
 
-    let l:err = gopher#internal#trim(join(l:out[0][3:]))
+    let l:err = gopher#str#trim_space(join(l:out[0][3:]))
     if len(l:out) > 1
-      let l:err .= ' ' . gopher#internal#trim(join(l:out[1][3:]))
+      let l:err .= ' ' . gopher#str#trim_space(join(l:out[1][3:]))
     endif
 
     return gopher#internal#error(l:err)

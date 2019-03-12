@@ -42,10 +42,31 @@ COMMANDS                                                     *gopher-commands*
 
         Tab completion includes the exported and unexported version.
 
-*:GoCoverage*
+:GoCoverage [flags]                                              *:GoCoverage*
 
-        Undocumented; may disappear if I can find a good generic plugin (or
-        I may write one myself).
+        Run `go test -cover` and highlight lines reported as covered and
+        uncovered.
+
+        [flags] are passed to the `go test` command; there are two special
+        flags:
+
+        clear        Clear all existing highlighting.
+        toggle       Toggle display of highlighting.
+
+                                 *hl-goCoverageCovered* *hl-goCoverageUncover*
+        NOTE: it's impossible to highlight the background with a colour that
+        is guaranteed to work well with all colour schemes. The default is to
+        use something that works well with the default one and – hopefully –
+        most common ones.
+
+        Override the goCoverageCovered and/or goCoverageUncover highlight
+        groups if the defaults don't work well for you.
+>
+                augroup my-gopher-coverage
+                        au!
+                        au Syntax go hi goCoverageCovered guibg=blue
+                        au Syntax go hi goCoverageUncover guibg=brown
+                augroup end <
 
 *:GoAddTags* *:GoRemoveTags*
 
@@ -54,14 +75,19 @@ COMMANDS                                                     *gopher-commands*
 ==============================================================================
 OPTIONS                                                       *gopher-options*
 
-*g:gopher_build_tags* = `''`
+*g:gopher_build_tags* = `[]`
 
-        Space-separated list of built tags.
-        TODO: listify.
+        List of build tags added to all commands.
 
 *g:gopher_go_flags* = `printf('-tags "%s"', g:gopher_build_tags)`
 
         Flags to add to all `go` commands.
+
+        TODO: rename to g:gopher_build_flags, or something. As this is mainly
+        useful for stuff like -gcflags and such.
+
+        TODO: consider merging this with gopher_build_tags, can extract build
+        tags.
 
 *g:gopher_debug* = `[]`
 

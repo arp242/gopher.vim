@@ -1,21 +1,39 @@
+let s:visible = 0
+
 " Highlights.
 fun! s:hi() abort
-  hi def      goCoverageCovered    guibg=#dfffdf
-  hi def      goCoverageUncover    guibg=#ffdfdf
+  if &background is# 'dark'
+    hi def      goCoverageCovered    guibg=#005000 ctermbg=28
+    hi def      goCoverageUncover    guibg=#500000 ctermbg=52
+  else
+    hi def      goCoverageCovered    guibg=#dfffdf ctermbg=120
+    hi def      goCoverageUncover    guibg=#ffdfdf ctermbg=223
+  endif
 endfun
-augroup gopher-coverage-hi
-  autocmd!
-  autocmd ColorScheme * call s:hi()
+augroup gopher-coverage
+  au!
+  au ColorScheme *    call s:hi()
+  au BufWinLeave *.go call gopher#coverage#clear()
 augroup end
 call s:hi()
 
-" Apply coverage highlights.
-fun! gopher#coverage#do() abort
+" Complete the special flags and some common flags people might want to use.
+fun! gopher#coverage#complete(lead, cmdline, cursor) abort
+  return ['clear', 'toggle', '-run', '-race', '-tags']
+endfun
+
+" Apply or clear coverage highlights.
+fun! gopher#coverage#do(...) abort
+  if a:0 is 1 && (a:1 is# 'clear' || (a:1 is# 'toggle' && s:visible))
+    return gopher#coverage#clear()
+  endif
+
   let l:tmp = tempname()
   try
     let [l:out, l:err] = gopher#system#run(['go', 'test',
-          \ '-coverprofile', l:tmp,
-          \ './' . expand('%:.:h')])
+          \ '-coverprofile', l:tmp] +
+          \ gopher#internal#add_build_tags(a:000) +
+          \ ['./' . expand('%:.:h')])
     if l:err
       call gopher#internal#error(l:out)
       return
@@ -26,59 +44,75 @@ fun! gopher#coverage#do() abort
     call delete(l:tmp)
   endtry
 
-  call s:overlay(l:profile)
+  call s:apply(l:profile)
 endfun
 
+" Report if the coverage display is currently visible.
+fun! gopher#coverage#is_visible() abort
+  return s:visible
+endfun
+
+" Clear any existing highlights.
 fun! gopher#coverage#clear() abort
-  " TODO: don't clear all matches.
-  call clearmatches()
+  let s:visible = 0
+  for l:m in getmatches()
+    if l:m.group is# 'goCoverageCovered' || l:m.group is# 'goCoverageUncover'
+      call matchdelete(l:m.id)
+    endif
+  endfor
 endfun
 
-" Read the coverprofile file and annotate the current buffer.
-fun! s:overlay(profile) abort
+" Read the coverprofile file and annotate all loaded buffers.
+fun! s:apply(profile) abort
   let l:path = gopher#internal#packagepath()
+  if l:path is# ''
+    return
+  endif
+
+  let s:visible = 1
 
   let l:other_files = {}
   for l:line in a:profile[1:]
     let l:cov = s:parse_line(l:line)
 
-    " Highlight other buffers later, to prevent switching back and forth and
-    " adding a lot of flicker.
-    " TODO: fix this.
-    if l:path != l:cov.file
-      "if !get(l:other_files, l:path)
-      "  let l:other_files[cov.file] = []
-      "endif
-      "let l:other_files[cov.file] += [l:cov]
+    if l:path is# l:cov.file
+      call gopher#coverage#_highlight(l:cov)
       continue
     endif
 
-    call s:match(l:cov)
+    " Highlight other buffers later to prevent switching back and forth.
+    if get(l:other_files, l:cov.file) is 0
+      let l:other_files[l:cov.file] = []
+    endif
+    call add(l:other_files[l:cov.file], l:cov)
   endfor
 
+  " Highlight all the other buffers.
   let l:s = bufnr('%')
   let l:lz = &lazyredraw
+  try
+    set lazyredraw
+    for l:b in gopher#buf#list()
+      if l:b is l:s || !bufloaded(l:b)
+        continue
+      endif
 
-  "try
-  "  set lazyredraw  " Reduces a lot of flashing
+      "silent exe l:b . 'buf'
+      silent exe l:b . 'sbuf'
+      for l:cov in get(l:other_files, gopher#internal#packagepath(), [])
+        call gopher#coverage#_highlight(l:cov)
+      endfor
+    endfor
+  finally
+    silent exe 'sbuf ' . l:s
+    let &lazyredraw = l:lz
+  endtry
+endfun
 
-  "  for l:b in gopher#internal#buffers()
-  "    silent exe l:b . 'buf'
-  "    for l:cov in get(l:other_files, gopher#internal#packagepath(), [])
-  "      call s:match(l:cov)
-  "    endfor
-  "  endfor
-  "finally
-  "  silent exe 'buffer ' . l:s
-  "  let &lazyredraw = l:lz
-  "endtry
-endfunction
-
-" Generate matches to be added to matchaddpos for the given coverage profile
-" block
-fun! s:match(cov) abort
+" Highlight the buffer described in cov.
+fun! gopher#coverage#_highlight(cov) abort
   let l:color = 'goCoverageCovered'
-  if a:cov.cnt == 0
+  if a:cov.cnt is 0
     let l:color = 'goCoverageUncover'
   endif
 
@@ -117,8 +151,9 @@ endfun
 " The format of a line is:
 "   package/file.go:startline.col,endline.col numstmt count
 "
+" For example:
 "   github.com/teamwork/apiutil/readonlybind/readonlybind.go:51.40,54.2 1 1
-function! s:parse_line(line) abort
+fun! s:parse_line(line) abort
   let l:m = matchlist(a:line, '\v([^:]+):(\d+)\.(\d+),(\d+)\.(\d+) (\d+) (\d+)')
   return {
         \ 'file':      l:m[1],
@@ -126,7 +161,7 @@ function! s:parse_line(line) abort
         \ 'startcol':  str2nr(l:m[3]),
         \ 'endline':   str2nr(l:m[4]),
         \ 'endcol':    str2nr(l:m[5]),
-        \ 'numstmt':   l:m[6],
-        \ 'cnt':       l:m[7],
+        \ 'numstmt':   str2nr(l:m[6]),
+        \ 'cnt':       str2nr(l:m[7]),
         \ }
 endfun
