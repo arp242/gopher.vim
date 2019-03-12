@@ -34,11 +34,17 @@ nnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('n', 'prev')<CR>
 onoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('o', 'prev')<CR>
 xnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('v', 'prev')<CR>
 
+" Internal gopher.vim commands.
 command! -bang GoDiag   call gopher#internal#diag(<bang>0)
 command!       GoSetup  call gopher#system#setup()
 
+" Code coverage reports.
+command! -nargs=* -complete=customlist,gopher#coverage#complete GoCoverage call gopher#coverage#do(<f-args>)
+
 " Rename identifier.
 command! -nargs=? -complete=customlist,gopher#rename#complete GoRename call gopher#rename#do(<f-args>)
+
+
 
 " Modify struct tags
 " TODO: think of a better command interface for this.
@@ -46,5 +52,3 @@ command! -nargs=? -complete=customlist,gopher#rename#complete GoRename call goph
 " :GoTags -rm asd
 command! -nargs=* -range GoAddTags    call gopher#tags#add(<line1>, <line2>, <count>, <f-args>)
 command! -nargs=* -range GoRemoveTags call gopher#tags#remove(<line1>, <line2>, <count>, <f-args>)
-
-command! -nargs=* GoCoverage call gopher#coverage#do()

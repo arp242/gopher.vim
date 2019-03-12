@@ -37,43 +37,27 @@ fun! Test_cursor_offset() abort
   call assert_equal(g:test_tmpdir . '/off:#8', l:out)
 endfun
 
-fun! Test_lines() abort
-  new
-  let l:want = ['aaa', 'bbb']
-  call append(0, l:want)
-
-  let l:out = gopher#internal#lines()
-  call assert_equal(l:want+[''], l:out)
-
-  set fileformat=dos
-  silent w lines
-  let l:out = gopher#internal#lines()
-  call assert_equal(l:want+[''], l:out)
-endfun
-
-fun! Test_trim() abort
-  let l:tests = {
-        \ 'xx':                'xx',
-        \ '  xx':              'xx',
-        \ 'xx  ':              'xx',
-        \ "xx\n":              'xx',
-        \ "\txx\t\n":          'xx',
-        \ "x  x  \t   \n   ":  'x  x',
-        \ }
-
-  for l:k in keys(l:tests)
-    call assert_equal(l:tests[l:k], gopher#internal#trim(l:k), l:k)
-  endfor
-endfun
-
-fun! Benchmark_trim() abort
-  let l:s = '  hello  '
-  for i in range(0, g:bench_n)
-    call gopher#internal#trim(l:s)
-  endfor
-endfun
-
 fun! Test_diag() abort
   " Just make sure it doesn't error out.
   silent call gopher#internal#diag(0)
+endfun
+
+fun! Test_add_build_tags() abort
+  " input, g:gopher_build_tags, want
+  let l:tests = [
+        \ ['no flags', ['go', 'test'],               [],    ['go', 'test']],
+        \ ['add flag', ['go', 'test'],               ['x'], ['go', 'test', '-tags', '"x"']],
+        \ ['merge',    ['go', 'test', '-tags', 'y'], ['x'], ['go', 'test', '-tags', '"y x"']],
+        \ ['add before pkg', ['go', 'test', 'p'],    ['x'], ['go', 'test', '-tags', '"x"', 'p']],
+        \ ['merge before pkg', ['go', 'test', '-tags', 'y', 'p'],    ['x'], ['go', 'test', '-tags', '"y x"', 'p']],
+        \ ]
+
+  for l:tt in l:tests
+    let [l:name, l:in, g:gopher_build_tags, l:want] = l:tt
+    let l:out = gopher#internal#add_build_tags(l:in)
+
+    if l:out != l:want
+      call Errorf("%s failed\nwant: %s\nout:  %s", l:name, l:want, l:out)
+    endif
+  endfor
 endfun

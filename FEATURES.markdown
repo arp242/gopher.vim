@@ -5,7 +5,7 @@ started; this is just a quick overview.
 
     BULDING
 
-    :GoBuildTags                  g:gopher_build_tags
+    :GoBuildTags                  Set g:gopher_build_tags
     :GoInstall                    :compiler go     | :make
     :GoTest                       :compiler gotest | :make
     :GoTestCompile                :make -c
@@ -52,7 +52,10 @@ started; this is just a quick overview.
     :GoFiles                      :!go list ...; rare enough to not need a command on its own, IMHO
     :GoDeps                       Idem
 
-    :GoCoverage                   :CoCoverage; would prefer external plugin for this though.
+    :GoCoverage                   :CoCoverage; would be a good candidte for an external plugin, but
+                                               I can't find any good ones.
+    :GoCoverageClear              :GoCoverage clear
+    :GoCoverageToggle             :GoCoverage toggle
 
     DEBUGGER
 
@@ -84,8 +87,6 @@ started; this is just a quick overview.
     :GoCallstack
     :GoChannelPeers
     :GoCoverageBrowser
-    :GoCoverageClear
-    :GoCoverageToggle
     :GoDescribe
     :GoDrop
     :GoFillStruct
