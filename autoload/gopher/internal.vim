@@ -131,7 +131,8 @@ fun! gopher#internal#diag(to_clipboard) abort
       let l:state += s:indent(l:out)
     else
       let l:out = substitute('GOPATH=' . l:out, "\n", '; GOROOT=', '')
-      let l:state += s:indent(l:version . '; ' . l:out)
+      let l:state += s:indent(printf('%s; %s; GO111MODULE=%s', l:version, l:out,
+            \ $GO111MODULE is# '' ? '[unset]' : $GO111MODULE))
     endif
 
     " gopher.vim version.
@@ -149,7 +150,7 @@ fun! gopher#internal#diag(to_clipboard) abort
     let l:state = add(l:state, ' ')
 
     " List command history (if any).
-    let l:state = add(l:state, 'COMMAND HISTORY')
+    let l:state = add(l:state, 'COMMAND HISTORY (newest on top)')
     for l:h in gopher#system#history()
       if l:h[4]
         let l:state = add(l:state, '    shell: ' . l:h[2])

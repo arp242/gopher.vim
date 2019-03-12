@@ -200,7 +200,8 @@ OPTIONS                                                       *gopher-options*
 *g:gopher_debug* = `[]`
         List of debugging options:
 
-        commands    Records all shell commands; use |:GoDiag| to view.
+        commands    Records all shell commands; use |:GoDiag| or
+        `gopher#system#history()` to view.
 
 *g:gopher_tag_default* = `json`
         Default tag for |:GoTags| when no parameters are given. Can be any

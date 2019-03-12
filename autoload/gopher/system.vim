@@ -43,7 +43,8 @@ fun! gopher#system#setup() abort
 endfun
 
 " Get command history (only populated if 'commands' is in the g:gopher_debug)
-" variable.
+" variable. Note that the list is reversed (new entries are prepended, not
+" appended).
 fun! gopher#system#history() abort
   return s:history
 endfun
@@ -293,12 +294,12 @@ fun! gopher#system#_hist_(cmd, start, exit, out, job) abort
     if l:debug_cmd[0][:len(s:gobin) - 1] is# s:gobin
       let l:debug_cmd[0] = 's:gobin/' . l:debug_cmd[0][len(s:gobin) + 1:]
     endif
-    let s:history = add(s:history, [
+    let s:history = insert(s:history, [
           \ a:exit,
           \ s:since(a:start),
           \ s:join_shell(l:debug_cmd),
           \ a:out,
-          \ !a:job])
+          \ !a:job], 0)
 endfun
 
 " Format time elapsed since start.
