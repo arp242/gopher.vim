@@ -55,6 +55,23 @@ fun! gopher#internal#has_debug(flag) abort
   return index(g:gopher_debug, a:flag) >= 0
 endfun
 
+" Report if the current buffer is inside GOPATH.
+fun! gopher#internal#in_gopath() abort
+  let [l:out, l:err] = gopher#system#run(['go', 'env', 'GOPATH'])
+  if l:err
+    return gopher#internal#error(l:out)
+  endif
+
+  let l:path = expand('%:p')
+  for l:gopath in split(l:out, gopher#internal#platform('win') ? ';' : ':')
+    if gopher#str#has_prefix(l:path, l:out)
+      return 1
+    endif
+  endfor
+
+  return 0
+endfun
+
 " Check if this is the requested OS.
 "
 " Supports 'win', 'unix'.

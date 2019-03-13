@@ -176,11 +176,9 @@ endfun
 "
 " TODO: Don't run multiple jobs that modify the buffer at the same time. For
 " some tools (like gorename) we need a global lock.
-" TODO: Neovim
 fun! gopher#system#job(done, cmd) abort
   if type(a:cmd) isnot v:t_list
-    call gopher#internal#error('must pass a list')
-    return
+    return gopher#internal#error('must pass a list')
   endif
 
   let l:state = {
@@ -189,13 +187,20 @@ fun! gopher#system#job(done, cmd) abort
         \ 'exit':   -1,
         \ 'start':  reltime(),
         \ 'cmd':    a:cmd,
-        \ 'done':   a:done,
-        \ }
+        \ 'done':   a:done}
+
+  if has('nvim')
+    let l:state.closed = 1
+    return jobstart(a:cmd, {
+          \ 'on_stdout': function('s:j_out_cb',  [], l:state),
+          \ 'on_stderr': function('s:j_out_cb',  [], l:state),
+          \ 'on_exit':   function('s:j_exit_cb', [], l:state),
+          \ })
+  endif
 
   return job_start(a:cmd, {
-        \ 'exit_cb':  function('s:j_exit_cb', [], l:state),
-        \ 'out_cb':   function('s:j_out_cb', [], l:state),
-        \ 'err_cb':   function('s:j_err_cb', [], l:state),
+        \ 'callback': function('s:j_out_cb',   [], l:state),
+        \ 'exit_cb':  function('s:j_exit_cb',  [], l:state),
         \ 'close_cb': function('s:j_close_cb', [], l:state),
         \})
 endfun
@@ -204,6 +209,10 @@ endfun
 " running after this returns!
 " It will return the job status ("fail" or "dead").
 fun! gopher#system#job_wait(job) abort
+  if has('nvim')
+    return jobwait(a:job) is 0 ? 'dead' : 'fail'
+  endif
+
   while 1
     let l:s = job_status(a:job)
     if l:s isnot# 'run'
@@ -270,7 +279,7 @@ fun! s:download(force) abort
   call gopher#internal#info('running "go mod download"; this may take a few seconds')
   let l:out = system(printf('cd %s && go mod download', s:gotools))
   if v:shell_error
-    echoerr l:out
+    call gopher#internal#error(l:out)
     return 0
   endif
 
@@ -318,6 +327,15 @@ fun! s:join_shell(l, ...) abort
   endtry
 endfun
 
+fun! s:j_exit_cb(job, exit, ...) abort dict
+  let self.exit = a:exit
+
+  if self.closed
+    call gopher#system#_hist_(self.cmd, self.start, self.exit, self.out, 1)
+    call self.done(self.exit, self.out)
+  endif
+endfun
+
 fun! s:j_close_cb(ch) abort dict
   let self.closed = 1
 
@@ -327,19 +345,11 @@ fun! s:j_close_cb(ch) abort dict
   endif
 endfun
 
-fun! s:j_exit_cb(job, exit) abort dict
-  let self.exit = a:exit
-
-  if self.closed
-    call gopher#system#_hist_(self.cmd, self.start, self.exit, self.out, 1)
-    call self.done(self.exit, self.out)
+fun! s:j_out_cb(ch, msg, ...) abort dict
+  let l:msg = a:msg
+  if type(l:msg) is v:t_list
+    let l:msg = join(l:msg, "\n")
   endif
-endfun
 
-fun! s:j_out_cb(ch, msg) abort dict
-  let self.out .= a:msg
-endfun
-
-fun! s:j_err_cb(ch, msg) abort dict
-  let self.out .= a:msg
+  let self.out .= l:msg
 endfun
