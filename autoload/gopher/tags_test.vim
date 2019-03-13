@@ -43,6 +43,7 @@ fun! Test_tags() abort
   " Remove all based on offset.
   let l:want = l:input + ['']
   call gopher#tags#modify(0, 0, -1, '-rm')
+  " vint: -ProhibitCommandRelyOnUser -ProhibitCommandWithUnintendedSideEffect
   silent %s/ *$//g  " Leaves trailing whitespace.
   let l:got = gopher#buf#lines()
   if l:want != l:got
