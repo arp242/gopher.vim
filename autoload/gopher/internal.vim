@@ -63,7 +63,7 @@ fun! gopher#internal#in_gopath() abort
   endif
 
   let l:path = expand('%:p')
-  for l:gopath in split(l:out, gopher#internal#platform('win') ? ';' : ':')
+  for l:gopath in split(l:out, gopher#internal#pathsep())
     if gopher#str#has_prefix(l:path, l:out)
       return 1
     endif
@@ -83,6 +83,11 @@ fun! gopher#internal#platform(n) abort
   endif
 
   call gopher#internal#error('gopher#internal#platform: unknown parameter: ' . a:n)
+endfun
+
+" Get the path separator for this platform.
+fun! gopher#internal#pathsep() abort
+  return gopher#internal#platform('win') ? ';' : ':'
 endfun
 
 let s:go_commands = ['go', 'bug', 'build', 'clean', 'doc', 'env', 'fix', 'fmt',

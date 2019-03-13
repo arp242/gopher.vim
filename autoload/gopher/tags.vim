@@ -1,14 +1,13 @@
-" TODO: doesn't work on modified buffers when not using visual mode:
-"       gopher.vim: line selection is invalid
-"
-" TODO: Doesn't replace correct text when buffer is modified in visual mode.
-"
-" TODO: -modified does't work
-"        gopher.vim: gomodifytags exit 1: failed to parse -modified archive: reading archive file formam.go: unexpected EOF
-"
 " TODO: :GoTags json=foo doesn't give the expected results?
-"
-" https://github.com/fatih/vim-go/blob/master/autoload/go/tags_test.vim
+
+" Format the current buffer as an 'overlay archive':
+" https://godoc.org/golang.org/x/tools/go/buildutil#ParseOverlayArchive
+fun! s:archive() abort
+  return printf("%s\n%d\n%s",
+          \ expand('%'),
+          \ line2byte('$') + len(getline('$')) - 1,
+          \ join(gopher#buf#lines(), "\n"))
+endfun
 
 fun! gopher#tags#modify(start, end, count, ...) abort
   let l:commands = {'add': [], 'rm': []}
@@ -41,15 +40,19 @@ endfun
 fun! s:run(start, end, offset, mode, tags) abort
   let [l:out, l:err] = gopher#system#tool(
         \ s:create_cmd(a:mode, a:start, a:end, a:offset, a:tags),
-        \ printf("%s\n%d\n%s",
-          \ expand('%'),
-          \ line2byte('$') + len(getline('$')),
-          \ join(gopher#buf#lines(), "\n")))
+        \ s:archive())
   if l:err
-    return gopher#internal#error('gomodifytags exit %d: %s', l:err, out)
+    return gopher#internal#error('gomodifytags exit %d: %s', l:err, l:out)
   endif
 
-  call s:write_out(out)
+  let l:outlist = split(l:out, "\n")
+  call setline(1, l:outlist)
+  if line('$') - 1 > len(l:outlist)
+    exe printf('%d,%dd', len(l:outlist), line('$') - 1)
+    undojoin
+  endif
+
+  " call s:write_out(l:out)
 endfun
 
 " Create the command to run gomodifytags.
@@ -59,8 +62,11 @@ endfun
 " offset        Run for the field at the given byte offset.
 " tags          List of tags (e.g. ['json'], ['json,flag'], ['json', 'db'])
 fun! s:create_cmd(mode, start, end, offset, tags) abort
+  " Operating on modified buffers may not work or give the wrong output when
+  " using -format json, so just replace the entire buffer until this is fixed.
+  " https://github.com/fatih/gomodifytags/issues/39
   let l:cmd = ['gomodifytags',
-        \ '-format', 'json',
+        \ '-format', 'source',
         \ '-file', expand('%')]
         \ + (g:gopher_tag_transform isnot# '' ? ['-transform', g:gopher_tag_transform] : [])
         \ + (&modified ? ['-modified'] : [])
@@ -70,7 +76,7 @@ fun! s:create_cmd(mode, start, end, offset, tags) abort
   let l:tags = map(copy(a:tags), {i, v -> split(l:v, ',')[0] })
 
   " Special case: remove all tags (:GoTags -rm).
-  if a:mode is# 'rm' && len(l:tags) is 0
+  if a:mode is# 'remove' && len(l:tags) is 0
     return l:cmd + ['-clear-tags']
   endif
 
@@ -85,19 +91,23 @@ fun! s:create_cmd(mode, start, end, offset, tags) abort
 endfun
 
 " Write output to the buffer.
-fun! s:write_out(out) abort
-  let l:result = json_decode(a:out)
-  if type(l:result) isnot v:t_dict
-    return gopher#internal#error('unexpected output: %s', a:out)
-  endif
-
-  let l:index = 0
-  for l:line in range(l:result['start'], l:result['end'])
-    call setline(l:line, l:result['lines'][l:index])
-    let l:index += 1
-  endfor
-
-  if has_key(l:result, 'errors')
-    call gopher#internal#error(l:result['errors'])
-  endif
-endfun
+" fun! s:write_out(out) abort
+"   try
+"     let l:result = json_decode(a:out)
+"   catch
+"     return gopher#internal#error(a:out)
+"   endtry
+"   if type(l:result) isnot v:t_dict
+"     return gopher#internal#error('unexpected output: %s', a:out)
+"   endif
+"
+"   let l:index = 0
+"   for l:line in range(l:result['start'], l:result['end'])
+"     call setline(l:line, l:result['lines'][l:index])
+"     let l:index += 1
+"   endfor
+"
+"   if has_key(l:result, 'errors')
+"     call gopher#internal#error(l:result['errors'])
+"   endif
+" endfun

@@ -7,12 +7,6 @@ let s:gobin   = s:gotools . '/bin'
 " #job(), in that order.
 let s:history = []
 
-" Prepend our GOBIN to the path so that external tools/plugins use binaries from
-" here.
-if s:gobin !~# $PATH
-  let $PATH = s:gobin . ':' . $PATH
-endif
-
 " List of all tools we know about. The key is the binary name, the value is a
 " 2-tuple with the full package name and a boolean to signal that go install has
 " been run this Vim session.
@@ -222,8 +216,7 @@ fun! gopher#system#job_wait(job) abort
   endwhile
 endfun
 
-" Get the full path to a tool name; download, compile and install it from the
-" go.mod file if needed.
+" Download, compile and install a tool if needed.
 fun! s:tool(name) abort
   if !has_key(s:tools, a:name)
     call gopher#internal#error('unknown tool: ' . a:name)
@@ -235,7 +228,7 @@ fun! s:tool(name) abort
 
   " We already ran go install and there is a binary.
   if l:tool[1] && filereadable(l:bin)
-    return l:bin
+    return a:name
   endif
 
   if !s:download(0)
@@ -262,7 +255,7 @@ fun! s:tool(name) abort
     call gopher#system#restore_env('GO111MODULE', l:old_gomod)
   endtry
 
-  return l:bin
+  return a:name
 endfun
 
 fun! s:escape_single_quote(s) abort
