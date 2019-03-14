@@ -1,4 +1,4 @@
-" buf.vim: utilities for working with buffers.
+" buf.vim: Utilities for working with buffers.
 
 " Get all lines in the buffer as a a list.
 fun! gopher#buf#lines() abort

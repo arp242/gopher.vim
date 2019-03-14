@@ -1,4 +1,4 @@
-" gopher.vim: add various commonly used functions, for brecity.
+" gopher.vim: Various common functions, or functions that don't have a place elsewhere.
 
 " Output an error message to the screen. The message can be either a list or a
 " string; every line will be echomsg'd separately.
@@ -12,7 +12,7 @@ fun! gopher#info(msg, ...) abort
   call s:echo(a:msg, 'Debug', a:000)
 endfun
 
-" Report if the user enabled a debug flag.
+" Report if the user enabled the given debug flag.
 fun! gopher#has_debug(flag) abort
   return index(g:gopher_debug, a:flag) >= 0
 endfun

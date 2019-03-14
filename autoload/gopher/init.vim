@@ -1,4 +1,4 @@
-" init.vim: initialisation of the plugin.
+" init.vim: Initialisation of the plugin.
 
 " Check if the requires Vim/Neovim/Go versions are installed.
 fun! gopher#init#version() abort
@@ -34,6 +34,7 @@ fun! gopher#init#version() abort
   endif
 endfun
 
+" Check if the 'go version' output is a version we support.
 fun! gopher#init#version_check(v) abort
   return a:v =~# '^go version go1\.\d\d\(\.\d\)\? .\+/.\+$'
 endfun

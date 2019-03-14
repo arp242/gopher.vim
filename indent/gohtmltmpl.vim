@@ -12,7 +12,7 @@ if exists('*GetGoHTMLTmplIndent')
   finish
 endif
 
-function! GetGoHTMLTmplIndent(lnum)
+fun! GetGoHTMLTmplIndent(lnum)
   " Get HTML indent
   if exists('*HtmlIndent')
     let l:ind = HtmlIndent()

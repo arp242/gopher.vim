@@ -1,4 +1,4 @@
-" present.vim: implement support for go present slides.
+" present.vim: Implement support for go present slides.
 
 " Jump to the next or previous section.
 "

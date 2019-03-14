@@ -1,4 +1,4 @@
-" coverage.vim: implement :GoCoverage.
+" coverage.vim: Implement :GoCoverage.
 
 let s:visible = 0
 

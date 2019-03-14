@@ -17,8 +17,11 @@ for root, dirs, files in os.walk('autoload'):
       lines = fp.readlines()
 
     # allfuns[foo.vim] = [{
-    #   sig: 'foo#fun(a)
-    #   doc: 'This is ...'
+    #   doc: 'this file contians ...',
+    #   funs: [{
+    #     sig: 'foo#fun(a)
+    #     doc: 'This is ...'
+    #   }]
     # }, ...]
     allfuns = {}
 
@@ -32,19 +35,26 @@ for root, dirs, files in os.walk('autoload'):
         if last[0] == '_' and last[-1] == '_':
           continue
         if allfuns.get(file, None) is None:
-          allfuns[file] = []
+          allfuns[file] = {'doc': ':'.join(lines[-1].split(':')[1:]).strip(), 'funs': []}
         curfun = line.replace('fun! ', '').replace(' abort\n', '')
         curdoc = []
       elif line.startswith('" ') and curfun is not None:
         curdoc.append('      ' + line[2:].strip())
       elif line.strip() == '' and curfun is not None:
         curdoc.reverse()
-        allfuns[file].append({'fun': curfun, 'doc': '\n'.join(curdoc)})
+        allfuns[file]['funs'].append({'fun': curfun, 'doc': '\n'.join(curdoc)})
         curfun = None
         curdoc = None
 
+    # TODO: order better; os.walk() isn't sorted (and neither is dict we use to
+    # store).
     for file, funs in allfuns.items():
-      print('[{}]({}/{})\n{}\n'.format(file, root, file, '-' * len(file)))
-      for f in funs:
+      header = '[{}]({}/{})'.format(file, root, file)
+      print(header)
+      print('-' * len(header))
+      print(funs['doc'])
+      print()
+      funs['funs'].reverse()
+      for f in funs['funs']:
         print('    {}\n{}\n'.format(f['fun'], f['doc']))
       print()

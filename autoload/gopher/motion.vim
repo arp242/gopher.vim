@@ -1,4 +1,4 @@
-" motion.vim: implement motions and text objects.
+" motion.vim: Implement motions and text objects.
 
 " Jump to the next or previous top-level declaration.
 "
@@ -36,6 +36,8 @@ fun! gopher#motion#jump(mode, dir) abort
 endfun
 
 " Select current comment block.
+"
+" mode can be 'a' or 'i', for the 'ac' and 'ic' variants.
 fun! gopher#motion#comment(mode) abort
   let [l:fname, l:tmp] = gopher#system#tmpmod()
 
@@ -124,8 +126,10 @@ fun! gopher#motion#comment(mode) abort
   endif
 endfun
 
-" Select a function in visual mode.
-function! gopher#motion#function(mode) abort
+" Select the current function.
+"
+" mode can be 'a' or 'i', for the 'af' and 'if' variants.
+fun! gopher#motion#function(mode) abort
   let [l:fname, l:tmp] = gopher#system#tmpmod()
 
   try

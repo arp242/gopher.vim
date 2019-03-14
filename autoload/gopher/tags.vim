@@ -1,7 +1,8 @@
-" tags.vim: implement :GoTags
+" tags.vim: Implement :GoTags.
 "
 " TODO: :GoTags json=foo doesn't give the expected results?
 
+" Modify tags.
 fun! gopher#tags#modify(start, end, count, ...) abort
   let l:commands = {'add': [], 'rm': []}
   let l:rm = 0

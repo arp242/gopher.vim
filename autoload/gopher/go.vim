@@ -1,4 +1,4 @@
-" go.vim: utilities for working with Go files.
+" go.vim: Utilities for working with Go files.
 
 " Report if the current buffer is a Go test file.
 fun! gopher#go#is_test() abort

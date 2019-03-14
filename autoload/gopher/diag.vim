@@ -1,4 +1,4 @@
-" diag.vim: implement :GoDiag
+" diag.vim: Implement :GoDiag.
 
 let s:root = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 

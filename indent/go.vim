@@ -18,7 +18,7 @@ if exists('*GoIndent')
   finish
 endif
 
-function! GoIndent(lnum)
+fun! GoIndent(lnum)
   let l:prevlnum = prevnonblank(a:lnum - 1)
 
   " Top of file.
