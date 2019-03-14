@@ -1,3 +1,5 @@
+" present.vim: implement support for go present slides.
+
 " Jump to the next or previous section.
 "
 " mode can be 'n', 'o', or 'v' for normal, operator-pending, or visual mode.

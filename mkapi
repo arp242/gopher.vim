@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+
+import os
+
+print('''
+Public API for gopher.vim. This is not stable yet!
+
+This file is generated using the mkapi script
+''')
+
+for root, dirs, files in os.walk('autoload'):
+  for file in files:
+    if file.endswith('_test.vim'):
+      continue
+
+    with open('{}/{}'.format(root, file)) as fp:
+      lines = fp.readlines()
+
+    # allfuns[foo.vim] = [{
+    #   sig: 'foo#fun(a)
+    #   doc: 'This is ...'
+    # }, ...]
+    allfuns = {}
+
+    lines.reverse()
+    curfun = None
+    curdoc = None
+    for line in lines:
+      if line.startswith('fun! gopher#'):
+        # "private" function
+        last = line.split('#').pop().split('(')[0]
+        if last[0] == '_' and last[-1] == '_':
+          continue
+        if allfuns.get(file, None) is None:
+          allfuns[file] = []
+        curfun = line.replace('fun! ', '').replace(' abort\n', '')
+        curdoc = []
+      elif line.startswith('" ') and curfun is not None:
+        curdoc.append('      ' + line[2:].strip())
+      elif line.strip() == '' and curfun is not None:
+        curdoc.reverse()
+        allfuns[file].append({'fun': curfun, 'doc': '\n'.join(curdoc)})
+        curfun = None
+        curdoc = None
+
+    for file, funs in allfuns.items():
+      print('[{}]({}/{})\n{}\n'.format(file, root, file, '-' * len(file)))
+      for f in funs:
+        print('    {}\n{}\n'.format(f['fun'], f['doc']))
+      print()

@@ -1,3 +1,5 @@
+" motion.vim: implement motions and text objects.
+
 " Jump to the next or previous top-level declaration.
 "
 " mode can be 'n', 'o', or 'v' for normal, operator-pending, or visual mode.
@@ -40,14 +42,13 @@ fun! gopher#motion#comment(mode) abort
   try
     let l:cmd = ['motion', '-format', 'json',
           \ '-file',   l:fname,
-          \ '-offset', gopher#internal#cursor_offset(),
+          \ '-offset', gopher#buf#cursor(),
           \ '-mode',   'comment',
           \ ]
 
     let [l:out, l:err] = gopher#system#tool(l:cmd)
     if l:err
-      call gopher#internal#error(l:out)
-      return
+      return gopher#error(l:out)
     endif
   finally
     if l:tmp
@@ -57,8 +58,7 @@ fun! gopher#motion#comment(mode) abort
 
   let l:loc = json_decode(l:out)
   if type(l:loc) isnot v:t_dict || !has_key(l:loc, 'comment')
-    call gopher#internal#error(l:out)
-    return
+    return gopher#error(l:out)
   endif
 
   let l:info = l:loc.comment
@@ -131,14 +131,13 @@ function! gopher#motion#function(mode) abort
   try
     let l:cmd = ['motion', '-mode', 'enclosing', '-parse-comments',
           \ '-file',   l:fname,
-          \ '-offset', gopher#internal#cursor_offset(),
+          \ '-offset', gopher#buf#cursor(),
           \ '-format', 'vim',
           \ ]
 
     let [l:out, l:err] = gopher#system#tool(l:cmd)
     if l:err
-      call gopher#internal#error(out)
-      return
+      return gopher#error(out)
     endif
   finally
     if l:tmp
@@ -148,8 +147,7 @@ function! gopher#motion#function(mode) abort
 
   let l:loc = json_decode(l:out)
   if type(l:loc) isnot v:t_dict || !has_key(l:loc, 'fn')
-    call gopher#internal#error(l:out)
-    return
+    return gopher#error(l:out)
   endif
 
   let l:info = l:loc.fn

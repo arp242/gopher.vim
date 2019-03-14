@@ -1,3 +1,5 @@
+" coverage.vim: implement :GoCoverage.
+
 let s:visible = 0
 
 " Highlights.
@@ -32,11 +34,10 @@ fun! gopher#coverage#do(...) abort
   try
     let [l:out, l:err] = gopher#system#run(['go', 'test',
           \ '-coverprofile', l:tmp] +
-          \ gopher#internal#add_build_tags(a:000) +
+          \ gopher#go#add_build_tags(a:000) +
           \ ['./' . expand('%:.:h')])
     if l:err
-      call gopher#internal#error(l:out)
-      return
+      return gopher#error(l:out)
     endif
 
     let l:profile = readfile(l:tmp)
@@ -64,7 +65,7 @@ endfun
 
 " Read the coverprofile file and annotate all loaded buffers.
 fun! s:apply(profile) abort
-  let l:path = gopher#internal#packagepath()
+  let l:path = gopher#go#packagepath()
   if l:path is# ''
     return
   endif
@@ -101,7 +102,7 @@ fun! s:apply(profile) abort
 
       "silent exe l:b . 'buf'
       silent exe l:b . 'sbuf'
-      for l:cov in get(l:other_files, gopher#internal#packagepath(), [])
+      for l:cov in get(l:other_files, gopher#go#packagepath(), [])
         call gopher#coverage#_highlight_(l:cov)
       endfor
     endfor

@@ -1,6 +1,4 @@
-fun! gopher#init#version_check(v) abort
-  return a:v =~# '^go version go1\.\d\d\(\.\d\)\? .\+/.\+$'
-endfun
+" init.vim: initialisation of the plugin.
 
 " Check if the requires Vim/Neovim/Go versions are installed.
 fun! gopher#init#version() abort
@@ -36,6 +34,10 @@ fun! gopher#init#version() abort
   endif
 endfun
 
+fun! gopher#init#version_check(v) abort
+  return a:v =~# '^go version go1\.\d\d\(\.\d\)\? .\+/.\+$'
+endfun
+
 let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 let s:config_done = 0
 
@@ -47,17 +49,17 @@ fun! gopher#init#config() abort
 
   " Ensure that the tools dir is in the PATH and takes precedence over other
   " (possibly outdated) tools.
-  let $PATH = s:root . '/tools/bin' . gopher#internal#pathsep() . $PATH
+  let $PATH = s:root . '/tools/bin' . gopher#system#pathsep() . $PATH
 
   " Set defaults.
-  let g:gopher_build_tags    = get(g:, 'gopher_build_tags', [])
-  let g:gopher_go_flags      = gopher#internal#add_build_tags(get(g:, 'gopher_go_flags', ''))
-  let g:gopher_highlight     = get(g:, 'gopher_highlight', ['string-spell', 'string-fmt'])
-  let g:gopher_debug         = get(g:, 'gopher_debug', [])
-  let g:gopher_tag_transform = get(g:, 'gopher_tag_transform', 'snakecase')
-  let g:gopher_tag_default   = get(g:, 'gopher_tag_default', 'json')
-
-  "g:gopher_gorename_flags
+  let g:gopher_build_tags     = get(g:, 'gopher_build_tags', [])
+  let g:gopher_build_flags    = get(g:, 'gopher_build_flags', [])
+        \ + (len(get(g:, 'gopher_build_tags', [])) > 0 ? ['-tags', join(g:gopher_build_tags, ' ')] : [])
+  let g:gopher_highlight      = get(g:, 'gopher_highlight', ['string-spell', 'string-fmt'])
+  let g:gopher_debug          = get(g:, 'gopher_debug', [])
+  let g:gopher_tag_transform  = get(g:, 'gopher_tag_transform', 'snakecase')
+  let g:gopher_tag_default    = get(g:, 'gopher_tag_default', 'json')
+  let g:gopher_gorename_flags = get(g:, 'gopher_gorename_flags', [])
 
   let s:config_done = 1
 endfun

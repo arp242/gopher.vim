@@ -1,13 +1,6 @@
+" tags.vim: implement :GoTags
+"
 " TODO: :GoTags json=foo doesn't give the expected results?
-
-" Format the current buffer as an 'overlay archive':
-" https://godoc.org/golang.org/x/tools/go/buildutil#ParseOverlayArchive
-fun! s:archive() abort
-  return printf("%s\n%d\n%s",
-          \ expand('%'),
-          \ line2byte('$') + len(getline('$')) - 1,
-          \ join(gopher#buf#lines(), "\n"))
-endfun
 
 fun! gopher#tags#modify(start, end, count, ...) abort
   let l:commands = {'add': [], 'rm': []}
@@ -28,7 +21,7 @@ fun! gopher#tags#modify(start, end, count, ...) abort
     call add(l:commands.add, g:gopher_tag_default)
   endif
 
-  let l:offset = (a:count > -1 ? 0 : gopher#internal#cursor_offset())
+  let l:offset = (a:count > -1 ? 0 : gopher#buf#cursor())
   if len(l:commands.add) > 0
     call s:run(a:start, a:end, l:offset, 'add', l:commands.add)
   endif
@@ -40,9 +33,9 @@ endfun
 fun! s:run(start, end, offset, mode, tags) abort
   let [l:out, l:err] = gopher#system#tool(
         \ s:create_cmd(a:mode, a:start, a:end, a:offset, a:tags),
-        \ s:archive())
+        \ gopher#system#archive())
   if l:err
-    return gopher#internal#error('gomodifytags exit %d: %s', l:err, l:out)
+    return gopher#error('gomodifytags exit %d: %s', l:err, l:out)
   endif
 
   let l:outlist = split(l:out, "\n")
@@ -95,10 +88,10 @@ endfun
 "   try
 "     let l:result = json_decode(a:out)
 "   catch
-"     return gopher#internal#error(a:out)
+"     return gopher#error(a:out)
 "   endtry
 "   if type(l:result) isnot v:t_dict
-"     return gopher#internal#error('unexpected output: %s', a:out)
+"     return gopher#error('unexpected output: %s', a:out)
 "   endif
 "
 "   let l:index = 0
@@ -108,6 +101,6 @@ endfun
 "   endfor
 "
 "   if has_key(l:result, 'errors')
-"     call gopher#internal#error(l:result['errors'])
+"     call gopher#error(l:result['errors'])
 "   endif
 " endfun

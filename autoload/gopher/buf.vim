@@ -1,4 +1,4 @@
-" Buffer utilities.
+" buf.vim: utilities for working with buffers.
 
 " Get all lines in the buffer as a a list.
 fun! gopher#buf#lines() abort
@@ -48,3 +48,15 @@ fun! gopher#buf#write_all() abort
   endtry
 endfun
 
+" Returns the byte offset for the cursor.
+"
+" If the first argument is non-blank it will return filename:#offset
+fun! gopher#buf#cursor(...) abort
+  let l:o = line2byte(line('.')) + (col('.') - 2)
+
+  if len(a:000) > 0 && a:000[0]
+    return printf('%s:#%d', expand('%:p'), l:o)
+  endif
+
+  return l:o
+endfun

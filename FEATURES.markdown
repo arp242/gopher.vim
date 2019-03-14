@@ -25,12 +25,11 @@ overview.
     :GoLint                       LSP, ALE, or other generic linting plugin.
     :GoAsmFmtAutoSaveToggle
     :GoErrCheck
-    :GoFmt
-    :GoFmtAutoSaveToggle
-    :GoImports                    formatprg is set to goimports so you can use gq
+    :GoFmt                        gq: formatprg is set to "gofmt"
+    :GoImports                    set formatprg=goimports (see :help ft-go)
     :GoMetaLinter                 :compiler golint | :make
+    :GoFmtAutoSaveToggle          autocmd, or plugin like ALE
     :GoMetaLinterAutoSaveToggle
-    :GoModFmt
     :GoVet
 
     CODE INSIGHT
@@ -82,6 +81,7 @@ overview.
 
     NOT IMPLEMENTED (YET)
 
+    :GoModFmt                     go mod edit -fmt doesn't read from stdin :-/
     :GoAlternate
     :GoAutoTypeInfoToggle
     :GoCallees

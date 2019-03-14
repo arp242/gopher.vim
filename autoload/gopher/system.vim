@@ -1,3 +1,5 @@
+" buf.vim: utilities for working with the external tools.
+
 let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 let s:gotools = s:root . '/tools'         " Our Go tools.
 let s:gobin   = s:gotools . '/bin'
@@ -70,15 +72,22 @@ fun! gopher#system#tmpmod() abort
   return [expand('%:p'), 0]
 endfun
 
+" Format the current buffer as an 'overlay archive':
+" https://godoc.org/golang.org/x/tools/go/buildutil#ParseOverlayArchive
+fun! gopher#system#archive() abort
+  return printf("%s\n%d\n%s",
+          \ expand('%'),
+          \ line2byte('$') + len(getline('$')) - 1,
+          \ join(gopher#buf#lines(), "\n"))
+endfun
+
 " Run a known Go tool.
 fun! gopher#system#tool(cmd, ...) abort
   if type(a:cmd) isnot v:t_list
-    call gopher#internal#error('gopher#system#tool: must pass a list')
-    return
+    return gopher#error('gopher#system#tool: must pass a list')
   endif
   if len(a:000) > 1
-    call gopher#internal#error('gopher#system#tool: can only pass one optional argument')
-    return
+    return gopher#error('gopher#system#tool: can only pass one optional argument')
   endif
 
   let l:bin = s:tool(a:cmd[0])
@@ -92,8 +101,7 @@ endfun
 " Run a known Go tool in the background.
 fun! gopher#system#tool_job(done, cmd) abort
   if type(a:cmd) isnot v:t_list
-    call gopher#internal#error('must pass a list')
-    return
+    return gopher#error('must pass a list')
   endif
 
   let l:bin = s:tool(a:cmd[0])
@@ -117,26 +125,24 @@ endfun
 " An optional second argument is passed to stdin.
 fun! gopher#system#run(cmd, ...) abort
   if type(a:cmd) isnot v:t_list
-    call gopher#internal#error('gopher#system#run: must pass a list')
-    return
+    return gopher#error('gopher#system#run: must pass a list')
   endif
   if len(a:000) > 1
-    call gopher#internal#error('gopher#system#run: can only pass one optional argument')
-    return
+    return gopher#error('gopher#system#run: can only pass one optional argument')
   endif
 
-  let l:cmd = s:join_shell(a:cmd)
+  let l:cmd = gopher#system#join(a:cmd)
 
   try
     let l:shell = &shell
     let l:shellredir = &shellredir
     let l:shellcmdflag = &shellcmdflag
 
-    if gopher#internal#has_debug('commands')
+    if gopher#has_debug('commands')
       let l:start = reltime()
     endif
 
-    if !gopher#internal#platform('win') && executable('/bin/sh')
+    if !gopher#system#platform('win') && executable('/bin/sh')
       set shell=/bin/sh shellredir=>%s\ 2>&1 shellcmdflag=-c
     endif
 
@@ -153,7 +159,7 @@ fun! gopher#system#run(cmd, ...) abort
     let l:out = l:out[:-2]
   endif
 
-  if gopher#internal#has_debug('commands')
+  if gopher#has_debug('commands')
     call gopher#system#_hist_(a:cmd, l:start, v:shell_error, l:out, 0)
   endif
 
@@ -172,7 +178,7 @@ endfun
 " some tools (like gorename) we need a global lock.
 fun! gopher#system#job(done, cmd) abort
   if type(a:cmd) isnot v:t_list
-    return gopher#internal#error('must pass a list')
+    return gopher#error('must pass a list')
   endif
 
   let l:state = {
@@ -216,10 +222,28 @@ fun! gopher#system#job_wait(job) abort
   endwhile
 endfun
 
+" Get the path separator for this platform.
+fun! gopher#system#pathsep() abort
+  return gopher#system#platform('win') ? ';' : ':'
+endfun
+
+" Check if this is the requested OS.
+"
+" Supports 'win', 'unix'.
+fun! gopher#system#platform(n) abort
+  if a:n is? 'win'
+    return has('win16') || has('win32') || has('win64')
+  elseif a:n is? 'unix'
+    return has('unix')
+  endif
+
+  call gopher#error('gopher#system#platform: unknown parameter: ' . a:n)
+endfun
+
 " Download, compile and install a tool if needed.
 fun! s:tool(name) abort
   if !has_key(s:tools, a:name)
-    call gopher#internal#error('unknown tool: ' . a:name)
+    call gopher#error('unknown tool: ' . a:name)
     return ''
   endif
 
@@ -246,8 +270,7 @@ fun! s:tool(name) abort
     let l:out = system(printf('cd %s && go install %s',
       \ shellescape(s:gotools), shellescape(l:tool[0])))
     if v:shell_error
-      call gopher#internal#error(l:out)
-      return
+      return gopher#error(l:out)
     endif
 
     " Record go install ran.
@@ -272,10 +295,10 @@ fun! s:download(force) abort
     return 1
   endif
 
-  call gopher#internal#info('running "go mod download"; this may take a few seconds')
+  call gopher#info('running "go mod download"; this may take a few seconds')
   let l:out = system(printf('cd %s && go mod download', s:gotools))
   if v:shell_error
-    call gopher#internal#error(l:out)
+    call gopher#error(l:out)
     return 0
   endif
 
@@ -289,7 +312,7 @@ endfun
 " Add item to history.
 " TODO: add information about stdin too.
 fun! gopher#system#_hist_(cmd, start, exit, out, job) abort
-    if !gopher#internal#has_debug('commands')
+    if !gopher#has_debug('commands')
       return
     endif
 
@@ -302,7 +325,7 @@ fun! gopher#system#_hist_(cmd, start, exit, out, job) abort
     let s:history = insert(s:history, [
           \ a:exit,
           \ s:since(a:start),
-          \ s:join_shell(l:debug_cmd),
+          \ gopher#system#join(l:debug_cmd),
           \ a:out,
           \ !a:job], 0)
 endfun
@@ -312,7 +335,8 @@ fun! s:since(start) abort
 	return substitute(reltimestr(reltime(a:start)), '\v^\s*(\d+\.\d{0,3}).*', '\1', '')
 endfun
 
-fun! s:join_shell(l, ...) abort
+" Join a list of commands to a string, escaping any shell meta characters.
+fun! gopher#system#join(l, ...) abort
   try
     let l:save = &shellslash
     set noshellslash

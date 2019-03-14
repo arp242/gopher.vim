@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/Carpetsmoker/gopher.vim.svg?branch=master)](https://travis-ci.org/Carpetsmoker/gopher.vim)
 [![codecov](https://codecov.io/gh/Carpetsmoker/gopher.vim/branch/master/graph/badge.svg)](https://codecov.io/gh/Carpetsmoker/gopher.vim)
 
-gopher.vim is an experimental Vim plugin for the Go programming language.
+gopher.vim is a Vim plugin for the Go programming language.
 
 Goals:
 
@@ -104,20 +104,26 @@ Some things you can stick in your vimrc:
     augroup my_gopher
         au!
 
-        " Make, lint, and test code.
-        au FileType go nnoremap MM :wa<CR>:compiler go<CR>:silent make!<CR>:redraw!<CR>
-        au FileType go nnoremap LL :wa<CR>:compiler golint<CR>:silent make!<CR>:redraw!<CR>
-        au FileType go nnoremap TT :wa<CR>:compiler gotest<CR>:silent make!<CR>:redraw!<CR>
+        " Qiucker way to make, lint, and test code.
+        " au FileType go nnoremap MM :wa<CR>:compiler go<CR>:silent make!<CR>:redraw!<CR>
+        " au FileType go nnoremap LL :wa<CR>:compiler golint<CR>:silent make!<CR>:redraw!<CR>
+        " au FileType go nnoremap TT :wa<CR>:compiler gotest<CR>:silent make!<CR>:redraw!<CR>
 
         " Lint on write.
-        autocmd BufWritePost *.go compiler golint | silent make! | redraw!
+        " autocmd BufWritePost *.go compiler golint | silent make! | redraw!
+
+        " Put a path before GOPATH, to use binaries from there (not recommended
+        " unless you have special needs or want to test a modified version of a
+        " tool!)
+        " autocmd Filetype go let $PATH = $HOME . '/go/bin:' . $PATH
 
         " Format buffer on write; need to make a motion for the entire buffer to
         " make this work.
-        autocmd BufWritePre *.go
-                    \  onoremap <buffer> f :<c-u>normal! mzggVG<cr>`z
-                    \| exe 'normal gqf'
-                    \| ounmap <buffer> f
+        " Use e.g. ALE or Syntastic for a more advanced experience.
+        " autocmd BufWritePre *.go
+        "             \  let s:save = winsaveview()
+        "             \| exe 'keepjumps %!goimports 2>/dev/null || cat /dev/stdin'
+        "             \| call winrestview(s:save)
     augroup end
 
 
@@ -180,3 +186,7 @@ Development
 - Prefer `printf()` over string concatenation; e.g. `printf('x: %s', ['a
   list'])` will work, whereas `'x: ' . ['a list']` will give you a useless
   error.
+
+- Use `gopher#error()` and `gopher#info()`; don't use `echom` or `echoerr`.
+
+- Prefix variables with the scope (e.g. `l:var` instead of `var`).

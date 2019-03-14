@@ -1,3 +1,5 @@
+" rename.vim: implement :GoRename.
+
 " Commandline completion: original, unexported camelCase, and exported
 " CamelCase.
 function! gopher#rename#complete(lead, cmdline, cursor) abort
@@ -8,8 +10,8 @@ function! gopher#rename#complete(lead, cmdline, cursor) abort
 endfun
 
 fun! gopher#rename#do(...) abort
-  if !gopher#internal#in_gopath()
-    return gopher#internal#error(
+  if !gopher#go#in_gopath()
+    return gopher#error(
       \ 'gorename does not work with modules yet. https://github.com/golang/go/issues/27571')
   endif
 
@@ -38,8 +40,8 @@ fun! gopher#rename#do(...) abort
     call gopher#system#tool_job({e, o -> s:done(l:e, l:o, l:autoread)}, [
           \ 'gorename',
           \ '-to',     l:to,
-          \ '-offset', gopher#internal#cursor_offset(1)
-          \ ] + gopher#internal#add_build_tags(get(g:, 'gopher_gorename_flags', [])))
+          \ '-offset', gopher#buf#cursor(1)
+          \ ] + gopher#go#add_build_tags(get(g:, 'gopher_gorename_flags', [])))
   catch
     " Just so we don't leave the buffer in nomod state on errors, and it doesn't
     " hurt to do twice.
@@ -56,13 +58,13 @@ fun! s:done(exit, out, autoread) abort
   if a:exit > 0
     return gopher#rename#_errors_(a:out)
   endif
-  call gopher#internal#info(a:out)
+  call gopher#info(a:out)
 endfun
 
 " Display an error.
 fun! gopher#rename#_errors_(out) abort
   if a:out =~# '": no identifier at this position'
-    return gopher#internal#error('gorename: no identifier at this position')
+    return gopher#error('gorename: no identifier at this position')
   endif
 
   if a:out =~# ': renaming this.*\(would conflict\|conflicts with\)'
@@ -75,7 +77,7 @@ fun! gopher#rename#_errors_(out) abort
     let l:out = a:out[:len(l:path)-1] . substitute(a:out[len(l:path):], l:pat, '', '')
     let l:out = substitute(l:out, '\s\+', ' ', 'g')
 
-    return gopher#internal#error(printf('gorename: %s', l:out))
+    return gopher#error(printf('gorename: %s', l:out))
   endif
 
   " Probably compile errors.
@@ -84,7 +86,7 @@ fun! gopher#rename#_errors_(out) abort
     if l:err =~# "^gorename: couldn't load packages due to errors:"
       continue
     endif
-    call gopher#internal#error('gorename: %s', l:err)
+    call gopher#error('gorename: %s', l:err)
   endfor
 endfun
 

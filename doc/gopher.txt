@@ -50,6 +50,20 @@ FILETYPES                                                   *gopher-filetypes*
 
                                                                        *ft-go*
 go~
+
+        The go filetype sets the following settings:
+
+                'formatprg'     `gofmt 2>/dev/null || cat /dev/stdin`
+                'equalprg'
+                                A simple/native way to format code with gofmt
+                                while ignoring errors. Use ALE or Syntastic
+                                for a more advances experience.
+
+                                Note: goimports is not used here as it can't
+                                operate over a partial file (e.g a line or
+                                function). See the snippet in the README on
+                                how to format with goimports on write.
+
                                                           *g:gopher_highlight*
         The `g:gopher_highlight` setting controls various options for the go
         syntax highlighting. Supported options:
@@ -128,6 +142,9 @@ COMMANDS                                                     *gopher-commands*
         NOTE: this only works for packages in GOPATH at the moment due to
         limitations in `gorename`: https://github.com/golang/go/issues/27571
 
+        *g:gopher_gorename_flags* = `[]`
+                List of flags to add to the `gorename` command.
+
 :GoCoverage [flags]                                              *:GoCoverage*
         Run `go test -cover` and highlight lines reported as covered and
         uncovered.
@@ -184,42 +201,38 @@ COMMANDS                                                     *gopher-commands*
 
                 :GoTags json -rm yaml         Combine add and rm
 <
+        *g:gopher_tag_default* = `json`
+                Default tag for |:GoTags| when no parameters are given. Can be
+                any valid set of arguments for |:GoTags| (e.g. `json,omitempty
+                -rm yaml`).
+
+        *g:gopher_tag_transform* = `'snakecase'`
+                Transform the struct field name when adding a tag. Supported
+                values:
+
+                        snakecase        FooBar -> foo_bar
+                        camelcase        FooBar -> fooBar
+                        lispcase         FooBar -> foo-bar
+                        pascalcase       fooBar -> FooBar
+                        keep             No transformation; FooBar -> FooBar
 
 ==============================================================================
 OPTIONS                                                       *gopher-options*
 
+General options or options that affect many commands; options specific for
+just a command are documented in the command.
+
 *g:gopher_build_tags* = `[]`
         List of build tags added to all commands that support it.
 
-*g:gopher_go_flags* = `printf('-tags "%s"', join(g:gopher_build_tags, ' '))`
-        Flags to add to all `go` commands.
-
-        TODO: rename to g:gopher_build_flags, or something. As this is mainly
-        useful for stuff like -gcflags and such.
-
-        TODO: consider merging this with gopher_build_tags, can extract build
-        tags.
+*g:gopher_build_flags* = `['-tags'] + g:gopher_build_tags`
+        List of flags to add to all `go` commands.
 
 *g:gopher_debug* = `[]`
         List of debugging options:
 
         commands    Records all shell commands; use |:GoDiag| or
         `gopher#system#history()` to view.
-
-*g:gopher_tag_default* = `json`
-        Default tag for |:GoTags| when no parameters are given. Can be any
-        valid set of arguments for |:GoTags| (e.g. `json,omitempty -rm yaml`).
-
-*g:gopher_tag_transform* = `'snakecase'`
-        Transform the struct field name when adding a tag with |:GoTags|.
-
-        Supported values:
-
-                snakecase        FooBar -> foo_bar
-                camelcase        FooBar -> fooBar
-                lispcase         FooBar -> foo-bar
-                pascalcase       fooBar -> FooBar
-                keep             No transformation; FooBar -> FooBar
 
 
 vim:tw=78:ts=8:sts=8:sw=8:ft=help:norl:expandtab

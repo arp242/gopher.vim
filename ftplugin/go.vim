@@ -4,14 +4,18 @@ endif
 let b:did_ftplugin = 1
 
 call gopher#init#version()
-setlocal formatoptions-=t
 
+setlocal formatoptions-=t
 setlocal comments=s1:/*,mb:*,ex:*/,://
 setlocal commentstring=//\ %s
 setlocal foldmethod=syntax
 setlocal noexpandtab
-setlocal equalprg=goimports
-setlocal formatprg=goimports
+
+" Special-fu to ensure we don't clobber the buffer with errors.
+" TODO: not completely portable.
+let &l:formatprg = 'gofmt 2>/dev/null || cat /dev/stdin'
+let &l:equalprg = &formatprg
+
 compiler go
 
 let b:undo_ftplugin = 'setl fo< com< cms<'
@@ -35,7 +39,7 @@ onoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('o', 'prev')<CR>
 xnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('v', 'prev')<CR>
 
 " Internal gopher.vim commands.
-command! -bang GoDiag   call gopher#internal#diag(<bang>0)
+command! -bang GoDiag   call gopher#diag#do(<bang>0)
 command!       GoSetup  call gopher#system#setup()
 
 " Code coverage reports.
