@@ -234,5 +234,13 @@ just a command are documented in the command.
         commands    Records all shell commands; use |:GoDiag| or
         `gopher#system#history()` to view.
 
+*gopher_override_vimgo* = (undefined)
+        Override vim-go; this removes all vim-go commands, autocommands,
+        unsets b:did_ftplugin and b:current_syntax, and removes vim-go from
+        'runtimepath'.
+
+        This is only recommended for testing/experimenting. This will break if
+        vim-go adds new commands or autocmds.
+
 
 vim:tw=78:ts=8:sts=8:sw=8:ft=help:norl:expandtab

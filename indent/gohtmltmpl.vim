@@ -31,4 +31,4 @@ fun! GetGoHTMLTmplIndent(lnum)
   endif
 
   return l:ind
-endfunction
+endfun

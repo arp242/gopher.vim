@@ -60,6 +60,6 @@ fun! GoIndent(lnum)
   endif
 
   return l:ind
-endfunction
+endfun
 
 " vim: sw=2 sts=2 et

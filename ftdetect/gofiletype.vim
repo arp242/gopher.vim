@@ -1,36 +1,22 @@
-" We take care to preserve the user's fileencodings and fileformats,
-" because those settings are global (not buffer local), yet we want
-" to override them for loading Go files, which are defined to be UTF-8.
-let s:current_fileformats = ''
-let s:current_fileencodings = ''
+" vint: -ProhibitAutocmdWithNoGroup
 
-" define fileencodings to open as utf-8 encoding even if it's ascii.
-fun! s:gofiletype_pre() abort
-  let s:current_fileformats = &g:fileformats
-  let s:current_fileencodings = &g:fileencodings
-  set fileencodings=utf-8 fileformats=unix
-  setf go
-endfunction
+au BufRead,BufNewFile *.tmpl   set filetype=gohtmltmpl
+au BufRead,BufNewFile *.slide  set filetype=gopresent
+au BufRead,BufNewFile go.mod   call s:gomod()
 
-" restore fileencodings as others
-fun! s:gofiletype_post() abort
-  let &g:fileformats = s:current_fileformats
-  let &g:fileencodings = s:current_fileencodings
-endfunction
+" These settings are global, but we want to override them when reading Go files,
+" as they're always UTF-8.
+let s:ffs   = ''
+let s:fencs = ''
+au BufNewFile *.go setf go | setl fileencoding=utf-8 fileformat=unix
+au BufRead *.go
+      \  let s:ffs   = &fileformats
+      \| let s:fencs = &fileencodings
+      \| set fileformats=unix fileencodings=utf-8 | setf go
+au BufReadPost *.go let &fileformats = s:ffs | let &fileencodings = s:fencs
 
-augroup plugin-gopher
-  au BufNewFile  *.go setf go | setl fileencoding=utf-8 fileformat=unix
-  au BufRead     *.go call s:gofiletype_pre()
-  au BufReadPost *.go call s:gofiletype_post()
-
-  au BufRead,BufNewFile *.tmpl  set filetype=gohtmltmpl
-  au BufRead,BufNewFile *.slide set filetype=gopresent
-
-  " Set the filetype if the first non-comment and non-blank line starts with
-  " 'module <path>'.
-  au BufNewFile,BufRead go.mod call s:gomod()
-augroup end
-
+" Set the filetype if the first non-comment and non-blank line starts with
+" 'module <path>'.
 fun! s:gomod()
   for l:i in range(1, line('$'))
     let l:l = getline(l:i)

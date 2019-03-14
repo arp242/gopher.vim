@@ -2,8 +2,7 @@ if exists('b:current_syntax')
   finish
 endif
 
-" Ideally this would be in the ftplugin too, but that's loaded after the syntax
-" file. I think this is probably the best location?
+" The ftplugin is loaded after the syntax file, so load it here too.
 call gopher#init#config()
 
 fun! s:has_setting(n)

@@ -17,6 +17,35 @@ fun! gopher#has_debug(flag) abort
   return index(g:gopher_debug, a:flag) >= 0
 endfun
 
+let s:overriden = 0
+
+" Override vim-go.
+fun! gopher#override_vimgo() abort
+  if s:overriden
+    return
+  end
+
+  let g:go_loaded_install = 1
+  unlet b:did_ftplugin
+  unlet b:current_syntax
+
+  let &rtp = substitute(&rtp, ',[/\\a-zA-Z0-9_.\-]*[/\\]vim-go', '', '')
+
+  au! vim-go
+  au! vim-go-buffer
+  au! vim-go-hi
+
+  let l:comm = map(split(execute('comm Go'), "\n"), { i, v ->
+        \ split(gopher#str#trim_space(substitute(l:v, '^\!', ' ', '')), ' ')[0]
+        \ })[1:]
+  for l:c in l:comm
+    exe 'delcommand ' . l:c
+  endfor
+
+  let s:overriden = 1
+  edit
+endfun
+
 " Echo a message to the screen and highlight it with the group in a:hi.
 "
 " The message can be a list or string; every line with be :echomsg'd separately.
