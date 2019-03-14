@@ -1,43 +1,22 @@
 scriptencoding utf-8
 call gopher#init#config()
 
-fun! Test_error() abort
-  " /home/martin/go/src/a/a.go:18:2: undeclared name: x
-  " /home/martin/go/src/a/a.go:19:2: undeclared name: x
-  " gorename: couldn't load packages due to errors: a
-  "
-  " gorename: -offset "/home/martin/go/src/a/dir1/asd.go:#38": no identifier at this position
-  "
-  " /home/martin/go/src/a/dir1/asd.go:5:6: renaming this func "QWEzxcasdzxc" to "x"
-  " /home/martin/go/src/a/dir1/dir1.go:5:6: <09>conflicts with func in same block
-  "
-  " /home/martin/go/src/a/dir1/asd.go:7:2: renaming this var "v" to "asd"
-  " /home/martin/go/src/a/dir1/asd.go:6:2: <09>conflicts with var in same block
+fun! Test_rename() abort
+  " Skip this test as it needs to setup GOPATH.
+  " TODO: maybe add Skip to testing.vim?
+  return
 
-  let l:tests = [
-        \{
-        \ 'in': "gorename: -offset \"/home/martin/go/src/a/a.go:#125\": cannot parse file: /home/martin/go/src/a/a.go:18:2: expected 'IDENT', found 'EOF'",
-        \ 'want': [{
-            \ 'lnum': 18, 'bufnr': 2, 'col': 2,
-            \ 'pattern': '',
-            \ 'valid': 1, 'vcol': 0, 'nr': 0, 'type': 'E', 'module': '',
-            \ 'text': ' expected ''IDENT'', found ''EOF'''
-            \ }],
-        \},
-        \{
-        \ 'in': "gorename: -offset \"/home/martin/go/src/a/a.go:#269\": cannot parse file: /home/martin/go/src/a/a.go:17:1: expected declaration, found asde",
-        \ 'want': [{
-            \ 'lnum': 17, 'bufnr': 2, 'col': 1,
-            \ 'pattern': '',
-            \ 'valid': 1, 'vcol': 0, 'nr': 0, 'type': 'E', 'module': '',
-            \ 'text': ' expected declaration, found asde'
-            \ }],
-        \}
-  \]
+  let l:input = ['package a', '', 'var a = 1']
+  let l:want = ['package a', '', 'var b = 1', '']
 
-  for l:tt in l:tests
-    call gopher#rename#_errors(l:tt.in)
-    "call assert_equal(l:tt.want, getqflist())
-    "call setqflist([])
-  endfor
+  new
+  call append(0, l:input)
+  call setpos('.', [bufnr(''), 3, 5, 0])
+  silent w rename.go
+
+  call gopher#rename#do('b')
+  let l:got = gopher#buf#lines()
+  if l:want != l:got
+    call Errorf("want: %s\ngot:  %s", l:want, l:got)
+  endif
 endfun

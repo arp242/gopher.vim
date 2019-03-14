@@ -7,12 +7,6 @@ let s:gobin   = s:gotools . '/bin'
 " #job(), in that order.
 let s:history = []
 
-" Prepend our GOBIN to the path so that external tools/plugins use binaries from
-" here.
-if s:gobin !~# $PATH
-  let $PATH = s:gobin . ':' . $PATH
-endif
-
 " List of all tools we know about. The key is the binary name, the value is a
 " 2-tuple with the full package name and a boolean to signal that go install has
 " been run this Vim session.
@@ -43,17 +37,18 @@ fun! gopher#system#setup() abort
 endfun
 
 " Get command history (only populated if 'commands' is in the g:gopher_debug)
-" variable.
+" variable. Note that the list is reversed (new entries are prepended, not
+" appended).
 fun! gopher#system#history() abort
   return s:history
 endfun
 
 " Restore an environment variable back to its original value.
 fun! gopher#system#restore_env(name, val) abort
-  if a:val isnot? ''
-    exe printf('let $%s = %s', a:name, s:escape_single_quote(a:val))
-  else
+  if a:val is -1
     exe printf('unlet $%s', a:name)
+  else
+    exe printf('let $%s = %s', a:name, s:escape_single_quote(a:val))
   endif
 endfun
 
@@ -159,7 +154,7 @@ fun! gopher#system#run(cmd, ...) abort
   endif
 
   if gopher#internal#has_debug('commands')
-    call gopher#system#_hist(a:cmd, l:start, v:shell_error, l:out, 0)
+    call gopher#system#_hist_(a:cmd, l:start, v:shell_error, l:out, 0)
   endif
 
   return [l:out, l:err]
@@ -175,11 +170,9 @@ endfun
 "
 " TODO: Don't run multiple jobs that modify the buffer at the same time. For
 " some tools (like gorename) we need a global lock.
-" TODO: Neovim
 fun! gopher#system#job(done, cmd) abort
   if type(a:cmd) isnot v:t_list
-    call gopher#internal#error('must pass a list')
-    return
+    return gopher#internal#error('must pass a list')
   endif
 
   let l:state = {
@@ -188,13 +181,20 @@ fun! gopher#system#job(done, cmd) abort
         \ 'exit':   -1,
         \ 'start':  reltime(),
         \ 'cmd':    a:cmd,
-        \ 'done':   a:done,
-        \ }
+        \ 'done':   a:done}
+
+  if has('nvim')
+    let l:state.closed = 1
+    return jobstart(a:cmd, {
+          \ 'on_stdout': function('s:j_out_cb',  [], l:state),
+          \ 'on_stderr': function('s:j_out_cb',  [], l:state),
+          \ 'on_exit':   function('s:j_exit_cb', [], l:state),
+          \ })
+  endif
 
   return job_start(a:cmd, {
-        \ 'exit_cb':  function('s:j_exit_cb', [], l:state),
-        \ 'out_cb':   function('s:j_out_cb', [], l:state),
-        \ 'err_cb':   function('s:j_err_cb', [], l:state),
+        \ 'callback': function('s:j_out_cb',   [], l:state),
+        \ 'exit_cb':  function('s:j_exit_cb',  [], l:state),
         \ 'close_cb': function('s:j_close_cb', [], l:state),
         \})
 endfun
@@ -203,6 +203,10 @@ endfun
 " running after this returns!
 " It will return the job status ("fail" or "dead").
 fun! gopher#system#job_wait(job) abort
+  if has('nvim')
+    return jobwait(a:job) is 0 ? 'dead' : 'fail'
+  endif
+
   while 1
     let l:s = job_status(a:job)
     if l:s isnot# 'run'
@@ -212,8 +216,7 @@ fun! gopher#system#job_wait(job) abort
   endwhile
 endfun
 
-" Get the full path to a tool name; download, compile and install it from the
-" go.mod file if needed.
+" Download, compile and install a tool if needed.
 fun! s:tool(name) abort
   if !has_key(s:tools, a:name)
     call gopher#internal#error('unknown tool: ' . a:name)
@@ -225,7 +228,7 @@ fun! s:tool(name) abort
 
   " We already ran go install and there is a binary.
   if l:tool[1] && filereadable(l:bin)
-    return l:bin
+    return a:name
   endif
 
   if !s:download(0)
@@ -233,8 +236,10 @@ fun! s:tool(name) abort
   endif
 
   try
-    let l:old_gobin = $GOBIN
-    let l:old_gomod = $GO111MODULE
+    let l:old_gobin =  exists('$GOBIN')       ? $GOBIN       : -1
+    let l:old_gomod =  exists('$GO111MODULE') ? $GO111MODULE : -1
+    let l:old_gopath = exists('$GOPATH')      ? $GOPATH      : -1
+    unlet $GOPATH
     let $GOBIN = s:gobin
     let $GO111MODULE = 'on'  " In case user set to 'off'
 
@@ -250,9 +255,10 @@ fun! s:tool(name) abort
   finally
     call gopher#system#restore_env('GOBIN', l:old_gobin)
     call gopher#system#restore_env('GO111MODULE', l:old_gomod)
+    call gopher#system#restore_env('GOPATH', l:old_gopath)
   endtry
 
-  return l:bin
+  return a:name
 endfun
 
 fun! s:escape_single_quote(s) abort
@@ -269,7 +275,7 @@ fun! s:download(force) abort
   call gopher#internal#info('running "go mod download"; this may take a few seconds')
   let l:out = system(printf('cd %s && go mod download', s:gotools))
   if v:shell_error
-    echoerr l:out
+    call gopher#internal#error(l:out)
     return 0
   endif
 
@@ -282,7 +288,7 @@ endfun
 
 " Add item to history.
 " TODO: add information about stdin too.
-fun! gopher#system#_hist(cmd, start, exit, out, job) abort
+fun! gopher#system#_hist_(cmd, start, exit, out, job) abort
     if !gopher#internal#has_debug('commands')
       return
     endif
@@ -293,12 +299,12 @@ fun! gopher#system#_hist(cmd, start, exit, out, job) abort
     if l:debug_cmd[0][:len(s:gobin) - 1] is# s:gobin
       let l:debug_cmd[0] = 's:gobin/' . l:debug_cmd[0][len(s:gobin) + 1:]
     endif
-    let s:history = add(s:history, [
+    let s:history = insert(s:history, [
           \ a:exit,
           \ s:since(a:start),
           \ s:join_shell(l:debug_cmd),
           \ a:out,
-          \ !a:job])
+          \ !a:job], 0)
 endfun
 
 " Format time elapsed since start.
@@ -317,28 +323,29 @@ fun! s:join_shell(l, ...) abort
   endtry
 endfun
 
+fun! s:j_exit_cb(job, exit, ...) abort dict
+  let self.exit = a:exit
+
+  if self.closed
+    call gopher#system#_hist_(self.cmd, self.start, self.exit, self.out, 1)
+    call self.done(self.exit, self.out)
+  endif
+endfun
+
 fun! s:j_close_cb(ch) abort dict
   let self.closed = 1
 
   if self.exit > -1
-    call gopher#system#_hist(self.cmd, self.start, self.exit, self.out, 1)
+    call gopher#system#_hist_(self.cmd, self.start, self.exit, self.out, 1)
     call self.done(self.exit, self.out)
   endif
 endfun
 
-fun! s:j_exit_cb(job, exit) abort dict
-  let self.exit = a:exit
-
-  if self.closed
-    call gopher#system#_hist(self.cmd, self.start, self.exit, self.out, 1)
-    call self.done(self.exit, self.out)
+fun! s:j_out_cb(ch, msg, ...) abort dict
+  let l:msg = a:msg
+  if type(l:msg) is v:t_list
+    let l:msg = join(l:msg, "\n")
   endif
-endfun
 
-fun! s:j_out_cb(ch, msg) abort dict
-  let self.out .= a:msg
-endfun
-
-fun! s:j_err_cb(ch, msg) abort dict
-  let self.out .= a:msg
+  let self.out .= l:msg
 endfun

@@ -76,7 +76,7 @@ fun! s:apply(profile) abort
     let l:cov = s:parse_line(l:line)
 
     if l:path is# l:cov.file
-      call gopher#coverage#_highlight(l:cov)
+      call gopher#coverage#_highlight_(l:cov)
       continue
     endif
 
@@ -90,8 +90,10 @@ fun! s:apply(profile) abort
   " Highlight all the other buffers.
   let l:s = bufnr('%')
   let l:lz = &lazyredraw
+  let l:swb = &switchbuf
   try
     set lazyredraw
+    set switchbuf=useopen,usetab,newtab
     for l:b in gopher#buf#list()
       if l:b is l:s || !bufloaded(l:b)
         continue
@@ -100,17 +102,18 @@ fun! s:apply(profile) abort
       "silent exe l:b . 'buf'
       silent exe l:b . 'sbuf'
       for l:cov in get(l:other_files, gopher#internal#packagepath(), [])
-        call gopher#coverage#_highlight(l:cov)
+        call gopher#coverage#_highlight_(l:cov)
       endfor
     endfor
   finally
     silent exe 'sbuf ' . l:s
     let &lazyredraw = l:lz
+    let &switchbuf = l:swb
   endtry
 endfun
 
 " Highlight the buffer described in cov.
-fun! gopher#coverage#_highlight(cov) abort
+fun! gopher#coverage#_highlight_(cov) abort
   let l:color = 'goCoverageCovered'
   if a:cov.cnt is 0
     let l:color = 'goCoverageUncover'

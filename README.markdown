@@ -1,3 +1,4 @@
+[![This project is considered experimental](https://img.shields.io/badge/Status-experimental-red.svg)](https://arp242.net/status/experimental)
 [![Build Status](https://travis-ci.org/Carpetsmoker/gopher.vim.svg?branch=master)](https://travis-ci.org/Carpetsmoker/gopher.vim)
 [![codecov](https://codecov.io/gh/Carpetsmoker/gopher.vim/branch/master/graph/badge.svg)](https://codecov.io/gh/Carpetsmoker/gopher.vim)
 
@@ -11,16 +12,56 @@ Goals:
 - Ensure that included commands are well-tested to work with as many possible
   scenarios as possible.
 
+Installation
+------------
+
 Installation can be done using the usual suspects. **Vim 8.0.400** or **Neovim
 0.2.0** are supported; older versions may work but are not supported.
 
 This plugin **requires Go 1.11** or newer; older versions will *not* work as the
 internal vendoring uses modules.
 
+Installation of external tools is done automatically on first usage, but can be
+done manually with `:GoSetup`.
+
 Getting started
 ---------------
 
-TODO: write something here.
+Quick overview of the basics:
+
+<!--
+Compiling code and running tests is provided with the `go` and `gotest`
+compiler. By default the compiler is set to `go` ; you can switch it to `gotest`
+with `:comp gotest`.
+
+You can now use `:make` or `:lmake` to compile the code. This is a synchronous
+process. You can use `:MakeJob` or `:LmakeJob` from vim-makejob to run it async,
+similar to `:GoInstall`, `:GoTest`, etc.
+
+Running `go generate` or passing `-run` to `:GoTest` can be done by switching
+the `makeprg` setting:
+
+	:comp gotest
+	:make -run TestX
+
+	:comp go
+	:set makeprg=go\ generate
+	:make
+
+You could even set `makeprg` to just `go`:
+
+	:set makeprg=go
+	:make install
+	:make run main.go
+	...
+
+All motions that work in vim-go also work in gopher.vim: `[[`, `]]`, `af`, etc.
+
+- `:GoCoverage` –
+- `:GoRename` –
+- `:GoTags` –
+-->
+
 
 See [FEATURES.markdown](FEATURES.markdown) for a translation of vim-go features.
 
@@ -128,4 +169,14 @@ Development
   to do this automatically.
 
 - The plugin is tested with
-  [testing.vim](https://github.com/Carpetsmoker/testing.vim).
+  [testing.vim](https://github.com/Carpetsmoker/testing.vim); running the full
+  test suite should be as easy as `tvim test ./...` (`tvim lint ./...` for the
+  style checkers).
+
+- Try to keep the public functions (`gopher#foo#do_something()`) as clean and
+  usable as possible; use `s:fun()` for internal stuff, unless you want to test
+  it in which case use Python's underscore style: `gopher#python#_private_()`.
+
+- Prefer `printf()` over string concatenation; e.g. `printf('x: %s', ['a
+  list'])` will work, whereas `'x: ' . ['a list']` will give you a useless
+  error.

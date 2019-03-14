@@ -5,14 +5,15 @@ fun! gopher#buf#lines() abort
   return getline(1, '$')
 endfun
 
-" List all Go buffers.
+" Get a list of all Go bufnrs.
 fun! gopher#buf#list() abort
   return filter(
         \ range(1, bufnr('$')),
         \ { i, v -> bufexists(l:v) && buflisted(l:v) && bufname(l:v)[-3:] is# '.go' })
 endfun
 
-" Run a command on every buffer and restore the position to the active buffer.
+" Run a command on every Go buffer and restore the position to the active
+" buffer.
 fun! gopher#buf#doall(cmd) abort
   let l:s = bufnr('%')
   let l:lz = &lazyredraw

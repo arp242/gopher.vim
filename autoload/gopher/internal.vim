@@ -2,16 +2,14 @@ let s:root = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 
 " Output an error message to the screen. The message can be either a list or a
 " string; every line will be echomsg'd separately.
-" TODO: run print() on strings.
-fun! gopher#internal#error(msg) abort
-  call s:echo(a:msg, 'ErrorMsg')
+fun! gopher#internal#error(msg, ...) abort
+  call s:echo(a:msg, 'ErrorMsg', a:000)
 endfun
 
 " Output an informational message to the screen. The message can be either a
 " list or a string; every line will be echomsg'd separately.
-" TODO: run print() on strings.
-fun! gopher#internal#info(msg) abort
-  call s:echo(a:msg, 'Debug')
+fun! gopher#internal#info(msg, ...) abort
+  call s:echo(a:msg, 'Debug', a:000)
 endfun
 
 " Returns the byte offset for the cursor.
@@ -25,7 +23,7 @@ fun! gopher#internal#cursor_offset(...) abort
   endif
 
   return l:o
-endfunction
+endfun
 
 " Report if the current buffer is a Go test file.
 fun! gopher#internal#is_test() abort
@@ -57,6 +55,23 @@ fun! gopher#internal#has_debug(flag) abort
   return index(g:gopher_debug, a:flag) >= 0
 endfun
 
+" Report if the current buffer is inside GOPATH.
+fun! gopher#internal#in_gopath() abort
+  let [l:out, l:err] = gopher#system#run(['go', 'env', 'GOPATH'])
+  if l:err
+    return gopher#internal#error(l:out)
+  endif
+
+  let l:path = expand('%:p')
+  for l:gopath in split(l:out, gopher#internal#pathsep())
+    if gopher#str#has_prefix(l:path, l:out)
+      return 1
+    endif
+  endfor
+
+  return 0
+endfun
+
 " Check if this is the requested OS.
 "
 " Supports 'win', 'unix'.
@@ -70,7 +85,14 @@ fun! gopher#internal#platform(n) abort
   call gopher#internal#error('gopher#internal#platform: unknown parameter: ' . a:n)
 endfun
 
-let s:special = ['go', 'test']
+" Get the path separator for this platform.
+fun! gopher#internal#pathsep() abort
+  return gopher#internal#platform('win') ? ';' : ':'
+endfun
+
+let s:go_commands = ['go', 'bug', 'build', 'clean', 'doc', 'env', 'fix', 'fmt',
+                   \ 'generate', 'get', 'install', 'list', 'mod', 'run', 'test',
+                   \ 'tool', 'version', 'vet']
 
 " Add g:gopher_build_tags to the flag_list; will be merged with existing tags
 " (if any).
@@ -81,7 +103,7 @@ fun! gopher#internal#add_build_tags(flag_list) abort
 
   let l:last_flag = 0
   for l:i in range(len(a:flag_list))
-    if a:flag_list[l:i][0] is# '-' || index(s:special, a:flag_list[l:i]) > -1
+    if a:flag_list[l:i][0] is# '-' || index(s:go_commands, a:flag_list[l:i]) > -1
       let l:last_flag = l:i
     endif
 
@@ -131,7 +153,8 @@ fun! gopher#internal#diag(to_clipboard) abort
       let l:state += s:indent(l:out)
     else
       let l:out = substitute('GOPATH=' . l:out, "\n", '; GOROOT=', '')
-      let l:state += s:indent(l:version . '; ' . l:out)
+      let l:state += s:indent(printf('%s; %s; GO111MODULE=%s', l:version, l:out,
+            \ $GO111MODULE is# '' ? '[unset]' : $GO111MODULE))
     endif
 
     " gopher.vim version.
@@ -149,7 +172,7 @@ fun! gopher#internal#diag(to_clipboard) abort
     let l:state = add(l:state, ' ')
 
     " List command history (if any).
-    let l:state = add(l:state, 'COMMAND HISTORY')
+    let l:state = add(l:state, 'COMMAND HISTORY (newest on top)')
     for l:h in gopher#system#history()
       if l:h[4]
         let l:state = add(l:state, '    shell: ' . l:h[2])
@@ -187,12 +210,15 @@ endfun
 " Echo a message to the screen and highlight it with the group in a:hi.
 "
 " The message can be a list or string; every line with be :echomsg'd separately.
-fun! s:echo(msg, hi) abort
-  let l:msg = []
-  if type(a:msg) isnot v:t_list
-    let l:msg = split(a:msg, "\n")
+fun! s:echo(msg, hi, ...) abort
+  if type(a:msg) is v:t_list
+    let l:msg = a:msg
   else
     let l:msg = a:msg
+    if len(a:000) > 0
+      let l:msg = call('printf', [a:msg] + a:000[0])
+    endif
+    let l:msg = split(l:msg, "\n")
   endif
 
   " Tabs display as ^I or <09>, so manually expand them.
