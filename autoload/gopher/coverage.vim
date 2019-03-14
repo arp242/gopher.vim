@@ -90,8 +90,10 @@ fun! s:apply(profile) abort
   " Highlight all the other buffers.
   let l:s = bufnr('%')
   let l:lz = &lazyredraw
+  let l:swb = &switchbuf
   try
     set lazyredraw
+    set switchbuf=useopen,usetab,newtab
     for l:b in gopher#buf#list()
       if l:b is l:s || !bufloaded(l:b)
         continue
@@ -106,6 +108,7 @@ fun! s:apply(profile) abort
   finally
     silent exe 'sbuf ' . l:s
     let &lazyredraw = l:lz
+    let &switchbuf = l:swb
   endtry
 endfun
 

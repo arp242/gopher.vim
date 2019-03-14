@@ -125,6 +125,9 @@ COMMANDS                                                     *gopher-commands*
 
         Tab completion includes the exported and unexported version.
 
+        NOTE: this only works for packages in GOPATH at the moment due to
+        limitations in `gorename`: https://github.com/golang/go/issues/27571
+
 :GoCoverage [flags]                                              *:GoCoverage*
         Run `go test -cover` and highlight lines reported as covered and
         uncovered.

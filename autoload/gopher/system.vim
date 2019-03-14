@@ -45,10 +45,10 @@ endfun
 
 " Restore an environment variable back to its original value.
 fun! gopher#system#restore_env(name, val) abort
-  if a:val isnot? ''
-    exe printf('let $%s = %s', a:name, s:escape_single_quote(a:val))
-  else
+  if a:val is -1
     exe printf('unlet $%s', a:name)
+  else
+    exe printf('let $%s = %s', a:name, s:escape_single_quote(a:val))
   endif
 endfun
 
@@ -236,8 +236,10 @@ fun! s:tool(name) abort
   endif
 
   try
-    let l:old_gobin = $GOBIN
-    let l:old_gomod = $GO111MODULE
+    let l:old_gobin =  exists('$GOBIN')       ? $GOBIN       : -1
+    let l:old_gomod =  exists('$GO111MODULE') ? $GO111MODULE : -1
+    let l:old_gopath = exists('$GOPATH')      ? $GOPATH      : -1
+    unlet $GOPATH
     let $GOBIN = s:gobin
     let $GO111MODULE = 'on'  " In case user set to 'off'
 
@@ -253,6 +255,7 @@ fun! s:tool(name) abort
   finally
     call gopher#system#restore_env('GOBIN', l:old_gobin)
     call gopher#system#restore_env('GO111MODULE', l:old_gomod)
+    call gopher#system#restore_env('GOPATH', l:old_gopath)
   endtry
 
   return a:name
