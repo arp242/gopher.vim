@@ -25,9 +25,9 @@ endfun
 " Get the package path for the file in the current buffer.
 " TODO: cache results?
 fun! gopher#go#package() abort
-  let [l:out, l:err] = gopher#system#run(['go', 'list', expand('%:p:h')])
-  if l:err
-    if gopher#str#has_suffix(l:out, 'cannot import absolute path')
+  let [l:out, l:err] = gopher#system#run(['go', 'list', expand('%:h')])
+  if l:err || l:out[0] is# '_'
+    if l:out[0] is# '_' || gopher#str#has_suffix(l:out, 'cannot import absolute path')
       let l:out = 'cannot determine module path (outside GOPATH, no go.mod)'
     endif
     call gopher#error(l:out)

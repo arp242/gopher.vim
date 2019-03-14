@@ -176,6 +176,7 @@ endfun
 "
 " TODO: Don't run multiple jobs that modify the buffer at the same time. For
 " some tools (like gorename) we need a global lock.
+" TODO: allow inspecting which jobs are running (in :GoDiag?)
 fun! gopher#system#job(done, cmd) abort
   if type(a:cmd) isnot v:t_list
     return gopher#error('must pass a list')
@@ -371,5 +372,7 @@ fun! s:j_out_cb(ch, msg, ...) abort dict
     let l:msg = join(l:msg, "\n")
   endif
 
-  let self.out .= l:msg
+  " TODO: this is probably wrong, at least on Neovim. It assumed that every
+  " "msg" is a line.
+  let self.out .= l:msg . "\n"
 endfun

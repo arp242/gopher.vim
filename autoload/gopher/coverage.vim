@@ -21,7 +21,8 @@ call s:hi()
 
 " Complete the special flags and some common flags people might want to use.
 fun! gopher#coverage#complete(lead, cmdline, cursor) abort
-  return ['clear', 'toggle', '-run', '-race', '-tags']
+  return filter(['clear', 'toggle', '-run', '-race', '-tags'],
+        \ {i, v -> strpart(l:v, 0, len(a:lead)) is# a:lead})
 endfun
 
 " Apply or clear coverage highlights.

@@ -127,24 +127,6 @@ COMMANDS                                                     *gopher-commands*
         When the [!] is included the output will be copied to the clipboard
         (|quote+| register).
 
-:GoRename [new-ident]                                              *:GoRename*
-        Rename the identifier under the cursor.
-
-        if [new-ident] is omitted the new identifier is based on the following
-        rules:
-
-          - All caps identifiers are CamelCased (FOO_BAR -> FooBar).
-          - Exported are unexported (FooBar -> fooBar).
-          - Unexported are exported (fooBar -> FooBar).
-
-        Tab completion includes the exported and unexported version.
-
-        NOTE: this only works for packages in GOPATH at the moment due to
-        limitations in `gorename`: https://github.com/golang/go/issues/27571
-
-        *g:gopher_gorename_flags* = `[]`
-                List of flags to add to the `gorename` command.
-
 :GoCoverage [flags]                                              *:GoCoverage*
         Run `go test -cover` and highlight lines reported as covered and
         uncovered.
@@ -169,6 +151,81 @@ COMMANDS                                                     *gopher-commands*
                         au Syntax go hi goCoverageCovered guibg=blue
                         au Syntax go hi goCoverageUncover guibg=brown
                 augroup end <
+
+:GoGuru [flags] {command}                                            *:GoGuru*
+        Run a `guru` command.
+
+        {command} can be any of:
+
+                callees     Show targets of function call.
+                            This is useful especially if the function call is
+                            an interface.
+                callers     Show locations where the current function is
+                            called from.
+                callstack   Show path from callgraph root to the current
+                            function.
+                definition  Show declaration of identifier.
+                describe    Show detailed description of selected syntax.
+                freevars    Show free variables of selection, meaning
+                            variables which are referenced but not defined
+                            within the selection.
+                implements  Show which interfaces a type of method implements.
+                peers       Show locations where data is sent or read to/from
+                            a channel.
+                pointsto    Show variables the selected pointer may point to.
+                referrers   Show all references to an identifier.
+                what        Basic information about the selected syntax.
+                whicherrs   Get possible values of an error variable.
+
+        See the guru manual for a full description and usage examples:
+        http://golang.org/s/using-guru
+
+        [flags] are passed to the `guru` command; commons ones are:
+
+                -reflect      Analyse reflection soundly (slow).
+                -scope [pkg]  Comma-separated list of packages the analysis
+                              should be limited to; overrides
+                              |g:gopher_guru_scope|.
+
+        *g:gopher_guru_scope* = `gopher#go#package()`
+                Limit the analysis to these package, comma-separated list.
+
+                Some guru commands are slow and expensive, so for reasons of
+                efficiency the analysis is limited to a limited set of
+                packages.
+                The default is to use the package the current buffer belongs
+                to; but this may not always be correct. For example for the
+                file example.com/pkg/a/a.go the scope will be set to
+                example.com/pkg/a, but you probably want example.com/pkg.
+
+                With this option a more extensive scope can be given. Some
+                examples:
+
+                        golang.org/x/tools/cmd/guru A single package
+                        golang.org/x/tools/...      All packages under dir
+                        ...                         The entire workspace.
+
+                You can set it from an |:autocmd|: >
+                        autocmd BufRead /code/example.com/*.go
+                                let g:gopher_guru_scope = 'example.com/pkg'
+<
+:GoRename [new-ident]                                              *:GoRename*
+        Rename the identifier under the cursor.
+
+        if [new-ident] is omitted the new identifier is based on the following
+        rules:
+
+          - All caps identifiers are CamelCased (FOO_BAR -> FooBar).
+          - Exported are unexported (FooBar -> fooBar).
+          - Unexported are exported (fooBar -> FooBar).
+
+        Tab completion includes the exported and unexported version.
+
+        NOTE: this only works for packages in GOPATH at the moment due to
+        limitations in `gorename`: https://github.com/golang/go/issues/27571
+
+        *g:gopher_gorename_flags* = `[]`
+                List of flags to add to the `gorename` command.
 
 :{range}GoTags [flags]                                               *:GoTags*
         Add, modify, or remove struct tags. Will only apply to the fields in
@@ -201,7 +258,7 @@ COMMANDS                                                     *gopher-commands*
 
                 :GoTags json -rm yaml         Combine add and rm
 <
-        *g:gopher_tag_default* = `json`
+        *g:gopher_tag_default* = `'json'`
                 Default tag for |:GoTags| when no parameters are given. Can be
                 any valid set of arguments for |:GoTags| (e.g. `json,omitempty
                 -rm yaml`).

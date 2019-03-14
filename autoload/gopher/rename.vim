@@ -6,7 +6,7 @@ fun! gopher#rename#complete(lead, cmdline, cursor) abort
   let l:word = expand('<cword>')
   return filter(
         \ uniq(sort([l:word, s:unexport(l:word), s:export(l:word)])),
-        \ { i, v -> strpart(l:v, 0, len(a:lead)) is# a:lead })
+        \ {i, v -> strpart(l:v, 0, len(a:lead)) is# a:lead})
 endfun
 
 " Rename the identifier under the cursor to the identifier in the first

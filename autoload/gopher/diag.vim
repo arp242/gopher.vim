@@ -36,7 +36,7 @@ fun! gopher#diag#do(to_clipboard) abort
     else
       let l:out = substitute('GOPATH=' . l:out, "\n", '; GOROOT=', '')
       let l:state += s:indent(printf('%s; %s; GO111MODULE=%s', l:version, l:out,
-            \ $GO111MODULE is# '' ? '[unset]' : $GO111MODULE))
+            \ $GO111MODULE is# '' ? '(unset)' : $GO111MODULE))
     endif
 
     " gopher.vim version.

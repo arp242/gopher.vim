@@ -69,6 +69,20 @@ Code insight
     :GoCoverageClear              :GoCoverage clear
     :GoCoverageToggle             :GoCoverage toggle
 
+    :GoCallees                    These are all guru commands, and can be used with :GoGuru
+    :GoCallers                    e.g. :GoGuru callers, :GoGuru whicherrs, etc.
+    :GoCallstack
+    :GoChannelPeers
+    :GoDescribe
+    :GoFreevars
+    :GoImplements
+    :GoPointsTo
+    :GoReferrers
+    :GoSameIds
+    :GoWhicherrs
+
+    :GoGuruScope                  :let gopher_guru_scope = '..' or :GoGuru -scope .. command
+
 Debugger
 --------
 
@@ -96,21 +110,9 @@ Other
 Not implemented (yet)
 ---------------------
 
-    :GoCallees                    guru; should probably make one command for this:
-    :GoCallers                    :GoGuru callers, or :GoInfo callers
-    :GoCallstack
-    :GoChannelPeers
-    :GoDescribe
-    :GoFreevars
-    :GoGuruScope
-    :GoImplements
-    :GoPointsTo
-    :GoReferrers
-    :GoSameIds
     :GoSameIdsAutoToggle
     :GoSameIdsClear
     :GoSameIdsToggle
-    :GoWhicherrs
 
     :GoKeyify                     keyify
     :GoFillStruct                 fillstruct
@@ -120,10 +122,11 @@ Not implemented (yet)
     :GoModFmt                     go mod edit -fmt doesn't read from stdin so can't use formatprg
     :GoAutoTypeInfoToggle         Should probably be LSP feature?
 
-    :GoCoverageBrowser            Not sure if it's worth having any of these?
-    :GoImport
-    :GoImportAs
-    :GoDrop
+    :GoImport                     :GoImport foo
+    :GoImportAs                   :GoImport foo alias or :GoImport foo:alias
+    :GoDrop                       :GoImport -rm foo
+
+    :GoCoverageBrowser            Not sure if it's worth having these?
     :GoPlay
 
 N/A

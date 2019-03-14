@@ -26,7 +26,7 @@ fun! Test_job() abort
   fun! s:done(exit, out) abort closure
     let l:done_called = 1
     call assert_equal(0, a:exit)
-    call assert_equal('one two"', a:out)
+    call assert_equal("one two\"\n", a:out)
   endfun
 
   let l:job = gopher#system#job(function('s:done'), ['echo', 'one', 'two"'])

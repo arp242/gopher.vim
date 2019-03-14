@@ -18,6 +18,9 @@ Various common functions, or functions that don't have a place elsewhere.
     gopher#has_debug(flag)
       Report if the user enabled the given debug flag.
 
+    gopher#override_vimgo()
+      Override vim-go.
+
 
 [motion.vim](autoload/gopher/motion.vim)
 ----------------------------------------
@@ -143,6 +146,17 @@ Utilities for working with Go files.
       (if any).
 
 
+[guru.vim](autoload/gopher/guru.vim)
+------------------------------------
+implement the :GoGuru command.
+
+    gopher#guru#complete(lead, cmdline, cursor)
+
+
+    gopher#guru#do(...)
+      TODO: commands need range: freevars
+
+
 [diag.vim](autoload/gopher/diag.vim)
 ------------------------------------
 Implement :GoDiag.
@@ -224,6 +238,7 @@ Utilities for working with the external programs and the OS.
       order (hopefully).
       TODO: Don't run multiple jobs that modify the buffer at the same time. For
       some tools (like gorename) we need a global lock.
+      TODO: allow inspecting which jobs are running (in :GoDiag?)
 
     gopher#system#job_wait(job)
       Wait for a job to finish. Note that the exit_cb or close_cb may still be
@@ -239,5 +254,15 @@ Utilities for working with the external programs and the OS.
 
     gopher#system#join(l, ...)
       Join a list of commands to a string, escaping any shell meta characters.
+
+
+[qf.vim](autoload/gopher/qf.vim)
+--------------------------------
+Utilities for working with the quickfix and location list.
+
+    gopher#qf#populate(out, efm, title)
+      Populate the quickfix list with the errors from out, parsed according to the
+      errorformat in efm.
+      If efm is an empty string "%f:%l:%c %m" will be used.
 
 

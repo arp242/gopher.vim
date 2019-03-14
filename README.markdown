@@ -59,6 +59,7 @@ Overview of over commands:
 - `:GoCoverage` – Highlight code coverage.
 - `:GoRename`   – Rename identifier under cursor.
 - `:GoTags`     – Add or remove struct tags
+- `:GoGuru`     – Get various information using the `guru` command.
 
 See [FEATURES.markdown](FEATURES.markdown) for a translation of vim-go features.
 
@@ -168,8 +169,8 @@ gopher.vim stands.
 Development
 -----------
 
-- It's probably good idea to open an issue first; I really don't like rejecting
-  PRs but I like accruing "bloat" even less.
+- It's probably good idea to **open an issue first** for features or additions;
+  I really don't like rejecting PRs but I like accruing "bloat" even less.
 
 - Please use [.editorconfig](.editorconfig) style settings;
   [vim-editorconfig](https://github.com/sgur/vim-editorconfig) is a good plugin
@@ -180,16 +181,14 @@ Development
   test suite should be as easy as `tvim test ./...` (`tvim lint ./...` for the
   style checkers).
 
-- see [API.markdown](API.markdown) for some API docs (only public functions are
-  documented in that file).
-
 - Try to keep the public functions (`gopher#foo#do_something()`) as clean and
   usable as possible; use `s:fun()` for internal stuff, unless you want to test
   it in which case use Python's underscore style: `gopher#python#_private_()`.
+  See [API.markdown](API.markdown) for some API docs (only public functions are
+  documented in that file).
 
-- Prefer `printf()` over string concatenation; e.g. `printf('x: %s', ['a
-  list'])` will work, whereas `'x: ' . ['a list']` will give you a useless
-  error.
+- Prefer `printf()` over string concatenation; e.g. `printf('x: %s', [])` will
+  work, whereas `'x: ' . []` will give you a useless error.
 
 - Use `gopher#error()` and `gopher#info()`; don't use `echom` or `echoerr`.
 

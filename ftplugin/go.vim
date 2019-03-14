@@ -56,9 +56,11 @@ nnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('n', 'prev')<CR>
 onoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('o', 'prev')<CR>
 xnoremap <buffer> <silent> [[ :<C-u>call gopher#motion#jump('v', 'prev')<CR>
 
+" Commands
 command! -bang                                                  GoDiag     call gopher#diag#do(<bang>0)
 command!                                                        GoSetup    call gopher#system#setup()
 
 command! -nargs=* -complete=customlist,gopher#coverage#complete GoCoverage call gopher#coverage#do(<f-args>)
+command! -nargs=+ -complete=customlist,gopher#guru#complete     GoGuru     call gopher#guru#do(<f-args>)
 command! -nargs=? -complete=customlist,gopher#rename#complete   GoRename   call gopher#rename#do(<f-args>)
 command! -nargs=* -range                                        GoTags     call gopher#tags#modify(<line1>, <line2>, <count>, <f-args>)
