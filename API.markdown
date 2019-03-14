@@ -187,6 +187,16 @@ Initialisation of the plugin.
       Initialize config values.
 
 
+[import.vim](autoload/gopher/import.vim)
+----------------------------------------
+Implement :GoImport
+
+    gopher#import#do(...)
+      Add, modify, or remove imports.
+      TODO: implement -rm pkg
+      TODO: implement adding multiple packages (:GoImport a b, or :GoImport addme -rm removeme)
+
+
 [system.vim](autoload/gopher/system.vim)
 ----------------------------------------
 Utilities for working with the external programs and the OS.

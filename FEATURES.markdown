@@ -99,6 +99,10 @@ Code modification
     :GoAddTags                    :GoTags
     :GoRemoveTags                 :GoTags -rm
 
+    :GoImport                     :GoImport foo
+    :GoImportAs                   :GoImport foo:alias
+    :GoDrop                       :GoImport -rm foo
+
 Other
 -----
 
@@ -121,10 +125,6 @@ Not implemented (yet)
     :GoAlternate                  Pretty useful, would prefer external plugin.
     :GoModFmt                     go mod edit -fmt doesn't read from stdin so can't use formatprg
     :GoAutoTypeInfoToggle         Should probably be LSP feature?
-
-    :GoImport                     :GoImport foo
-    :GoImportAs                   :GoImport foo alias or :GoImport foo:alias
-    :GoDrop                       :GoImport -rm foo
 
     :GoCoverageBrowser            Not sure if it's worth having these?
     :GoPlay

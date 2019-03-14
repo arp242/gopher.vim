@@ -5,6 +5,7 @@ package tools
 // There may be a better way to do this in the future.
 // https://github.com/golang/go/issues/25922
 import (
+	_ "arp242.net/goimport"
 	_ "github.com/fatih/gomodifytags"
 	_ "github.com/fatih/motion"
 	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"

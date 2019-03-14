@@ -209,6 +209,12 @@ COMMANDS                                                     *gopher-commands*
                         autocmd BufRead /code/example.com/*.go
                                 let g:gopher_guru_scope = 'example.com/pkg'
 <
+:GoImport [flags]                                                  *:GoImport*
+        Add, modify, or remove imports.
+
+        All packages in [flags] will be added. A package can be given as
+        `pkg:alias`. Imports can be removed by using `-rm pkg`
+
 :GoRename [new-ident]                                              *:GoRename*
         Rename the identifier under the cursor.
 

@@ -60,6 +60,7 @@ Overview of over commands:
 - `:GoRename`   – Rename identifier under cursor.
 - `:GoTags`     – Add or remove struct tags
 - `:GoGuru`     – Get various information using the `guru` command.
+- `:GoImport`   – Add, modify, or remove imports.
 
 See [FEATURES.markdown](FEATURES.markdown) for a translation of vim-go features.
 

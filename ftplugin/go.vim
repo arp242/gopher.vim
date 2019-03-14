@@ -62,5 +62,6 @@ command!                                                        GoSetup    call 
 
 command! -nargs=* -complete=customlist,gopher#coverage#complete GoCoverage call gopher#coverage#do(<f-args>)
 command! -nargs=+ -complete=customlist,gopher#guru#complete     GoGuru     call gopher#guru#do(<f-args>)
+command! -nargs=+                                               GoImport   call gopher#import#do(<f-args>)
 command! -nargs=? -complete=customlist,gopher#rename#complete   GoRename   call gopher#rename#do(<f-args>)
 command! -nargs=* -range                                        GoTags     call gopher#tags#modify(<line1>, <line2>, <count>, <f-args>)
