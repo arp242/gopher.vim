@@ -13,6 +13,10 @@ if isdirectory(s:cmd)
 	let &l:makeprg .= ' ' . s:cmd
 endif
 
+" TODO: this error isn't recognized:
+" # a
+" runtime.main_main·f: function main is undeclared in the main package
+
 setl errorformat =%-G#\ %.%#                   " Ignore lines beginning with '#' ('# command-line-arguments' line sometimes appears?)
 setl errorformat+=%-G%.%#panic:\ %m            " Ignore lines containing 'panic: message'
 setl errorformat+=%Ecan\'t\ load\ package:\ %m " Start of multiline error string is 'can\'t load package'

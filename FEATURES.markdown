@@ -4,14 +4,12 @@ See [README.markdown](README.markdown) for more detailed information to get
 started and `:help gopher` for the full reference manual. This is just a quick
 overview.
 
-    BULDING
+Building
+--------
 
-    :GoBuildTags                  let g:gopher_build_tags = [..]
-    :GoInstall                    :compiler go     | :make
-    :GoTest                       :compiler gotest | :make
-    :GoTestCompile                :make -c
-    :GoTestFunc                   :make -run ..
+    :GoInstall                    :make
 
+                                  Change the makeprg to use other build commands.
     :GoBuild                      :setl makeprg=go\ build
     :GoGenerate                   :setl makeprg=go\ generate
     :GoRun                        :setl makeprg=go\ run
@@ -19,20 +17,34 @@ overview.
                                     :setl makeprg=go
                                     :make install
                                     :make run main.go
+                                  Replace :make with :MakeJob from vim-makejob for async versions.
 
-    LINTING
+                                  Testing is done with the gotest compiler:
+    :GoTest                       :compiler gotest | :make
+    :GoTestCompile                :make -c or :make -c -o/dev/null
+    :GoTestFunc                   :make -run ..
 
-    :GoLint                       LSP, ALE, or other generic linting plugin.
-    :GoAsmFmtAutoSaveToggle
-    :GoErrCheck
+    :GoBuildTags                  let g:gopher_build_tags = [..]
+
+Linting
+-------
+
+    :GoMetaLinter                 :compiler golint | :make
+                                  Or use LSP, ALE, or other generic linting plugin.
+    :GoMetaLinterAutoSaveToggle   autocmd
+
     :GoFmt                        gq: formatprg is set to "gofmt"
     :GoImports                    set formatprg=goimports (see :help ft-go)
-    :GoMetaLinter                 :compiler golint | :make
-    :GoFmtAutoSaveToggle          autocmd, or plugin like ALE
-    :GoMetaLinterAutoSaveToggle
+    :GoIfErr                      set formatprg=goiferr
+    :GoFmtAutoSaveToggle          autocmd or plugin like ALE
+    :GoAsmFmtAutoSaveToggle
+
+    :GoLint                       Use gometalinter or golangci-lint
+    :GoErrCheck
     :GoVet
 
-    CODE INSIGHT
+Code insight
+------------
 
     :GoDoc                        Use LSP for all of this.
     :GoDecls
@@ -57,50 +69,41 @@ overview.
     :GoCoverageClear              :GoCoverage clear
     :GoCoverageToggle             :GoCoverage toggle
 
-    DEBUGGER
+Debugger
+--------
 
     :GoDebugBreakpoint            There are external plugins for this.
     :GoDebugStart
     :GoDebugTest
 
-    CODE MODIFICATION
+Code modification
+-----------------
 
     :GoRename                     :GoRename (LSP should be able to do this eventually but it kind of
-                                             sucks right now, and my implementation seems to work a
-                                             lot better).
+                                             sucks right now)
 
     :GoAddTags                    :GoTags
     :GoRemoveTags                 :GoTags -rm
 
-    OTHER
+Other
+-----
 
     motions ([[, ]], etc.)        Implemented, but different from vim-go.
     text objects (af, etc.)       Works as vim-go
     :GoPath                       :let $GOPATH = '..'
     :GoTemplateAutoCreateToggle   Easy to use an autocmd.
 
-    NOT IMPLEMENTED (YET)
+Not implemented (yet)
+---------------------
 
-    :GoModFmt                     go mod edit -fmt doesn't read from stdin :-/
-    :GoAlternate
-    :GoAutoTypeInfoToggle
-    :GoCallees
-    :GoCallers
+    :GoCallees                    guru; should probably make one command for this:
+    :GoCallers                    :GoGuru callers, or :GoInfo callers
     :GoCallstack
     :GoChannelPeers
-    :GoCoverageBrowser
     :GoDescribe
-    :GoDrop
-    :GoFillStruct
     :GoFreevars
     :GoGuruScope
-    :GoIfErr
-    :GoImpl
     :GoImplements
-    :GoImport
-    :GoImportAs
-    :GoKeyify
-    :GoPlay
     :GoPointsTo
     :GoReferrers
     :GoSameIds
@@ -109,7 +112,22 @@ overview.
     :GoSameIdsToggle
     :GoWhicherrs
 
-    N/A
+    :GoKeyify                     keyify
+    :GoFillStruct                 fillstruct
+    :GoImpl                       impl
+
+    :GoAlternate                  Pretty useful, would prefer external plugin.
+    :GoModFmt                     go mod edit -fmt doesn't read from stdin so can't use formatprg
+    :GoAutoTypeInfoToggle         Should probably be LSP feature?
+
+    :GoCoverageBrowser            Not sure if it's worth having any of these?
+    :GoImport
+    :GoImportAs
+    :GoDrop
+    :GoPlay
+
+N/A
+---
 
     :GoInstallBinaries
     :GoReportGitHubIssue

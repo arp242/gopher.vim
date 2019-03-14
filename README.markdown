@@ -27,16 +27,13 @@ done manually with `:GoSetup`.
 Getting started
 ---------------
 
-Quick overview of the basics:
-
-<!--
 Compiling code and running tests is provided with the `go` and `gotest`
-compiler. By default the compiler is set to `go` ; you can switch it to `gotest`
-with `:comp gotest`.
+compilers. By default the compiler is set to `go` ; you can switch it to
+`gotest` with `:comp gotest`.
 
-You can now use `:make` or `:lmake` to compile the code. This is a synchronous
-process. You can use `:MakeJob` or `:LmakeJob` from vim-makejob to run it async,
-similar to `:GoInstall`, `:GoTest`, etc.
+You can now use `:make` to compile the code. This is a synchronous process. You
+can use `:MakeJob` from vim-makejob to run it async, similar to `:GoInstall`,
+`:GoTest`, etc.
 
 Running `go generate` or passing `-run` to `:GoTest` can be done by switching
 the `makeprg` setting:
@@ -57,11 +54,11 @@ You could even set `makeprg` to just `go`:
 
 All motions that work in vim-go also work in gopher.vim: `[[`, `]]`, `af`, etc.
 
-- `:GoCoverage` –
-- `:GoRename` –
-- `:GoTags` –
--->
+Overview of over commands:
 
+- `:GoCoverage` – Highlight code coverage.
+- `:GoRename`   – Rename identifier under cursor.
+- `:GoTags`     – Add or remove struct tags
 
 See [FEATURES.markdown](FEATURES.markdown) for a translation of vim-go features.
 
@@ -80,7 +77,7 @@ options.
   [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim),
   [vim-lsp](https://github.com/prabirshrestha/vim-lsp).
 
-- [vim-makejob](https://github.com/djmoch/vim-makejob) – Async `:make`.
+- [vim-makejob](https://git.danielmoch.com/vim-makejob) – Async `:make`.
 
 - [vim-qf](https://github.com/romainl/vim-qf) – Make working with the quickfix
   list/window a bit smoother.
@@ -93,18 +90,22 @@ options.
   [UltiSnips](https://github.com/sirver/UltiSnips),
   [neosnippet.vim](https://github.com/Shougo/neosnippet.vim).
 
+- [vim-delve](https://github.com/sebdah/vim-delve) – Debugger.
+  Alternatives:
+  [vim-godebug](https://github.com/jodosha/vim-godebug).
+
 ### Other resources
 
 - [Linting your code, the vanilla way](https://gist.github.com/romainl/ce55ce6fdc1659c5fbc0f4224fd6ad29)
 
-### Useful settings
+### Tips
 
 Some things you can stick in your vimrc:
 
     augroup my_gopher
         au!
 
-        " Qiucker way to make, lint, and test code.
+        " Quicker way to make, lint, and test code.
         " au FileType go nnoremap MM :wa<CR>:compiler go<CR>:silent make!<CR>:redraw!<CR>
         " au FileType go nnoremap LL :wa<CR>:compiler golint<CR>:silent make!<CR>:redraw!<CR>
         " au FileType go nnoremap TT :wa<CR>:compiler gotest<CR>:silent make!<CR>:redraw!<CR>
@@ -178,6 +179,9 @@ Development
   [testing.vim](https://github.com/Carpetsmoker/testing.vim); running the full
   test suite should be as easy as `tvim test ./...` (`tvim lint ./...` for the
   style checkers).
+
+- see [API.markdown](API.markdown) for some API docs (only public functions are
+  documented in that file).
 
 - Try to keep the public functions (`gopher#foo#do_something()`) as clean and
   usable as possible; use `s:fun()` for internal stuff, unless you want to test

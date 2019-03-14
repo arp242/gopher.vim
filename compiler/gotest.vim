@@ -5,7 +5,7 @@ let g:current_compiler = 'gotest'
 let s:save_cpo = &cpoptions
 set cpoptions-=C
 
-let &l:makeprg = 'go test ' . gopher#system#join(g:, 'gopher_build_flags', [])
+let &l:makeprg = 'go test ' . gopher#system#join(get(g:, 'gopher_build_flags', []))
 
 let s:goroot = system('go env GOROOT')[:-2]
 
