@@ -73,4 +73,4 @@ syn region goTplComment start="\[\[\(- \)\?/\*" end="\*/\( -\)\?\]\]" display
 hi def link gotplAction PreProc
 hi def link goTplComment Comment
 
-let b:current_syntax = 'gotexttmpl'
+let b:current_syntax = 'gotxt'

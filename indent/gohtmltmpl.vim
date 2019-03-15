@@ -5,14 +5,14 @@ endif
 runtime! indent/html.vim
 
 " Indent Golang HTML templates
-setlocal indentexpr=GetGoHTMLTmplIndent(v:lnum)
+setlocal indentexpr=GetGoHTMLIndent(v:lnum)
 setlocal indentkeys+==else,=end
 
-if exists('*GetGoHTMLTmplIndent')
+if exists('*GetGoHTMLIndent')
   finish
 endif
 
-fun! GetGoHTMLTmplIndent(lnum)
+fun! GetGoHTMLIndent(lnum)
   " Get HTML indent
   if exists('*HtmlIndent')
     let l:ind = HtmlIndent()

@@ -105,11 +105,12 @@ gopresent~
                         Only highlights the basics and adds |gopher-[[| and
                         |gopher-]]| motions.
 
-                                               *ft-gotexttmpl* *ft-gohtmltmpl*
-gotexttmpl gohtmltmpl~
-                        text/template and html/template. gohtmltmpl loads the
-                        standard html syntax highlighting, but they are
-                        otherwise identical.
+                                                       *ft-gotext* *ft-gohtml*
+gotext gohtml~
+                        text/template and html/template. Automatically applied
+                        to files ending with the `.gotext` and `.gohtml`.
+                        gohtml loads the standard html syntax highlighting,
+                        but they are otherwise identical.
 
 ==============================================================================
 COMMANDS                                                     *gopher-commands*
