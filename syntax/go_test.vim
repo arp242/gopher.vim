@@ -27,3 +27,19 @@ fun! Test_fmt() abort
         \ [['goVar', 1, 4], ['goString', 21, 21], ['goFormatSpecifier', 22, 22], ['goString', 24, 25], ['goString', 27, 30]],
     \ ])
 endfun
+
+fun! Test_builtin() abort
+    call TestSyntax(g:test_packdir . '/syntax/test/builtin.go',
+        \ [
+        \ [['goPackage', 1, 8]],
+        \ [],
+        \ [['goVar', 1, 4], ['goBuiltins', 5, 8], ['goDecimalInt', 11, 11]],
+        \ [],
+        \ [['goDeclaration', 1, 5], ['goBuiltins', 6, 12]],
+        \ [],
+        \ [['goDeclaration', 1, 5]],
+        \ [['goBuiltins', 2, 8], ['goDecimalInt', 12, 12]],
+        \ [['goBuiltins', 11, 17]],
+        \ [],
+    \ ])
+endfun

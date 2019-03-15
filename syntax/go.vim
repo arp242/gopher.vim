@@ -30,9 +30,20 @@ syn keyword     goType            int int8 int16 int32 int64 rune
 syn keyword     goType            byte uint uint8 uint16 uint32 uint64 uintptr
 syn keyword     goType            float32 float64
 syn keyword     goType            complex64 complex128
-syn keyword     goBuiltins        append cap close complex copy delete imag len
-syn keyword     goBuiltins        make new panic print println real recover
 syn keyword     goBoolean         true false nil iota
+
+" Highlight builtin functions, to prevent accidental overriding.
+" Do not match when it's a method function name or method call.
+" Test: builtin.go
+"
+" TODO: this is a bit slow (second slowest is goSingleDecl at ~0.35); different
+" variants I tried:
+" 0.064089   5294   160     0.000059    0.000012  goBuiltins         \v(\.|\))@<!<(append|cap|..
+" 0.165187   5294   160     0.000152    0.000031  goBuiltins         \v<(\.|\))@<!(append|cap|..
+" 0.761366   5328   194     0.000943    0.000143  goBuiltins         \v(\.|\) )@<!(append|cap|..
+" 1.000724   5328   194     0.000956    0.000188  goBuiltins         \v[^.]@<=(append|cap|..
+" TOTAL      COUNT  MATCH   SLOWEST     AVERAGE   NAME               PATTERN
+syn match goBuiltins /\v(\.|\) )@<!<(append|cap|close|complex|copy|delete|imag|len|make|new|panic|print|println|real|recover)/
 
 " Comments blocks.
 syn keyword     goTodo            contained TODO FIXME XXX BUG
