@@ -11,6 +11,7 @@ import (
 	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
 	_ "github.com/saibing/bingo"
 	_ "golang.org/x/tools/cmd/goimports"
+	_ "golang.org/x/tools/cmd/gopls"
 	_ "golang.org/x/tools/cmd/gorename"
 	_ "golang.org/x/tools/cmd/guru"
 	// See https://github.com/golang/go/issues/24661
