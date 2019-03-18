@@ -79,6 +79,10 @@ options.
   [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim),
   [vim-lsp](https://github.com/prabirshrestha/vim-lsp).
 
+- [neoformat](https://github.com/sbdchd/neoformat) – run gofmt/goimports.
+  Alternatives:
+  [ALE](https://github.com/w0rp/ale).
+
 - [vim-makejob](https://git.danielmoch.com/vim-makejob) – Async `:make`.
 
 - [vim-qf](https://github.com/romainl/vim-qf) – Make working with the quickfix
