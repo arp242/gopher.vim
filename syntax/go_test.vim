@@ -33,6 +33,8 @@ fun! Test_builtin() abort
         \ [
         \ [['goPackage', 1, 8]],
         \ [],
+        \ [['goImport', 1, 7], ['goString', 8, 12]],
+        \ [],
         \ [['goVar', 1, 4], ['goBuiltins', 5, 8], ['goDecimalInt', 11, 11]],
         \ [],
         \ [['goDeclaration', 1, 5], ['goBuiltins', 6, 12]],
@@ -40,6 +42,11 @@ fun! Test_builtin() abort
         \ [['goDeclaration', 1, 5]],
         \ [['goBuiltins', 2, 8], ['goDecimalInt', 12, 12]],
         \ [['goBuiltins', 11, 17]],
+        \ [],
+        \ [['goBuiltins', 14, 17], ['goString', 18, 20]],
+        \ [],
+        \ [],
+        \ [['goDeclaration', 1, 5]],
         \ [],
     \ ])
 endfun

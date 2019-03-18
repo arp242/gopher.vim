@@ -39,11 +39,12 @@ syn keyword     goBoolean         true false nil iota
 " TODO: this is a bit slow (second slowest is goSingleDecl at ~0.35); different
 " variants I tried:
 " 0.064089   5294   160     0.000059    0.000012  goBuiltins         \v(\.|\))@<!<(append|cap|..
+" 0.074896   5278   132     0.000367    0.000014  goBuiltins         \v(\.|\) )@<!<(append|..)\ze[^a-zA-Z0-9_]
 " 0.165187   5294   160     0.000152    0.000031  goBuiltins         \v<(\.|\))@<!(append|cap|..
 " 0.761366   5328   194     0.000943    0.000143  goBuiltins         \v(\.|\) )@<!(append|cap|..
 " 1.000724   5328   194     0.000956    0.000188  goBuiltins         \v[^.]@<=(append|cap|..
 " TOTAL      COUNT  MATCH   SLOWEST     AVERAGE   NAME               PATTERN
-syn match goBuiltins /\v(\.|\) )@<!<(append|cap|close|complex|copy|delete|imag|len|make|new|panic|print|println|real|recover)/
+syn match goBuiltins /\v(\.|\) )@<!<(append|cap|close|complex|copy|delete|imag|len|make|new|panic|print|println|real|recover)\ze[^a-zA-Z0-9_]/
 
 " Comments blocks.
 syn keyword     goTodo            contained TODO FIXME XXX BUG
