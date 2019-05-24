@@ -94,11 +94,13 @@ options.
 - [minisnip](https://github.com/joereynolds/vim-minisnip) – Snippets.
   Alternatives:
   [UltiSnips](https://github.com/sirver/UltiSnips),
-  [neosnippet.vim](https://github.com/Shougo/neosnippet.vim).
+  [neosnippet.vim](https://github.com/Shougo/neosnippet.vim),
+  [sonictemplate-vim](https://github.com/mattn/sonictemplate-vim).
 
 - [vim-delve](https://github.com/sebdah/vim-delve) – Debugger.
   Alternatives:
   [vim-godebug](https://github.com/jodosha/vim-godebug).
+
 
 ### Other resources
 

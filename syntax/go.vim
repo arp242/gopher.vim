@@ -25,6 +25,7 @@ syn keyword     goLabel           case default
 syn keyword     goRepeat          for range
 
 " Predefined identifiers.
+" TODO: a method named error or true is valid, and shouldn't be highlighted.
 syn keyword     goType            chan map bool string error
 syn keyword     goType            int int8 int16 int32 int64 rune
 syn keyword     goType            byte uint uint8 uint16 uint32 uint64 uintptr
@@ -45,6 +46,12 @@ syn keyword     goBoolean         true false nil iota
 " 1.000724   5328   194     0.000956    0.000188  goBuiltins         \v[^.]@<=(append|cap|..
 " TOTAL      COUNT  MATCH   SLOWEST     AVERAGE   NAME               PATTERN
 syn match goBuiltins /\v(\.|\) )@<!<(append|cap|close|complex|copy|delete|imag|len|make|new|panic|print|println|real|recover)\ze[^a-zA-Z0-9_]/
+
+" avoid highlighting attributes as builtins
+"   syn match   pythonAttribute	/\.\h\w*/hs=s+1
+" 	\ contains=ALLBUT,pythonBuiltin,pythonFunction,pythonAsync
+" 	\ transparent
+
 
 " Comments blocks.
 syn keyword     goTodo            contained TODO FIXME XXX BUG
