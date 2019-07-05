@@ -31,11 +31,16 @@ fun! gopher#coverage#do(...) abort
     return gopher#coverage#clear()
   endif
 
+  let l:args = a:000
+  if a:0 is 1 && (a:1 is# 'toggle')
+    let l:args = []
+  endif
+
   let l:tmp = tempname()
   try
     let [l:out, l:err] = gopher#system#run(['go', 'test',
           \ '-coverprofile', l:tmp] +
-          \ gopher#go#add_build_tags(a:000) +
+          \ gopher#go#add_build_tags(l:args) +
           \ ['./' . expand('%:.:h')])
     if l:err
       return gopher#error(l:out)
