@@ -151,8 +151,8 @@ COMMANDS                                                     *gopher-commands*
                         au!
                         au Syntax go hi goCoverageCovered guibg=blue
                         au Syntax go hi goCoverageUncover guibg=brown
-                augroup end <
-
+                augroup end
+<
 :GoGuru [flags] {command}                                            *:GoGuru*
         Run a `guru` command.
 
