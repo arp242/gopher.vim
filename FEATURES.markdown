@@ -13,6 +13,7 @@ Building
     :GoBuild                      :setl makeprg=go\ build
     :GoGenerate                   :setl makeprg=go\ generate
     :GoRun                        :setl makeprg=go\ run
+
                                   NOTE: can also set makeprg to go:
                                     :setl makeprg=go
                                     :make install
@@ -33,53 +34,53 @@ Linting
                                   Or use LSP, ALE, or other generic linting plugin.
     :GoMetaLinterAutoSaveToggle   autocmd
 
-    :GoFmt                        =: equalprg is set to "gofmt"
-    :GoImports                    set equalprg=goimports (see :help ft-go)
-    :GoIfErr                      set equalprg=goiferr
+    :GoFmt                        = (equalprg is set to gofmt)
+    :GoImports                    :set equalprg=goimports (see :help ft-go)
+    :GoIfErr                      :set equalprg=goiferr
     :GoFmtAutoSaveToggle          autocmd or plugin like ALE
-    :GoAsmFmtAutoSaveToggle
+    :GoAsmFmtAutoSaveToggle       v
 
     :GoLint                       Use gometalinter or golangci-lint
-    :GoErrCheck
-    :GoVet
+    :GoErrCheck                   |
+    :GoVet                        v
 
 Code insight
 ------------
 
     :GoDoc                        Use LSP for all of this.
-    :GoDecls
-    :GoDeclsDir
-    :GoDef
-    :GoDef
-    :GoDefPop
-    :GoDefPop
-    :GoDefStack
-    :GoDefStack
-    :GoDefStackClear
-    :GoDefStackClear
-    :GoDocBrowser
-    :GoInfo
-    Completion
+    :GoDecls                      |
+    :GoDeclsDir                   |
+    :GoDef                        |
+    :GoDef                        |
+    :GoDefPop                     |
+    :GoDefPop                     |
+    :GoDefStack                   |
+    :GoDefStack                   |
+    :GoDefStackClear              |
+    :GoDefStackClear              |
+    :GoDocBrowser                 |
+    :GoInfo                       |
+    Insert mode completion        v
 
     :GoFiles                      :!go list ...; probably rare enough to not need a command on its own.
-    :GoDeps
+    :GoDeps                       v
 
-    :GoCoverage                   :CoCoverage; would be a good candidte for an external plugin, but
+    :GoCoverage                   :CoCoverage; would be a good candidate for an external plugin, but
                                                I can't find any good ones.
     :GoCoverageClear              :GoCoverage clear
     :GoCoverageToggle             :GoCoverage toggle
 
     :GoCallees                    These are all guru commands, and can be used with :GoGuru
     :GoCallers                    e.g. :GoGuru callers, :GoGuru whicherrs, etc.
-    :GoCallstack
-    :GoChannelPeers
-    :GoDescribe
-    :GoFreevars
-    :GoImplements
-    :GoPointsTo
-    :GoReferrers
-    :GoSameIds
-    :GoWhicherrs
+    :GoCallstack                  |
+    :GoChannelPeers               |
+    :GoDescribe                   |
+    :GoFreevars                   |
+    :GoImplements                 |
+    :GoPointsTo                   |
+    :GoReferrers                  |
+    :GoSameIds                    |
+    :GoWhicherrs                  v
 
     :GoGuruScope                  :let gopher_guru_scope = '..' or :GoGuru -scope .. command
 
@@ -87,8 +88,8 @@ Debugger
 --------
 
     :GoDebugBreakpoint            There are external plugins for this.
-    :GoDebugStart
-    :GoDebugTest
+    :GoDebugStart                 |
+    :GoDebugTest                  v
 
 Code modification
 -----------------
@@ -127,13 +128,13 @@ Not implemented (yet)
     :GoAutoTypeInfoToggle         Should probably be LSP feature?
 
     :GoCoverageBrowser            Not sure if it's worth having these?
-    :GoPlay
+    :GoPlay                       v
 
 N/A
 ---
 
-    :GoInstallBinaries
-    :GoReportGitHubIssue
-    :GoUpdateBinaries
+    :GoInstallBinaries            Managed automatically
+    :GoUpdateBinaries             v
+    :GoReportGitHubIssue          Not needed now; might add ":GoDiag report" later
 
 vim: cc=35 tw=100
