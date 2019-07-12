@@ -8,7 +8,7 @@ gopher.vim is a Vim plugin for the Go programming language.
 This plugin requires Go 1.11 or newer; older versions will not work as the
 internal vendoring uses modules.
 
-NOTE: see the README for some information to get started; this is only a
+Note: see the README for some information to get started; this is only a
 reference.
 
 ==============================================================================
@@ -66,23 +66,27 @@ go~
 
                                                           *g:gopher_highlight*
         The `g:gopher_highlight` setting controls various options for the go
-        syntax highlighting. Supported options:
+        syntax highlighting. It's a list which can contain any combination of
+        the following items:
 
                 complex                Highlight complex numbers; disabled by
-                                       default as it's fairly expensive and
-                                       not frequently used.
+                                       default as it's fairly slow and not
+                                       frequently used.
                 string-fmt             Highlight fmt formatting specifiers.
                 string-spell           Enable spell checking in strings.
 
         Options to control folding:
 
-                fold-block             `{` .. `}` blocks.
+                fold-block             All `{` .. `}` blocks.
                 fold-comment           Any comment except the package comment.
                 fold-import            `import` block.
                 fold-pkg-comment       The package comment.
                 fold-varconst          `var` and `const` blocks.
 
         The default is `['string-spell', 'string-fmt']`
+
+        Note: you will need to reload the syntax file with `:set syntax=go`
+        for changes to take effect when changing it at runtime.
 
                                                              *gopher-compiler*
         Several compilers are supported; you can select one with the
@@ -139,7 +143,7 @@ COMMANDS                                                     *gopher-commands*
         toggle       Toggle display of highlighting.
 
                                  *hl-goCoverageCovered* *hl-goCoverageUncover*
-        NOTE: it's impossible to highlight the background with a colour that
+        Note: it's impossible to highlight the background with a colour that
         is guaranteed to work well with all colour schemes. The default is to
         use something that works well with the default one and – hopefully –
         most common ones.
@@ -228,7 +232,7 @@ COMMANDS                                                     *gopher-commands*
 
         Tab completion includes the exported and unexported version.
 
-        NOTE: this only works for packages in GOPATH at the moment due to
+        Note: this only works for packages in GOPATH at the moment due to
         limitations in `gorename`: https://github.com/golang/go/issues/27571
 
         *g:gopher_gorename_flags* = `[]`
