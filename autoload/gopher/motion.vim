@@ -66,6 +66,11 @@ fun! gopher#motion#comment(mode) abort
   let l:info = l:loc.comment
   call cursor(l:info.startLine, l:info.startCol)
 
+  " Adjust cursor to select all whitespace before the first comment marker.
+  if a:mode is# 'a'
+    " TODO
+  endif
+
   " Adjust cursor to exclude start comment markers. Try to be a little bit
   " clever when using multi-line '/*' markers.
   if a:mode is# 'i'
