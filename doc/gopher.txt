@@ -53,8 +53,7 @@ go~
 
         The go filetype sets the following settings:
 
-                'formatprg'     `gofmt 2>/dev/null || cat /dev/stdin`
-                'equalprg'
+                'equalprg'     `gofmt 2>/dev/null || cat /dev/stdin`
                                 A simple/native way to format code with gofmt
                                 while ignoring errors. Use ALE or Syntastic
                                 for a more advances experience.

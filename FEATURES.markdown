@@ -33,9 +33,9 @@ Linting
                                   Or use LSP, ALE, or other generic linting plugin.
     :GoMetaLinterAutoSaveToggle   autocmd
 
-    :GoFmt                        gq: formatprg is set to "gofmt"
-    :GoImports                    set formatprg=goimports (see :help ft-go)
-    :GoIfErr                      set formatprg=goiferr
+    :GoFmt                        =: equalprg is set to "gofmt"
+    :GoImports                    set equalprg=goimports (see :help ft-go)
+    :GoIfErr                      set equalprg=goiferr
     :GoFmtAutoSaveToggle          autocmd or plugin like ALE
     :GoAsmFmtAutoSaveToggle
 

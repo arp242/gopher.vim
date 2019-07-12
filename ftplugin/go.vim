@@ -31,12 +31,11 @@ setlocal noexpandtab
 " Special-fu to ensure we don't clobber the buffer with errors.
 " TODO: /dev/stdin is not completely portable, but I don't know how to get the
 " same effect with standard POSIX redirection.
-let &l:formatprg = 'gofmt 2>/dev/null || cat /dev/stdin'
-let &l:equalprg = &formatprg
+let &l:equalprg = 'gofmt 2>/dev/null || cat /dev/stdin'
 
 compiler go
 
-let b:undo_ftplugin = 'setl formatoptions< comments< commentstring< formatprg< equalprg<'
+let b:undo_ftplugin = 'setl formatoptions< comments< commentstring< equalprg<'
 
 " Motions
 onoremap <buffer> <silent> af :<C-u>call gopher#motion#function('a')<CR>
