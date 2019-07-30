@@ -54,7 +54,7 @@ fun! s:echo(msg, hi, ...) abort
     let l:msg = a:msg
   else
     let l:msg = a:msg
-    if len(a:000) > 0
+    if len(a:000) > 0 && len(a:000[0]) > 0
       let l:msg = call('printf', [a:msg] + a:000[0])
     endif
     let l:msg = split(l:msg, "\n")
