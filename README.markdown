@@ -1,6 +1,6 @@
 [![This project is considered experimental](https://img.shields.io/badge/Status-experimental-red.svg)](https://arp242.net/status/experimental)
-[![Build Status](https://travis-ci.org/Carpetsmoker/gopher.vim.svg?branch=master)](https://travis-ci.org/Carpetsmoker/gopher.vim)
-[![codecov](https://codecov.io/gh/Carpetsmoker/gopher.vim/branch/master/graph/badge.svg)](https://codecov.io/gh/Carpetsmoker/gopher.vim)
+[![Build Status](https://travis-ci.org/arp242/gopher.vim.svg?branch=master)](https://travis-ci.org/arp242/gopher.vim)
+[![codecov](https://codecov.io/gh/arp242/gopher.vim/branch/master/graph/badge.svg)](https://codecov.io/gh/arp242/gopher.vim)
 
 gopher.vim is a Vim plugin for the Go programming language.
 
@@ -184,9 +184,9 @@ Development
   to do this automatically.
 
 - The plugin is tested with
-  [testing.vim](https://github.com/Carpetsmoker/testing.vim); running the full
-  test suite should be as easy as `tvim test ./...` (`tvim lint ./...` for the
-  style checkers).
+  [testing.vim](https://github.com/arp242/testing.vim); running the full test
+  suite should be as easy as `tvim test ./...` (`tvim lint ./...` for the style
+  checkers).
 
 - Try to keep the public functions (`gopher#foo#do_something()`) as clean and
   usable as possible; use `s:fun()` for internal stuff, unless you want to test
