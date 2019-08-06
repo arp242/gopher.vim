@@ -256,7 +256,7 @@ Development
 - Always prefix variables with the scope (e.g. `l:var` instead of `var`).
 
 - Use strict comparisons: `if l:foo is# 'str'` instead of `==`. It's like `===`
-  from PHP and JavaScript; try `:echo 1 == '1' | :echo 1 is '1'.
+  from PHP and JavaScript; try `:echo 1 == '1' | :echo 1 is '1'`.
 
   The `#` ensures that case is always matched; use `is?` for case-insensitive
   matches. Not needed for numbers, but doesn't hurt either.
