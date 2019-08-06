@@ -58,6 +58,9 @@ Code insight
     :GoDocBrowser                 ⤶
     :GoInfo                       ⤶
     Insert mode completion        ⤶
+    :GoSameIdsAutoToggle          ⤶
+    :GoSameIdsClear               ⤶
+    :GoSameIdsToggle              ⤶
 
     :GoFiles                      :!go list ...; probably rare enough to not need a command on its own.
     :GoDeps                       ⤶
@@ -112,10 +115,6 @@ Other
 Not implemented (yet)
 ---------------------
 
-    :GoSameIdsAutoToggle
-    :GoSameIdsClear
-    :GoSameIdsToggle
-
     :GoKeyify                     keyify
     :GoFillStruct                 fillstruct
     :GoImpl                       impl
@@ -134,4 +133,5 @@ N/A
     :GoUpdateBinaries             ⤶
     :GoReportGitHubIssue          Not needed now; might add ":GoDiag report" later
 
-vim: cc=35 tw=100
+<!-- vim: cc=35 tw=100
+-->

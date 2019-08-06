@@ -72,16 +72,19 @@ A list of useful companion plugins; this is not an exhaustive list, but rather a
 "most useful" list. For many alternatives exist as well; I didn't test all
 options.
 
+See [PLUGINS.markdown](PLUGINS.markdown) for some configuration hints for
+various plugins.
+
 - [vim-lsc](https://github.com/natebosch/vim-lsc) – LSP client.
   Alternatives:
-  [ALE](https://github.com/w0rp/ale),
+  [ALE](https://github.com/dense-analysis/ale),
   [coc.nvim](https://github.com/neoclide/coc.nvim),
   [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim),
   [vim-lsp](https://github.com/prabirshrestha/vim-lsp).
 
 - [neoformat](https://github.com/sbdchd/neoformat) – run gofmt/goimports.
   Alternatives:
-  [ALE](https://github.com/w0rp/ale).
+  [ALE](https://github.com/dense-analysis/ale).
 
 - [vim-makejob](https://git.danielmoch.com/vim-makejob) – Async `:make`.
 
@@ -176,8 +179,11 @@ this stuff.
 
 ### Why do some commands conflict with vim-go? Why not prefix commands with `:Gopher`?
 
-This is what I originally did, and found it annoying. If you really want you can
-probably `:delcommand` and `:command GopherCommand ...` or some such.
+This is what I originally did, and found it annoying as it's so much work to
+type, man! Being compatible probably isn't too useful anyway, so I changed it.
+
+If you really want you can probably `:delcommand` and `:command GopherCommand
+...` or some such.
 
 History and rationale
 ---------------------
@@ -249,11 +255,12 @@ Development
 
 - Always prefix variables with the scope (e.g. `l:var` instead of `var`).
 
-- Use strict comparisons: `if l:foo is# 'str'` instead of `==`. It's Vim's `===`
-  from PHP and JavaScript. The `#` ensures that case is always matched; use
-  `is?` for case-insensitive matches. Not needed for numbers, but doesn't hurt
-  either.
+- Use strict comparisons: `if l:foo is# 'str'` instead of `==`. It's like `===`
+  from PHP and JavaScript; try `:echo 1 == '1' | :echo 1 is '1'.
+
+  The `#` ensures that case is always matched; use `is?` for case-insensitive
+  matches. Not needed for numbers, but doesn't hurt either.
 
 - Use modern Vim features, don't be too worried about backwards compatibility
   with very old Vim versions that some distros still ship with. Just because
-  Debian wants to support everything for 5 years doesn't mean I should.
+  Debian wants to support everything for 5 years doesn't mean we should.

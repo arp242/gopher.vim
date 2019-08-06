@@ -26,6 +26,8 @@ fun! gopher#guru#do(...) abort
         \ + [gopher#buf#cursor(1)]))
 endfun
 
+" TODO: errors don't always appear well. Not sure how to best fix that, seems
+" more of a Vim issue than anything else :-/
 fun! s:done(exit, out) abort
   if a:exit > 0
     " TODO: add hint about scope if appropriate.
