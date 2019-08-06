@@ -5,13 +5,11 @@ let g:current_compiler = 'go'
 let s:save_cpo = &cpoptions
 set cpoptions-=C
 
-let &l:makeprg = 'go install ' . gopher#system#join(get(g:, 'gopher_build_flags', []))
-
-" Builds the ./cmd/<dirname> if it exists; it's a common pattern.
-let s:cmd = './cmd/' . expand('%:p:h:t')
-if isdirectory(s:cmd)
-	let &l:makeprg .= ' ' . s:cmd
-endif
+" TODO: can probably automate the gopher_install_package better with some "go
+" list"-fu.
+let &l:makeprg = printf('go install %s %s',
+      \ gopher#system#join(get(g:, 'gopher_build_flags', [])),
+      \ get(g:, 'gopher_install_package', ''))
 
 " TODO: this error isn't recognized:
 " # a

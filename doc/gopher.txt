@@ -96,6 +96,22 @@ go~
                 gotest                  `go test`
                 golint                  `golangci-lint`
 
+                                                    *g:gopher_install_package*
+        Can be set to a package name to install with |:make|; default is to
+        use the current directory. This is especially useful if the main
+        package is a `./cmd/proj` subpackage. You typically want to set this
+        per-project with an |autocmd|:
+>
+            autocmd BufReadPre /home/martin/code/proj/*.go
+                        \ let g:gopher_install_package = 'example.com/proj/cmd/proj'
+<
+        This ensures that the `example.com/proj/cmd/proj` package is installed
+        with |:make| regardless of the current directory or file you have
+        open. This is only used by the go |compiler|, not gotest or golint.
+
+        Note: run |:e| to reload after changing this during runtime.
+
+
                                                                     *ft-gomod*
 gomod~
                         go.mod file; there are no options.
@@ -299,7 +315,7 @@ just a command are documented in the command.
         List of debugging options:
 
         commands    Records all shell commands; use |:GoDiag| or
-        `gopher#system#history()` to view.
+                    `gopher#system#history()` to view.
 
 *gopher_override_vimgo* = (undefined)
         Override vim-go; this removes all vim-go commands, autocommands,
