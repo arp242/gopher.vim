@@ -10,12 +10,12 @@ cache:
 
 install: |
   # Use Python 3
-  pyenv global 3.6
+  pyenv global 3.7
 
   # Move plugin to more logical location.
   cd ~
   mkdir -p ~/.vim/pack/plugin/start
-  mv /home/travis/gopath/src/github.com/Carpetsmoker/gopher.vim ~/.vim/pack/plugin/start
+  mv /home/travis/gopath/src/github.com/arp242/gopher.vim ~/.vim/pack/plugin/start
 
   (
     set -euC
@@ -29,7 +29,7 @@ install: |
 
     # testing.vim
     pip3 install --user -q vim-vint covimerage codecov
-    git clone -q --depth 1 https://github.com/Carpetsmoker/testing.vim.git $HOME/testing.vim
+    git clone -q --depth 1 https://github.com/arp242/testing.vim.git $HOME/testing.vim
 
     # Lint tools
     # pack="$HOME/vim/share/vim/vim80/pack/dist/start"

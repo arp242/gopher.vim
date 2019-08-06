@@ -121,12 +121,11 @@ Some things you can stick in your vimrc:
         " au FileType go nnoremap LL :wa<CR>:compiler golint<CR>:silent make!<CR>:redraw!<CR>
         " au FileType go nnoremap TT :wa<CR>:compiler gotest<CR>:silent make!<CR>:redraw!<CR>
 
-        " Lint on write.
+        " Basic lint on write.
         " autocmd BufWritePost *.go compiler golint | silent make! | redraw!
 
-        " Put a path before GOPATH, to use binaries from there (not recommended
-        " unless you have special needs or want to test a modified version of a
-        " tool!)
+        " Put a path before GOPATH to use tools from there. Not recommended
+        " unless you have special needs or want to test a modified version.
         " autocmd Filetype go let $PATH = $HOME . '/go/bin:' . $PATH
 
         " Format buffer on write; need to make a motion for the entire buffer to
@@ -148,25 +147,26 @@ FAQ
 
 ### Some things that were asynchronous in vim-go are no longer, what gives?
 
-Yeah, async is nice. But it's also hard. For example the code for `:GoCoverage`
-is now 120 lines shorter while also fixing a few bugs and adding features.
+async can be nice but it's also hard. For example the code for `:GoCoverage` is
+now 120 lines shorter while also fixing a few bugs and adding features.
 
-There is also a user interface aspect: if I ask Vim to do something then often I
-want it to, well, do something now. When it's run in the background feedback is
-often poor. Is it still running? Did I miss a message? Who knows. Messages are
-sometimes lost. And how do you cancel a background job from the UI?
+There is also a user interface aspect: if I ask Vim to do something then I want
+it to do something now. When it's run in the background feedback is often poor.
+Is it still running? Did I miss a message? Who knows, messages are sometimes
+lost. How do you cancel a background job from the UI? Often you can't. What if I
+switch buffers or modify a file? *Weird Stuff*™ hapens.
 
 This doesn't mean I'm against async, just not for every last thing. Some things
-in gopher.vim are still async. It's a trade-off.
-
-If you have a good case for something to be async then feel free to open an
-issue with a use case.
+in gopher.vim are still async. It's a trade-off. If you have a good case for
+something to be async then feel free to open an issue and try and convince me
+:-)
 
 ### The syntax has fewer colours, it's so boring!
 
 I removed a whole bunch of the extra options as it's hard to maintain and not
 all that useful. It doesn't even work all that well because enabling all options
-would slow everything down to a crawl.
+would slow everything down to a crawl and testing all the combinations is
+tricky.
 
 The syntax file in gopher.vim has fewer features, but is also much faster and
 easier to maintain.
