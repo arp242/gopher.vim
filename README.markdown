@@ -6,11 +6,17 @@ gopher.vim is a Vim plugin for the Go programming language.
 
 Goals:
 
-- Vendor external dependencies in the plugin.
+- Vendor external dependencies in the plugin to avoid common version mismatch
+  problems.
+
 - Off-load functionality to native Vim features or generic plugins when they
-  offer a good user experience.
+  offer a good user experience. Implement as little as reasonable.
+
 - Ensure that included commands are well-tested to work with as many possible
   scenarios as possible.
+
+I've been using this as my daily workhorse for the last half year or so, and it
+works quite well for me.
 
 Installation
 ------------
@@ -223,8 +229,8 @@ retains some concepts and ideas. vim-go is the giant's shoulders on which
 gopher.vim stands.
 
 [govim](https://github.com/myitcv/govim) is another attempt at a modern Go
-plugin, and seems to have roughly the same approach as vim-go: reinvent all the
-things. To be honest I didn't look too closely at it (as gopher.vim was already
+plugin, and seems to have the same conceptual approach as vim-go: reinvent all
+the things. To be honest I didn't look too closely at it (gopher.vim was already
 fully functional and correct by the time govim was announced).
 
 Development

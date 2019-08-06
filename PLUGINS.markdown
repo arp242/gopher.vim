@@ -1,5 +1,8 @@
 Configuration hints for various plugins.
 
+Feel free to open a PR to add to this. It's just what I use (or used in the
+past).
+
 ALE
 ---
 

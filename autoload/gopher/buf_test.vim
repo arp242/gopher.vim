@@ -1,3 +1,6 @@
+scriptencoding utf-8
+call gopher#init#config()
+
 fun! Test_lines() abort
   new
   let l:want = ['aaa', 'bbb']
