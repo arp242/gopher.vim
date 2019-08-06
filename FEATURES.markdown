@@ -8,11 +8,9 @@ Building
 --------
 
     :GoInstall                    :make
-
-                                  Change the makeprg to use other build commands.
-    :GoBuild                      :setl makeprg=go\ build
-    :GoGenerate                   :setl makeprg=go\ generate
-    :GoRun                        :setl makeprg=go\ run
+    :GoBuild                      :setl makeprg=go\ build | :make
+    :GoGenerate                   :setl makeprg=go\ generate | :make
+    :GoRun                        :setl makeprg=go\ run | :make
 
                                   NOTE: can also set makeprg to go:
                                     :setl makeprg=go
@@ -20,7 +18,6 @@ Building
                                     :make run main.go
                                   Replace :make with :MakeJob from vim-makejob for async versions.
 
-                                  Testing is done with the gotest compiler:
     :GoTest                       :compiler gotest | :make
     :GoTestCompile                :make -c or :make -c -o/dev/null
     :GoTestFunc                   :make -run ..
@@ -38,32 +35,32 @@ Linting
     :GoImports                    :set equalprg=goimports (see :help ft-go)
     :GoIfErr                      :set equalprg=goiferr
     :GoFmtAutoSaveToggle          autocmd or plugin like ALE
-    :GoAsmFmtAutoSaveToggle       v
+    :GoAsmFmtAutoSaveToggle       ⤶
 
     :GoLint                       Use gometalinter or golangci-lint
-    :GoErrCheck                   |
-    :GoVet                        v
+    :GoErrCheck                   ⤶
+    :GoVet                        ⤶
 
 Code insight
 ------------
 
     :GoDoc                        Use LSP for all of this.
-    :GoDecls                      |
-    :GoDeclsDir                   |
-    :GoDef                        |
-    :GoDef                        |
-    :GoDefPop                     |
-    :GoDefPop                     |
-    :GoDefStack                   |
-    :GoDefStack                   |
-    :GoDefStackClear              |
-    :GoDefStackClear              |
-    :GoDocBrowser                 |
-    :GoInfo                       |
-    Insert mode completion        v
+    :GoDecls                      ⤶
+    :GoDeclsDir                   ⤶
+    :GoDef                        ⤶
+    :GoDef                        ⤶
+    :GoDefPop                     ⤶
+    :GoDefPop                     ⤶
+    :GoDefStack                   ⤶
+    :GoDefStack                   ⤶
+    :GoDefStackClear              ⤶
+    :GoDefStackClear              ⤶
+    :GoDocBrowser                 ⤶
+    :GoInfo                       ⤶
+    Insert mode completion        ⤶
 
     :GoFiles                      :!go list ...; probably rare enough to not need a command on its own.
-    :GoDeps                       v
+    :GoDeps                       ⤶
 
     :GoCoverage                   :CoCoverage; would be a good candidate for an external plugin, but
                                                I can't find any good ones.
@@ -72,15 +69,15 @@ Code insight
 
     :GoCallees                    These are all guru commands, and can be used with :GoGuru
     :GoCallers                    e.g. :GoGuru callers, :GoGuru whicherrs, etc.
-    :GoCallstack                  |
-    :GoChannelPeers               |
-    :GoDescribe                   |
-    :GoFreevars                   |
-    :GoImplements                 |
-    :GoPointsTo                   |
-    :GoReferrers                  |
-    :GoSameIds                    |
-    :GoWhicherrs                  v
+    :GoCallstack                  ⤶
+    :GoChannelPeers               ⤶
+    :GoDescribe                   ⤶
+    :GoFreevars                   ⤶
+    :GoImplements                 ⤶
+    :GoPointsTo                   ⤶
+    :GoReferrers                  ⤶
+    :GoSameIds                    ⤶
+    :GoWhicherrs                  ⤶
 
     :GoGuruScope                  :let gopher_guru_scope = '..' or :GoGuru -scope .. command
 
@@ -88,8 +85,8 @@ Debugger
 --------
 
     :GoDebugBreakpoint            There are external plugins for this.
-    :GoDebugStart                 |
-    :GoDebugTest                  v
+    :GoDebugStart                 ⤶
+    :GoDebugTest                  ⤶
 
 Code modification
 -----------------
@@ -128,13 +125,13 @@ Not implemented (yet)
     :GoAutoTypeInfoToggle         Should probably be LSP feature?
 
     :GoCoverageBrowser            Not sure if it's worth having these?
-    :GoPlay                       v
+    :GoPlay                       ⤶
 
 N/A
 ---
 
     :GoInstallBinaries            Managed automatically
-    :GoUpdateBinaries             v
+    :GoUpdateBinaries             ⤶
     :GoReportGitHubIssue          Not needed now; might add ":GoDiag report" later
 
 vim: cc=35 tw=100

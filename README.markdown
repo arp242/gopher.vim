@@ -31,8 +31,8 @@ Compiling code and running tests is provided with the `go` and `gotest`
 compilers. By default the compiler is set to `go`; you can switch it to `gotest`
 with `:comp gotest`.
 
-You can now use `:make` to compile the code. This is a synchronous process. You
-can use `:MakeJob` from vim-makejob to run it async, similar to vim-go's
+You can use `:make` to compile the code. This is a synchronous process. You can
+use `:MakeJob` from vim-makejob to run it async, similar to vim-go's
 `:GoInstall`, `:GoTest`, etc.
 
 Running `go generate` or passing `-run` to `:GoTest` can be done by switching
@@ -54,13 +54,13 @@ You could even set `makeprg` to just `go`:
 
 All motions that work in vim-go also work in gopher.vim: `[[`, `]]`, `af`, etc.
 
-Overview of over commands:
+Overview of other commands:
 
 - `:GoCoverage` – Highlight code coverage.
-- `:GoRename`   – Rename identifier under cursor.
 - `:GoTags`     – Add or remove struct tags
-- `:GoGuru`     – Get various information using the `guru` command.
+- `:GoRename`   – Rename identifier under cursor.
 - `:GoImport`   – Add, modify, or remove imports.
+- `:GoGuru`     – Get various information using the `guru` command.
 
 See [FEATURES.markdown](FEATURES.markdown) for a translation of vim-go features.
 

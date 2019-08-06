@@ -39,14 +39,24 @@ fun! s:run(start, end, offset, mode, tags) abort
     return gopher#error('gomodifytags exit %d: %s', l:err, l:out)
   endif
 
-  let l:outlist = split(l:out, "\n")
-  call setline(1, l:outlist)
-  if line('$') - 1 > len(l:outlist)
-    exe printf('%d,%dd', len(l:outlist), line('$') - 1)
-    undojoin
+  try
+    let l:result = json_decode(l:out)
+  catch
+    return gopher#error(l:out)
+  endtry
+  if type(l:result) isnot v:t_dict
+    return gopher#error('unexpected output: %s', l:out)
   endif
 
-  " call s:write_out(l:out)
+  if has_key(l:result, 'errors')
+    return gopher#error(l:result['errors'])
+  endif
+
+  let l:i = 0
+  for l:line in range(l:result['start'], l:result['end'])
+    call setline(l:line, l:result['lines'][l:i])
+    let l:i += 1
+  endfor
 endfun
 
 " Create the command to run gomodifytags.
@@ -60,11 +70,11 @@ fun! s:create_cmd(mode, start, end, offset, tags) abort
   " using -format json, so just replace the entire buffer until this is fixed.
   " https://github.com/fatih/gomodifytags/issues/39
   let l:cmd = ['gomodifytags',
-        \ '-format', 'source',
-        \ '-file', expand('%')]
-        \ + (g:gopher_tag_transform isnot# '' ? ['-transform', g:gopher_tag_transform] : [])
-        \ + (&modified ? ['-modified'] : [])
-        \ + (a:offset isnot 0 ? ['-offset', a:offset] : ['-line', printf('%d,%d', a:start, a:end)])
+                \ '-format', 'json',
+                \ '-file', expand('%')]
+                \ + (g:gopher_tag_transform isnot# '' ? ['-transform', g:gopher_tag_transform] : [])
+                \ + (&modified ? ['-modified'] : [])
+                \ + (a:offset isnot 0 ? ['-offset', a:offset] : ['-line', printf('%d,%d', a:start, a:end)])
 
   " Create list if just tag names, without options.
   let l:tags = map(copy(a:tags), {i, v -> split(l:v, ',')[0] })
@@ -83,25 +93,3 @@ fun! s:create_cmd(mode, start, end, offset, tags) abort
         \ + [printf('-%s-tags', a:mode), join(l:tags, ',')]
         \ + (!empty(l:opts) ? [printf('-%s-options', a:mode), join(l:opts, ',')] : [])
 endfun
-
-" Write output to the buffer.
-" fun! s:write_out(out) abort
-"   try
-"     let l:result = json_decode(a:out)
-"   catch
-"     return gopher#error(a:out)
-"   endtry
-"   if type(l:result) isnot v:t_dict
-"     return gopher#error('unexpected output: %s', a:out)
-"   endif
-"
-"   let l:index = 0
-"   for l:line in range(l:result['start'], l:result['end'])
-"     call setline(l:line, l:result['lines'][l:index])
-"     let l:index += 1
-"   endfor
-"
-"   if has_key(l:result, 'errors')
-"     call gopher#error(l:result['errors'])
-"   endif
-" endfun

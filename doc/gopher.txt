@@ -286,8 +286,8 @@ COMMANDS                                                     *gopher-commands*
 <
         *g:gopher_tag_default* = `'json'`
                 Default tag for |:GoTags| when no parameters are given. Can be
-                any valid set of arguments for |:GoTags| (e.g. `json,omitempty
-                -rm yaml`).
+                any valid set of arguments for |:GoTags| (for example
+                `json,omitempty -rm yaml`).
 
         *g:gopher_tag_transform* = `'snakecase'`
                 Transform the struct field name when adding a tag. Supported

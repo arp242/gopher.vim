@@ -2,7 +2,7 @@ module tools
 
 require (
 	arp242.net/goimport v0.0.0-20190222045455-cc7494e264a0
-	github.com/fatih/gomodifytags v0.0.0-20190517204355-df91c5bc7551
+	github.com/fatih/gomodifytags v0.0.0-20190716080653-b460b6a4c992
 	github.com/fatih/motion v0.0.0-20190527122956-41470362fad4
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/saibing/bingo v0.0.0-20190331051950-76bcd777316d

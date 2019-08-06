@@ -17,6 +17,8 @@ github.com/fatih/gomodifytags v0.0.0-20180914191908-141225bf62b6 h1:iXJdM8Uob6EP
 github.com/fatih/gomodifytags v0.0.0-20180914191908-141225bf62b6/go.mod h1:p2/x7bnOQsbq/deXsDIlj2yLiKFGPkD2nuoYqwn8R4Y=
 github.com/fatih/gomodifytags v0.0.0-20190517204355-df91c5bc7551 h1:/fvatMHXeYKMzBfS7ZAWJxAUVdNvorVap9/T7agWgW8=
 github.com/fatih/gomodifytags v0.0.0-20190517204355-df91c5bc7551/go.mod h1:p2/x7bnOQsbq/deXsDIlj2yLiKFGPkD2nuoYqwn8R4Y=
+github.com/fatih/gomodifytags v0.0.0-20190716080653-b460b6a4c992 h1:lNqDmdhlaZkv7gv05CNALhaasZEsIvDeZ3Zdi+sYfiM=
+github.com/fatih/gomodifytags v0.0.0-20190716080653-b460b6a4c992/go.mod h1:p2/x7bnOQsbq/deXsDIlj2yLiKFGPkD2nuoYqwn8R4Y=
 github.com/fatih/motion v0.0.0-20180408211639-218875ebe238 h1:Qo4RxRMFag+fvDqQ6A3MblYBormptQUZ1ssOtV+EeQ8=
 github.com/fatih/motion v0.0.0-20180408211639-218875ebe238/go.mod h1:pseIrV+t9A4+po+KJ1LheSnYH8m1qs6WhKx2zFiGi9I=
 github.com/fatih/motion v0.0.0-20190527122956-41470362fad4 h1:g4GA9iRiXHcBKOAjgZi2HsLP5zD2bSXZE5VL/+3yNN8=
