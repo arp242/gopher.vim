@@ -46,6 +46,39 @@ ic                      "inner comment", select the content of the function
                         but exclude the start and end markers.
 
 ==============================================================================
+MAPPINGS                                                     *gopher-mappings*
+
+Settings for mappings:
+
+*g:gopher_map_prefix* = `;`
+        Prefix all mappings with a key; the default is `;`, which is what the
+        documentation assumes. For example to map to `<Leader>i`: >
+                let g:gopher_map_prefix = '<Leader>'
+<
+*g:gopher_map_disabled* = `0`
+        Disable mapping any of the below. You can choose your own mappings in
+        your vimrc using the |<Plug>| maps: >
+                nmap <Leader>x <Plug>(gopher-if)
+<
+The actual mappings:
+
+                                                     *(gopher-if)* *gopher-;i*
+;i                      Toggle between single-line and normal if checks. For
+                        example these: >
+                                err := e()
+                                if err != nil {
+
+                                _, ok := aMap[key]
+                                if ok && otherCond {
+<
+                        Become: >
+                                if err := e(); err != nil {
+
+                                if _, ok := aMap[key]; ok && otherCond {
+<
+                        This works in both directions.
+
+==============================================================================
 FILETYPES                                                   *gopher-filetypes*
 
                                                                        *ft-go*

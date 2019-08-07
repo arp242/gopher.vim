@@ -146,6 +146,20 @@ Utilities for working with Go files.
       (if any).
 
 
+[frob.vim](autoload/gopher/frob.vim)
+------------------------------------
+Modify Go code.
+
+    gopher#frob#if()
+
+      Toggle between 'single-line' and 'normal' if checks:
+      err := e()
+      if err != nil {
+      and:
+      if err := e(); err != nil {
+      This works for all variables, not just error checks.
+
+
 [guru.vim](autoload/gopher/guru.vim)
 ------------------------------------
 implement the :GoGuru command.
