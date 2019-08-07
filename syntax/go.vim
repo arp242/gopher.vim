@@ -128,7 +128,7 @@ if s:has_setting('string-fmt')
         \@<=%[-#0 +]*\
         \v%(%(%(\[\d+])?\*)|\d+)?\
         \v%(\.%(%(%(\[\d+])?\*)|\d+)?)?\
-        \v%(\[\d+])?[vTtbcdoqxXUeEfFgGsp]/ contained containedin=goString,goRawString
+        \v%(\[\d+])?[vTtbcdoqxXUeEfFgGspw]/ contained containedin=goString,goRawString
 endif
 
 " Character.
