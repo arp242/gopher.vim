@@ -10,7 +10,7 @@
 "   if err := e(); err != nil {
 "
 " This works for all variables, not just error checks.
-fun! gopher#frob#if()
+fun! gopher#frob#if() abort
   let l:line = getline('.')
   if match(l:line, 'if ') is -1
     " Try line below current one too.
