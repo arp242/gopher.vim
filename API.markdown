@@ -114,6 +114,15 @@ Utilities for working with strings.
       NOTE: this only works with the default value of 'magic'!
 
 
+[dict.vim](autoload/gopher/dict.vim)
+------------------------------------
+Utilities for working with dictionaries.
+
+    gopher#dict#merge(defaults, override)
+      Merge two dictionaries, also recursively merging nested keys.
+      Use extend() if you don't need to merge nested keys.
+
+
 [present.vim](autoload/gopher/present.vim)
 ------------------------------------------
 Implement support for go present slides.
@@ -150,14 +159,44 @@ Utilities for working with Go files.
 ------------------------------------
 Modify Go code.
 
-    gopher#frob#if()
+    gopher#frob#cmd(...)
+      Run the :GoFrob command.
 
+    gopher#frob#complete(lead, cmdline, cursor)
+      Complete the mappings people can choose and interfaces for 'implement'.
+
+    gopher#frob#implement(iface)
+      Implement methods for an interface.
+
+    gopher#frob#if()
       Toggle between 'single-line' and 'normal' if checks:
       err := e()
       if err != nil {
       and:
       if err := e(); err != nil {
       This works for all variables, not just error checks.
+
+    gopher#frob#ret(error)
+      Generate a return statement with zero values.
+      If error is 1 it will return 'err' and surrounded in an 'if err != nil' check.
+
+    gopher#frob#popup()
+      Show a popup menu with mappings to choose from.
+
+
+[pkg.vim](autoload/gopher/pkg.vim)
+----------------------------------
+Utilities for working with Go packages.
+
+    gopher#pkg#list_std()
+      List all stdlib Go packages.
+
+    gopher#pkg#list_deps()
+      List all Go packages and dependencies for the current path.
+
+    gopher#pkg#list_interfaces(pkg)
+      List all interfaces for a Go package.
+      TODO: cache.
 
 
 [guru.vim](autoload/gopher/guru.vim)
@@ -278,6 +317,11 @@ Utilities for working with the external programs and the OS.
 
     gopher#system#join(l, ...)
       Join a list of commands to a string, escaping any shell meta characters.
+
+    gopher#system#sanitize_cmd(cmd)
+      Remove v:none from the command, makes it easier to build commands:
+      gopher#system#run(['gosodoff', (a:error ? '-errcheck' : v:none)])
+      Without the filter an empty string would be passed.
 
 
 [qf.vim](autoload/gopher/qf.vim)

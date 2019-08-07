@@ -136,7 +136,7 @@ fun! gopher#system#run(cmd, ...) abort
     return gopher#error('gopher#system#run: can only pass one optional argument')
   endif
 
-  let l:cmd = gopher#system#join(a:cmd)
+  let l:cmd = gopher#system#join(gopher#system#sanitize_cmd(a:cmd))
 
   try
     let l:shell = &shell
@@ -192,7 +192,7 @@ fun! gopher#system#job(done, cmd) abort
         \ 'closed': 0,
         \ 'exit':   -1,
         \ 'start':  reltime(),
-        \ 'cmd':    a:cmd,
+        \ 'cmd':    gopher#system#sanitize_cmd(a:cmd),
         \ 'done':   a:done}
 
   if has('nvim')
@@ -354,6 +354,15 @@ fun! gopher#system#join(l, ...) abort
   endtry
 endfun
 
+" Remove v:none from the command, makes it easier to build commands:
+"
+"   gopher#system#run(['gosodoff', (a:error ? '-errcheck' : v:none)])
+"
+" Without the filter an empty string would be passed.
+fun! gopher#system#sanitize_cmd(cmd) abort
+  return filter(a:cmd, {_, v -> l:v isnot v:none})
+endfun
+
 fun! s:j_exit_cb(job, exit, ...) abort dict
   let self.exit = a:exit
 
@@ -382,3 +391,43 @@ fun! s:j_out_cb(ch, msg, ...) abort dict
   " "msg" is a line.
   let self.out .= l:msg . "\n"
 endfun
+
+" TODO: We can add a generic cache mechanism for some stuff:
+"
+"   s:cache[key] = [expiry, val]
+"
+" The tricky part, as always with caches, is the expiry. How do we know the Go
+" code on disk changed?
+"
+"   Any open buffer changed   -> we can detect by incrementing a counter in BufWritePost
+"   git diff | sha256sum      -> 0.01s on my system, faster than go list etc.
+"   More than *n* minutes ago -> Just expire caches every 10 mins or so? Not
+"                                ideal, but main goal is so that people typing
+"                                'GoFrob implement <Tab>' don't have a better
+"                                response times after hitting tab a few times.
+"
+" In e.g. gopher#pkg#list_deps()
+"
+"     let [l:out, l:ok] = gopher#system#cache('list_deps', a:pkg)
+"     if l:ok
+"         return l:out
+"     endif
+"
+"     let l:out = [.. expensive work ..]
+"
+"     " Returns input for convinience
+"     return gopher#system#store_cache(l:out, 'list_deps', a:pkg)
+"
+"
+" fun! s:cache_expiry(val, name, ...)
+"   return [s:changecount, 'git diff | sha256sum', localtime()]
+" endfun
+"
+" fun! gopher#system#store_cache(val, name, ...)
+"     let s:cache[a:name + a:000] = [s:cache_expiry(), l:out]
+"
+" endfun
+"
+" fun! gopher#system#cache(name, ...)
+"
+" endfun

@@ -50,6 +50,7 @@ fun! gopher#diag#do(to_clipboard) abort
 
     " List all config variables.
     let l:state = add(l:state, 'VARIABLES')
+    " TODO: wrap very long variable names a bit more nicely.
     let l:state += s:indent(filter(split(execute('let'), "\n"), { i, v -> l:v =~# '^gopher_' }))
     let l:state = add(l:state, ' ')
 
