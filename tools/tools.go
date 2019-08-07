@@ -8,7 +8,6 @@ import (
 	_ "arp242.net/goimport"
 	_ "github.com/fatih/gomodifytags"
 	_ "github.com/fatih/motion"
-	_ "github.com/saibing/bingo"
 	_ "golang.org/x/tools/cmd/goimports"
 	_ "golang.org/x/tools/cmd/gopls"
 	_ "golang.org/x/tools/cmd/gorename"
