@@ -4,6 +4,7 @@ package tools
 
 // There may be a better way to do this in the future.
 // https://github.com/golang/go/issues/25922
+// List of more tools: https://github.com/golang/go/issues/24661
 import (
 	_ "arp242.net/goimport"
 	_ "arp242.net/gosodoff"
@@ -14,9 +15,4 @@ import (
 	_ "golang.org/x/tools/cmd/gopls"
 	_ "golang.org/x/tools/cmd/gorename"
 	_ "golang.org/x/tools/cmd/guru"
-	// See https://github.com/golang/go/issues/24661
-	// "github.com/davidrjenni/reftools/cmd/fillstruct"
-	// "github.com/josharian/impl"
-	// "honnef.co/go/tools/cmd/keyify"
-	// "github.com/koron/iferr"
 )

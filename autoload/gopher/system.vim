@@ -14,7 +14,7 @@ let s:history = []
 " been run this Vim session.
 let s:tools = {}
 
-" Build s:tools from tools.go.
+" Build s:tools from tools.go; this is run when this file is loaded.
 fun! s:init() abort
   for l:line in readfile(s:gotools . '/tools.go')
     if l:line !~# "^\t_ \""
@@ -24,8 +24,14 @@ fun! s:init() abort
     let l:line = split(l:line, '"')[1]
     let s:tools[fnamemodify(l:line, ':t')] = [l:line, 0]
   endfor
+
+  " Make sure gopls is available, otherwise external LSP servers are going to
+  " error out.
+  if !executable('gopls')
+    call gopher#info('installing gopls; this may take a minute')
+    call s:tool('gopls')
+  endif
 endfun
-call s:init()
 
 " Setup modules and install all tools.
 fun! gopher#system#setup() abort
@@ -118,11 +124,6 @@ fun! gopher#system#tool_job(done, cmd) abort
 endfun
 
 " Run an external command.
-"
-" async is a boolean flag to use the async API instead of system().
-"
-" done will be called when the command has finished with exit code and output as
-" a string.
 "
 " cmd must be a list, one argument per item. Every list entry will be
 " automatically shell-escaped
@@ -431,3 +432,6 @@ endfun
 " fun! gopher#system#cache(name, ...)
 "
 " endfun
+
+
+call s:init()  " At end so entire file is parsed.

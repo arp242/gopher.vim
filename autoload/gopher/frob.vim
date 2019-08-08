@@ -68,7 +68,7 @@ fun! gopher#frob#implement(iface) abort
     let l:type = l:type[1]
     let l:recv = tolower(l:type)[0]
 
-    let [l:out, l:err] = gopher#system#run(['impl',
+    let [l:out, l:err] = gopher#system#tool(['impl',
           \ '-dir', expand('%:p:h'),
           \ printf('%s *%s', l:recv, l:type), a:iface])
     if l:err
@@ -166,7 +166,7 @@ endfun
 "
 " If error is 1 it will return 'err' and surrounded in an 'if err != nil' check.
 fun! gopher#frob#ret(error) abort
-  let [l:out, l:err] = gopher#system#run(
+  let [l:out, l:err] = gopher#system#tool(
         \ ['gosodoff', '-pos=' . gopher#buf#cursor(), (a:error ? '-errcheck' : v:none)],
         \ gopher#buf#lines())
   if l:err
