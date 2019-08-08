@@ -48,7 +48,12 @@ endfun
 " Restore an environment variable back to its original value.
 fun! gopher#system#restore_env(name, val) abort
   if a:val is -1
-    exe printf('unlet $%s', a:name)
+    if has('patch-8.0.1832')
+      exe printf('unlet $%s', a:name)
+    else
+      " Best effort for older Vim.
+      exe printf('let $%s = ""', a:name)
+    endif
   else
     exe printf('let $%s = %s', a:name, s:escape_single_quote(a:val))
   endif
@@ -264,7 +269,8 @@ fun! s:tool(name) abort
     let l:old_gobin =  exists('$GOBIN')       ? $GOBIN       : -1
     let l:old_gomod =  exists('$GO111MODULE') ? $GO111MODULE : -1
     let l:old_gopath = exists('$GOPATH')      ? $GOPATH      : -1
-    unlet $GOPATH
+
+    let $GOPATH = ''   " TODO(8.0.1832): use unlet; this is also okay.
     let $GOBIN = s:gobin
     let $GO111MODULE = 'on'  " In case user set to 'off'
 
