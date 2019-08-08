@@ -8,21 +8,26 @@ Goals:
 
 - Vendor external dependencies in the plugin to avoid common version mismatch
   problems.
-
 - Off-load functionality to native Vim features or generic plugins when they
   offer a good user experience. Implement as little as reasonable.
-
 - Ensure that included commands are well-tested to work with as many possible
-  scenarios as possible.
+  scenarios as possible (many vim-go commands are rather rough around the
+  edges).
 
-I've been using this as my daily workhorse for the last half year or so, and it
-works quite well for me.
+It's currently pre-1.0, but I've been using this as my daily workhorse for the
+last half year or so, and it works quite well for me.
+
+Also see [CHANGES.markdown](CHANGES.markdown) for a more detailed list of
+changes.
 
 Installation
 ------------
 
 Installation can be done using the usual suspects. **Vim 8.0.400** or **Neovim
-0.2.0** are supported; older versions may work but are not supported.
+0.2.0** are supported; older versions may work but are not supported. **Vim
+8.1.1513** is recommended, mainly for the popup feature, which vastly improves
+the UX for key mappings. [How can I get a newer version of Vim on Ubuntu?][new]
+might be useful.
 
 This plugin **requires Go 1.11** or newer; older versions will *not* work as the
 internal vendoring uses modules.
@@ -30,16 +35,17 @@ internal vendoring uses modules.
 Installation of external tools is done automatically on first usage, but can be
 done manually with `:GoSetup`.
 
+[new]: https://vi.stackexchange.com/q/10817/51
+
 Getting started
 ---------------
 
-Compiling code and running tests is provided with the `go` and `gotest`
-compilers. By default the compiler is set to `go`; you can switch it to `gotest`
-with `:comp gotest`.
+Compiling code and running tests is done with the `go` and `gotest` compilers.
+By default the compiler is set to `go`; you can switch it to `gotest` with
+`:comp gotest`.
 
-You can use `:make` to compile the code. This is a synchronous process. You can
-use `:MakeJob` from vim-makejob to run it async, similar to vim-go's
-`:GoInstall`, `:GoTest`, etc.
+You can use `:make` to compile or test the code. This is a synchronous process,
+there are plugins to make it async (see "Companion plugins" below).
 
 Running `go generate` or passing `-run` to `:GoTest` can be done by switching
 the `makeprg` setting:
@@ -58,17 +64,23 @@ You could even set `makeprg` to just `go`:
 	:make run main.go
 	...
 
+Setting `g:gopher_install_package` can be pretty useful, especially if you have
+a `./cmd/proj` you want to compile:
+
+    autocmd BufReadPre /home/martin/code/proj/*.go
+            \ let g:gopher_install_package = 'example.com/proj/cmd/proj'
+
 All motions that work in vim-go also work in gopher.vim: `[[`, `]]`, `af`, etc.
 
 Overview of other commands:
 
 - `:GoCoverage` – Highlight code coverage.
-- `:GoTags`     – Add or remove struct tags
-- `:GoRename`   – Rename identifier under cursor.
-- `:GoImport`   – Add, modify, or remove imports.
+- `:GoFrob`     – Frob with (modify) code. Also mapped to `;` in normal mode or
+                  `<C-k>` in insert mode.
 - `:GoGuru`     – Get various information using the `guru` command.
-
-See [FEATURES.markdown](FEATURES.markdown) for a translation of vim-go features.
+- `:GoImport`   – Add, modify, or remove imports.
+- `:GoRename`   – Rename identifier under cursor.
+- `:GoTags`     – Add or remove struct tags
 
 See `:help gopher` for the full reference manual.
 
@@ -153,14 +165,14 @@ FAQ
 
 ### Some things that were asynchronous in vim-go are no longer, what gives?
 
-async can be nice but it's also hard. For example the code for `:GoCoverage` is
+Async can be nice but it's also hard. For example the code for `:GoCoverage` is
 now 120 lines shorter while also fixing a few bugs and adding features.
 
 There is also a user interface aspect: if I ask Vim to do something then I want
 it to do something now. When it's run in the background feedback is often poor.
 Is it still running? Did I miss a message? Who knows, messages are sometimes
 lost. How do you cancel a background job from the UI? Often you can't. What if I
-switch buffers or modify a file? *Weird Stuff*™ hapens.
+switch buffers or modify a file? *Weird Stuff*™ happens.
 
 This doesn't mean I'm against async, just not for every last thing. Some things
 in gopher.vim are still async. It's a trade-off. If you have a good case for
@@ -187,6 +199,8 @@ this stuff.
 
 This is what I originally did, and found it annoying as it's so much work to
 type, man! Being compatible probably isn't too useful anyway, so I changed it.
+
+Functions, mappings, settings, etc. are all prefixed with `gopher`.
 
 If you really want you can probably `:delcommand` and `:command GopherCommand
 ...` or some such.

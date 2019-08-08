@@ -70,6 +70,14 @@ fun! gopher#coverage#clear() abort
 endfun
 
 " Read the coverprofile file and annotate all loaded buffers.
+"
+" TODO: no feedback if there are no test with -run:
+"
+"    shell: 'go' 'test' '-coverprofile' '/tmp/v8o0H7U/2' '-run' 'TestX' './.'
+"    exit 0; took 0.900s
+"    ok  <09>zgo.at/goatcounter<09>0.007s<09>coverage: 0.5% of statements [no tests to run]
+"
+" Maybe add some feedback in general if a buffer has 0 coveraged lines?
 fun! s:apply(profile) abort
   let l:path = gopher#go#packagepath()
   if l:path is# ''
@@ -95,6 +103,7 @@ fun! s:apply(profile) abort
   endfor
 
   " Highlight all the other buffers.
+  " TODO: also hook in to e.g. BufWinEnter to highlight new buffers automatically.
   let l:s = bufnr('%')
   let l:lz = &lazyredraw
   let l:swb = &switchbuf

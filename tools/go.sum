@@ -1,5 +1,11 @@
 arp242.net/goimport v0.0.0-20190222045455-cc7494e264a0 h1:2bn+SSMjFoWFghA2CRfYmtvSTm0Lg32LRaJWEJGIX24=
 arp242.net/goimport v0.0.0-20190222045455-cc7494e264a0/go.mod h1:K7lwZAruEcsgCOVoxfKu9QXuWDIZqcFZqFejFnUPh70=
+arp242.net/gosodoff v0.0.0-20190807024354-d9c66c697f0d h1:RmBeU6KgCaVOuD2q11ovr5fD2Rv3wlJfeim6shjwDCM=
+arp242.net/gosodoff v0.0.0-20190807024354-d9c66c697f0d/go.mod h1:p3Aq6z0yvuXQhjPm/VRZClteiAVwJZJEHIK5HysF/AE=
+arp242.net/gosodoff v0.0.0-20190808150955-78886b9cf0e3 h1:nEtgP6pJOXlBIu6dFdXPUZkMkrR3h2v6CPsf4qanXsE=
+arp242.net/gosodoff v0.0.0-20190808150955-78886b9cf0e3/go.mod h1:p3Aq6z0yvuXQhjPm/VRZClteiAVwJZJEHIK5HysF/AE=
+github.com/110y/goreturn v0.0.0-20190714043431-ce3e67cfeace h1:nhgHgTVfUhwYE1bZEYmq2zpyFRLJ4i7aw2w+qyfN6qI=
+github.com/110y/goreturn v0.0.0-20190714043431-ce3e67cfeace/go.mod h1:vc9YOYmvhU9r3KPTwXTefmhcaJ4+hDVE2thFm+KQlA0=
 github.com/fatih/camelcase v1.0.0 h1:hxNvNX/xYBp0ovncs8WyWZrOrpBNub/JfaMvbURyft8=
 github.com/fatih/camelcase v1.0.0/go.mod h1:yN2Sb0lFhZJUdVvtELVWefmrXpuZESvPmqwoZc+/fpc=
 github.com/fatih/gomodifytags v1.0.0 h1:RkCI599dZHzrDNTQvdqo59B5y5O4e6+fxPMPNiGXIvg=
@@ -8,6 +14,10 @@ github.com/fatih/motion v0.0.0-20190527122956-41470362fad4 h1:g4GA9iRiXHcBKOAjgZ
 github.com/fatih/motion v0.0.0-20190527122956-41470362fad4/go.mod h1:pseIrV+t9A4+po+KJ1LheSnYH8m1qs6WhKx2zFiGi9I=
 github.com/fatih/structtag v1.0.0 h1:pTHj65+u3RKWYPSGaU290FpI/dXxTaHdVwVwbcPKmEc=
 github.com/fatih/structtag v1.0.0/go.mod h1:IKitwq45uXL/yqi5mYghiD3w9H6eTOvI9vnk8tXMphA=
+github.com/josharian/impl v0.0.0-20190715203526-f0d59e96e372 h1:zfpL1AnHJLc+2j3QphUpADoPRCnHMFCUE83V+XgYqhA=
+github.com/josharian/impl v0.0.0-20190715203526-f0d59e96e372/go.mod h1:t4Tr0tn92eq5ISef4cS5plFAMYAqZlAXtgUcKE6y8nw=
+github.com/koron/iferr v0.0.0-20180615142939-bb332a3b1d91 h1:hunjgdb3b21ZdRmzDPXii0EcnHpjH7uCP+kODoE1JH0=
+github.com/koron/iferr v0.0.0-20180615142939-bb332a3b1d91/go.mod h1:C2tFh8w3I6i4lnUJfoBx2Hwku3mgu4wPNTtUNp1i5KI=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2 h1:VklqNMn3ovrHsnt90PveolxSbWFaJdECFbxSq0Mqo2M=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=

@@ -8,22 +8,20 @@ gopher.vim is a Vim plugin for the Go programming language.
 This plugin requires Go 1.11 or newer; older versions will not work as the
 internal vendoring uses modules.
 
-Note: see the README for some information to get started; this is only a
-reference.
+Note: see the README for information to get started; this is only a reference.
 
 ==============================================================================
 MOTIONS                                                       *gopher-motions*
 
                                                      *gopher-v_]]* *gopher-]]*
-]]                      [count] top-level declarations forward.
-                        A top-level declaration is a `func`, `type`, `var`,
-                        `const`, or `import`.
+]]                      Go [count] top-level declarations forward. A top-level
+                        declaration is a `func`, `type`, `var`, `const`, or `import`.
 
                         In |ft-gopresent| files it jumps [count] sections
-                        forward.
+                        forward
 
                                                      *gopher-v_[[* *gopher-[[*
-[[                      [count] top-level declarations backwards. In
+[[                      Go [count] top-level declarations backwards. In
                         |ft-gopresent| it jumps [count] sections backwards.
 
 ==============================================================================
@@ -50,25 +48,75 @@ MAPPINGS                                                     *gopher-mappings*
 
 Settings for mappings:
 
-*g:gopher_map_prefix* = `;`
-        Prefix all mappings with a key; the default is `;`, which is what the
-        documentation assumes. For example to map to `<Leader>i`: >
-                let g:gopher_map_prefix = '<Leader>'
-<
-*g:gopher_map_disabled* = `0`
-        Disable mapping any of the below. You can choose your own mappings in
-        your vimrc using the |<Plug>| maps: >
-                nmap <Leader>x <Plug>(gopher-if)
-<
-The actual mappings:
+*g:gopher_map* = `{}`
+        Control how keys are mapped. This is a dict where the following keys
+        have a special meaning (all starting with _):
 
-                                                     *(gopher-if)* *gopher-;i*
-;i                      Toggle between single-line and normal if checks. For
+            Key name          Default  Description ~
+            _default          1        Use the defaults for any of the below;
+                                       otherwise changing one settings means
+                                       you'd have to copy all the defaults.
+
+            _popup            1        Use the popup menu; in Vim 8.1.1513 or
+                                       newer this uses the inline popup menus
+                                       (highly recommended!)
+
+            _nmap_prefix      ;        Prefix all normal mode mappings.
+
+            _imap_prefix      <C-k>    Prefix all insert mode mappings.
+
+            _imap_ctrl       1         Also map <C-> variants of insert
+                                       mappings, so <C-k>i and <C-k><C-i> both
+                                       work.
+
+        All other keys are a mapping name with the `gopher-` prefix and
+        parenthesis removed (e.g. `if`).
+        The value is used for both the normal and insert mode mappings if it's
+        is a string. Use a list to map different keys for normal and insert
+        mode. Use an empty string to not map a key.
+
+            Map                   Default value ~
+            |(gopher-if)|           i
+            |(gopher-return)|       r
+            |(gopher-error)|        e
+            |(gopher-implement)|    m
+
+        Some examples:
+
+            Don't map anything; you can still use the (gopher-*) mappings
+            manually from your vimrc: >
+                let g:gopher_map = 0
+<
+            Map all defaults except |(gopher-if)|, which is mapped to `;x`
+            (normal mode) and `<C-k>x` (insert mode): >
+                let g:gopher_map = {'_default': 1, 'if': 'x'}
+<
+            Don't map any defaults, and just |(gopher-if)|: >
+                let g:gopher_map = {'_default': 0, 'if': 'x'}
+<
+            Use `<Leader>i` and `<C-g>i`: >
+                let g:gopher_map = {'_nmap_prefix': '<Leader>', '_imap_prefix': '<C-g>'}
+<
+            A more complex example which 1) doesn't map any defaults, 2) doesn't
+            use a prefix for normal mode mappings, maps to `<F1>` and `<F2>`,
+            and 4) doesn't map anything in insert mode: >
+                let g:gopher_map = {
+                                \ '_default':      0,
+                                \ '_nmap_prefix':  '',
+                                \ 'if':            ['<F1>', ''],
+                                \ 'return'         ['<F2>', ''],
+                                \ }
+
+The actual mappings; the defaults are shown in the first column with the
+default prefixes.
+
+                                                                 *(gopher-if)*
+;i  <C-k>i              Toggle between single-line and normal if checks. For
                         example these: >
                                 err := e()
                                 if err != nil {
 
-                                _, ok := aMap[key]
+                                , ok := aMap[key]
                                 if ok && otherCond {
 <
                         Become: >
@@ -77,6 +125,21 @@ The actual mappings:
                                 if _, ok := aMap[key]; ok && otherCond {
 <
                         This works in both directions.
+
+                                                         *(gopher-implement)*
+;m  <C-k>m              Implement an interface: generate all methods that
+                        don't exist yet for a type.
+                        Expects cursor to be on type definition; you'll be
+                        asked which interface you want to implement.
+
+                                                             *(gopher-return)*
+;r  <C-k>r              Generate a return statement with the appropriate zero
+                        values for the current function.
+
+                                                              *(gopher-error)*
+;e  <C-k>e              Generate a return statement with the appropriate zero
+                        values for the current function, wrapped in an 'err !=
+                        nil' check.
 
 ==============================================================================
 FILETYPES                                                   *gopher-filetypes*
@@ -132,7 +195,7 @@ go~
                                                     *g:gopher_install_package*
         Can be set to a package name to install with |:make|; default is to
         use the current directory. This is especially useful if the main
-        package is a `./cmd/proj` subpackage. You typically want to set this
+        package is a `./cmd/proj` package. You typically want to set this
         per-project with an |autocmd|:
 >
             autocmd BufReadPre /home/martin/code/proj/*.go
@@ -205,10 +268,22 @@ COMMANDS                                                     *gopher-commands*
                         au Syntax go hi goCoverageUncover guibg=brown
                 augroup end
 <
-:GoGuru [flags] {command}                                            *:GoGuru*
-        Run a `guru` command.
+:GoFrob [command] [parameters]                                      *:GoFrob*
+        Various tools to frob with (modify) Go code. All these operations are
+        also mapped by default (see |gopher-mappings|); this is just an
+        alternative way to run it for people who prefer to not use the
+        mappings.
 
-        {command} can be any of:
+        The [command] can be any of the `(gopher-*)`mappings, with the
+        `gopher-` prefix and parenthesis removed (e.g. `if`). You'll be asked
+        which operation to run if the [command] is omitted.
+
+        Some operations accept additional parameters:
+
+                implement       One or more interface name.
+
+:GoGuru [flags] {command}                                            *:GoGuru*
+        Get information about Go code. {command} can be any of:
 
                 callees     Show targets of function call.
                             This is useful especially if the function call is
@@ -350,13 +425,41 @@ just a command are documented in the command.
         commands    Records all shell commands; use |:GoDiag| or
                     `gopher#system#history()` to view.
 
-*gopher_override_vimgo* = (undefined)
+*g:gopher_override_vimgo* = (undefined)
         Override vim-go; this removes all vim-go commands, autocommands,
         unsets b:did_ftplugin and b:current_syntax, and removes vim-go from
         'runtimepath'.
 
         This is only recommended for testing/experimenting. This will break if
         vim-go adds new commands or autocmds.
+
+*g:gopher_popup* = (undefined)
+        Dict to merge with the options passed to |popup_create|. See
+        |popup_create-arguments|.
+
+        Especially useful to override the position or appearance; for example
+        if you don't want any borders, padding, and a different colour you can
+        use something like: >
+                hi GopherMenu guibg=#cccccc guifg=#000000
+                let g:gopher_popup = {
+                        \ 'border':    [0, 0, 0, 0],
+                        \ 'highlight': 'GopherMenu',
+                        \ 'padding':   [0, 0, 0, 0],
+                        \ 'title':     '',
+                \}
+<
+        This can also be a function returning a dict, mainly so that you can
+        use |winwidth()| and |winheight()| for positioning. For example to
+        place it in the bottom-right of the current window: >
+                let g:Gopher_popup = {->{
+                        \ 'pos':       'botright',
+                        \ 'line':      winheight(0) + 1,
+                        \ 'col':       winwidth(0),
+                        \ }}
+<
+        Note: You MUST spell this with a capital (Vim requirement, |E704|).
+        The uppercase variant will be merged with the lowercase variant if
+        both are defined.
 
 
 vim:tw=78:ts=8:sts=8:sw=8:ft=help:norl:expandtab

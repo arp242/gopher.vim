@@ -3,6 +3,8 @@ Configuration hints for various plugins.
 Feel free to open a PR to add to this. It's just what I use (or used in the
 past).
 
+Also see: https://github.com/golang/go/wiki/gopls#vim--neovim
+
 ALE
 ---
 

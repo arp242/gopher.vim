@@ -1,4 +1,4 @@
-" buf.vim: Utilities for working with strings.
+" str.vim: Utilities for working with strings.
 
 " Trim leading and trailing whitespace from a string.
 fun! gopher#str#trim_space(s) abort
