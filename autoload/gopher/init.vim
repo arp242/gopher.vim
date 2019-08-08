@@ -36,7 +36,7 @@ endfun
 
 " Check if the 'go version' output is a version we support.
 fun! gopher#init#version_check(v) abort
-  return a:v =~# '^go version go1\.\d\d\(\.\d\)\? .\+/.\+$'
+  return a:v =~# '^go version go1\.\d\d\(\.\d\d\?\)\? .\+/.\+$'
 endfun
 
 let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
