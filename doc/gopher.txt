@@ -308,6 +308,10 @@ COMMANDS                                                     *gopher-commands*
         See the guru manual for a full description and usage examples:
         http://golang.org/s/using-guru
 
+        Note: `guru` is not fully modules-aware. Use a LSP client for gopls'
+        module-aware code insight features (not all of `guru`'s features are
+        supported in LSP though).
+
         [flags] are passed to the `guru` command; commons ones are:
 
                 -reflect      Analyse reflection soundly (slow).
@@ -340,8 +344,17 @@ COMMANDS                                                     *gopher-commands*
 :GoImport [flags]                                                  *:GoImport*
         Add, modify, or remove imports.
 
-        All packages in [flags] will be added. A package can be given as
-        `pkg:alias`. Imports can be removed by using `-rm pkg`
+        Multiple imports can be added (`-add pkg`), removed (`-rm pkg`), or
+        replaced (`-replace pkg`). The `-add` flag is optional for the first
+        package. <cword> is assumed if [flags] is empty.
+
+        A package can be given as `pkg:import-alias`, for example use
+        `github.com/lib/pq:_` to add `import _ "github.com/lib/pq"`
+
+        Normally adding imports that already exist is an error, for example
+        `:GoImport html/template` while `text/template` is already imported.
+        With `-replace html/template` the existing `text/template` import is
+        replaced.
 
 :GoRename [new-ident]                                              *:GoRename*
         Rename the identifier under the cursor.
@@ -355,8 +368,8 @@ COMMANDS                                                     *gopher-commands*
 
         Tab completion includes the exported and unexported version.
 
-        Note: this only works for packages in GOPATH at the moment due to
-        limitations in `gorename`: https://github.com/golang/go/issues/27571
+        Note: this only works for packages in GOPATH. Use a LSP client for
+        gopls' module-aware rename feature.
 
         *g:gopher_gorename_flags* = `[]`
                 List of flags to add to the `gorename` command.

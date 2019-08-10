@@ -35,7 +35,6 @@ fun! gopher#frob#complete(lead, cmdline, cursor) abort
         \ {_, v -> strpart(l:v, 0, len(a:lead)) is# a:lead})
 endfun
 
-
 " Find all interfaces starting with lead.
 "
 " Before the dot we complete a package; for example on 'i' it completes:

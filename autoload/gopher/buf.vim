@@ -1,6 +1,6 @@
 " buf.vim: Utilities for working with buffers.
 
-" Get all lines in the buffer as a a list.
+" Get all lines in the buffer as a list.
 fun! gopher#buf#lines() abort
   return getline(1, '$')
 endfun
@@ -59,4 +59,10 @@ fun! gopher#buf#cursor(...) abort
   endif
 
   return l:o
+endfun
+
+" Go to a specific byte offset.
+fun! gopher#buf#goto(offset) abort
+  let l:line = byte2line(a:offset)
+		    "[bufnum, lnum, col, off]
 endfun

@@ -1,6 +1,6 @@
 " vint: -ProhibitAutocmdWithNoGroup
 
-au BufRead,BufNewFile *.gohtml set filetype=html.gohtml
+au BufRead,BufNewFile *.gohtml set filetype=gohtml.html
 au BufRead,BufNewFile *.gotxt  set filetype=gotxt
 au BufRead,BufNewFile *.slide  set filetype=gopresent
 au BufRead,BufNewFile go.mod   call s:gomod()

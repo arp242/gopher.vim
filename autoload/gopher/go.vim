@@ -22,6 +22,15 @@ fun! gopher#go#in_gopath() abort
   return 0
 endfun
 
+" Get the Go module name, or -1 if there is none.
+fun! gopher#go#module() abort
+  let [l:out, l:err] = gopher#system#run(['go', 'list', '-m'])
+  if l:err
+    return -1
+  endif
+  return l:out
+endfun
+
 " Get the package path for the file in the current buffer.
 " TODO: cache results?
 fun! gopher#go#package() abort

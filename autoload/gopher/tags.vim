@@ -67,9 +67,6 @@ endfun
 " offset        Run for the field at the given byte offset.
 " tags          List of tags (e.g. ['json'], ['json,flag'], ['json', 'db'])
 fun! s:create_cmd(mode, start, end, offset, tags) abort
-  " Operating on modified buffers may not work or give the wrong output when
-  " using -format json, so just replace the entire buffer until this is fixed.
-  " https://github.com/fatih/gomodifytags/issues/39
   let l:cmd = ['gomodifytags',
                 \ '-format', 'json',
                 \ '-file', expand('%')]

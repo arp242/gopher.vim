@@ -400,7 +400,7 @@ endfun
 " The tricky part, as always with caches, is the expiry. How do we know the Go
 " code on disk changed?
 "
-"   Any open buffer changed   -> we can detect by incrementing a counter in BufWritePost
+"   Any open buffer changed   -> we can detect by incrementing a counter in BufWritePost (b:changedtick?)
 "   git diff | sha256sum      -> 0.01s on my system, faster than go list etc.
 "   More than *n* minutes ago -> Just expire caches every 10 mins or so? Not
 "                                ideal, but main goal is so that people typing
