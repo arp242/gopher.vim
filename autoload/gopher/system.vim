@@ -31,6 +31,10 @@ fun! s:init() abort
     call gopher#info('installing gopls; this may take a minute')
     call s:tool('gopls')
   endif
+  if !executable('goimports')
+    call gopher#info('installing gopls; this may take a minute')
+    call s:tool('goimports')
+  endif
 endfun
 
 " Setup modules and install all tools.
