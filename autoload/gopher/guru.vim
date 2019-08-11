@@ -5,9 +5,12 @@ let s:commands = ['callees', 'callers', 'callstack', 'definition', 'describe',
                 \ 'what', 'whicherrs']
 
 fun! gopher#guru#complete(lead, cmdline, cursor) abort
-  " TODO: complete -scope with packages.
-  return filter(s:commands + ['-scope', '-tags', '-reflect'],
-        \ {i, v -> strpart(l:v, 0, len(a:lead)) is# a:lead})
+  if gopher#compl#prev_word(a:cmdline, a:cursor) is# '-scope'
+    let l:list = gopher#pkg#list_importable()
+  else
+    let l:list = ['-scope', '-tags', '-reflect']
+  endif
+  return gopher#compl#filter(a:lead, l:list)
 endfun
 
 " TODO: commands need range: freevars

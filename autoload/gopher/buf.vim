@@ -61,8 +61,21 @@ fun! gopher#buf#cursor(...) abort
   return l:o
 endfun
 
-" Go to a specific byte offset.
-fun! gopher#buf#goto(offset) abort
-  let l:line = byte2line(a:offset)
-		    "[bufnum, lnum, col, off]
+" Replace text from byte offset 'start' to offset 'end'.
+fun! gopher#buf#replace(start, end, data) abort
+  try
+    let l:save = winsaveview()
+    let l:a = @a
+
+    let @a = trim(a:data)
+    keepjumps exe 'goto' a:start
+    normal! m<
+
+    keepjumps exe 'goto' a:end
+    normal! m>gv"ap
+  finally
+    call winrestview(l:save)
+    let @a = l:a
+    " TODO: restore visual selection as well, but I don't think that's possible.
+  endtry
 endfun

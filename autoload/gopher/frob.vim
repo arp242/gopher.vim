@@ -27,12 +27,9 @@ endfun
 " Complete the mappings people can choose and interfaces for 'implement'.
 fun! gopher#frob#complete(lead, cmdline, cursor) abort
   if getcmdtype() is# '@' || a:cmdline[:16] is# 'GoFrob implement '
-    return filter(s:find_interface(a:lead),
-          \ {_, v -> strpart(l:v, 0, len(a:lead)) is# a:lead})
+    return gopher#compl#filter(a:lead, s:find_interface(a:lead))
   endif
-
-  return filter(['if', 'return', 'error', 'implement'],
-        \ {_, v -> strpart(l:v, 0, len(a:lead)) is# a:lead})
+  return gopher#compl#filter(a:lead, ['if', 'return', 'error', 'implement'])
 endfun
 
 " Find all interfaces starting with lead.
@@ -44,7 +41,7 @@ endfun
 "   [io.ByteReader, .., io.WriterTo]
 fun! s:find_interface(lead) abort
   if a:lead is# '' || a:lead !~# '^\h\w.*\.\%(\h\w*\)\=$'
-    return uniq(sort(gopher#pkg#list_std() + gopher#pkg#list_deps()))
+    return gopher#pkg#list_importable()
   endif
 
   let l:pkg = split(a:lead, '\.', 1)

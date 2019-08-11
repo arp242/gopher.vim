@@ -2,6 +2,8 @@ arp242.net/goimport v0.0.0-20190222045455-cc7494e264a0 h1:2bn+SSMjFoWFghA2CRfYmt
 arp242.net/goimport v0.0.0-20190222045455-cc7494e264a0/go.mod h1:K7lwZAruEcsgCOVoxfKu9QXuWDIZqcFZqFejFnUPh70=
 arp242.net/goimport v1.0.0 h1:5fdiksnigv5JUajgEgmMsfO79Hqiis9NLfa00tw5CKM=
 arp242.net/goimport v1.0.0/go.mod h1:r/7scZbL29IyYeCAm9eGcdn4tXjqKBhlvrDj6r4djnE=
+arp242.net/goimport v1.0.1 h1:qPny/9JUOxh9UgGyqGq6FrNPWPYqfjfmA49lTXGIiLM=
+arp242.net/goimport v1.0.1/go.mod h1:r/7scZbL29IyYeCAm9eGcdn4tXjqKBhlvrDj6r4djnE=
 arp242.net/gosodoff v0.0.0-20190807024354-d9c66c697f0d h1:RmBeU6KgCaVOuD2q11ovr5fD2Rv3wlJfeim6shjwDCM=
 arp242.net/gosodoff v0.0.0-20190807024354-d9c66c697f0d/go.mod h1:p3Aq6z0yvuXQhjPm/VRZClteiAVwJZJEHIK5HysF/AE=
 arp242.net/gosodoff v0.0.0-20190808150955-78886b9cf0e3 h1:nEtgP6pJOXlBIu6dFdXPUZkMkrR3h2v6CPsf4qanXsE=
