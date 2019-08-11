@@ -380,7 +380,8 @@ COMMANDS                                                     *gopher-commands*
         omitted.
 
         All tags in [flags] will be added. A tag can be followed by a `,`
-        (comma) and an option to add the option, or set to a
+        (comma) and an option to add the option, or set to a specific name
+        with `tag:name`.
 
         Tags can be removed by using `-rm tag`; options can be removed by
         using `-rm tag,opt`
@@ -400,7 +401,7 @@ COMMANDS                                                     *gopher-commands*
                 :GoTags -rm json -rm db       Remove two tags
                 :GoTags -rm                   Remove all tags
 
-                :GoAddTags sometag=foo        Set the tag sometag to the
+                :GoAddTags sometag:foo        Set the tag sometag to the
                                               string foo.
 
                 :GoTags json -rm yaml         Combine add and rm

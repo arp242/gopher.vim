@@ -40,7 +40,8 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list).
   highlighted as well.
 
 - `GoImport` was completely reimplemented using an external tool instead of
-  regexps.
+  regexps; it's smarter about various things, such as replacing `text/template`
+  with `html/template`.
 
 - Several improvements to the syntax highlighting; it's much faster, adds a few
   minor highlights (e.g. struct tags, highlight erroneous go:generate, few

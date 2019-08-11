@@ -3,7 +3,7 @@
 " Complete package names.
 fun! gopher#import#complete(lead, cmdline, cursor) abort
   let l:p = gopher#compl#prev_word(a:cmdline, a:cursor)
-  if (l:p is# 'GoImport' || l:p[0] is# '-') && gopher#compl#word(a:cmdline, a:cursor)[0] isnot '-'
+  if (l:p is# 'GoImport' || l:p[0] is# '-') && gopher#compl#word(a:cmdline, a:cursor)[0] isnot# '-'
     let l:list = gopher#pkg#list_importable()
   else
     let l:list = ['-add', '-replace', '-rm']

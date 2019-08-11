@@ -1,7 +1,9 @@
 " tags.vim: Implement :GoTags.
-"
-" TODO: :GoTags json=foo doesn't give the expected results?
-" TODO: completion
+
+fun! gopher#tags#complete(lead, cmdline, cursor) abort
+  " TODO: can be smarter.
+  return gopher#compl#filter(a:lead, ['-rm', 'json', 'json,omitempty', 'db', 'yaml'])
+endfun
 
 " Modify tags.
 fun! gopher#tags#modify(start, end, count, ...) abort
