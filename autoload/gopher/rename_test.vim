@@ -3,7 +3,6 @@ call gopher#init#config()
 
 fun! Test_rename() abort
   " Skip this test as it needs to setup GOPATH.
-  " TODO: maybe add Skip to testing.vim?
   return
 
   let l:input = ['package a', '', 'var a = 1']

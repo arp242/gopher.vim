@@ -1,5 +1,6 @@
 " tags.vim: Implement :GoTags.
 
+" Complete flags and common tags.
 fun! gopher#tags#complete(lead, cmdline, cursor) abort
   " TODO: can be smarter.
   return gopher#compl#filter(a:lead, ['-rm', 'json', 'json,omitempty', 'db', 'yaml'])

@@ -392,50 +392,54 @@ fun! s:j_out_cb(ch, msg, ...) abort dict
     let l:msg = join(l:msg, "\n")
   endif
 
-  " TODO: this is probably wrong, at least on Neovim. It assumed that every
+  " TODO: this is probably wrong, at least on Neovim. It assumes that every
   " "msg" is a line.
   let self.out .= l:msg . "\n"
 endfun
 
-" TODO: We can add a generic cache mechanism for some stuff:
-"
-"   s:cache[key] = [expiry, val]
-"
-" The tricky part, as always with caches, is the expiry. How do we know the Go
-" code on disk changed?
-"
-"   Any open buffer changed   -> we can detect by incrementing a counter in BufWritePost (b:changedtick?)
-"   git diff | sha256sum      -> 0.01s on my system, faster than go list etc.
-"   More than *n* minutes ago -> Just expire caches every 10 mins or so? Not
-"                                ideal, but main goal is so that people typing
-"                                'GoFrob implement <Tab>' don't have a better
-"                                response times after hitting tab a few times.
-"
-" In e.g. gopher#pkg#list_deps()
-"
-"     let [l:out, l:ok] = gopher#system#cache('list_deps', a:pkg)
-"     if l:ok
-"         return l:out
-"     endif
-"
-"     let l:out = [.. expensive work ..]
-"
-"     " Returns input for convinience
-"     return gopher#system#store_cache(l:out, 'list_deps', a:pkg)
-"
-"
-" fun! s:cache_expiry(val, name, ...)
-"   return [s:changecount, 'git diff | sha256sum', localtime()]
-" endfun
-"
-" fun! gopher#system#store_cache(val, name, ...)
-"     let s:cache[a:name + a:000] = [s:cache_expiry(), l:out]
-"
-" endfun
-"
-" fun! gopher#system#cache(name, ...)
-"
-" endfun
+let s:writetick = 0
+au BufWritePost *.go let s:writetick += 1
+let s:cache = {}
+
+" Store data in the cache.
+fun! gopher#system#store_cache(val, name, ...) abort
+  let [l:diff, _] = ['git', 'diff']
+  let s:cache[a:name . join(a:000)] = [[s:writetick, localtime(), sha256(l:diff)], a:val]
+endfun
+
+" Retrieve data from the cache.
+fun! gopher#system#cache(name, ...) abort
+  let l:k = a:name . join(a:000)
+  let l:c = get(s:cache, l:k, v:none)
+  if l:c is v:none
+    return [v:none, v:false]
+  endif
+
+  " Cache expiry, in order of cheapest to most expensive:
+  "
+  " - Any open buffer changed.
+  "
+  " - More than a minute ago. Main goal is so that people typing ':GoImport
+  "   <Tab>' have bette response times the second and third time they press Tab.
+  "
+  " - Files on disk changes: 'git diff | sha256sum'; it takes about 0.01s on my
+  "   system with a medium repo (much faster than go list etc.)
+  if s:writetick > l:c[0][0]
+    let s:cache[l:k] = v:none
+    return [v:none, v:false]
+  elseif localtime() > l:c[0][1] + 60  " Cache for 1 minute only.
+    let s:cache[l:k] = v:none
+    return [v:none, v:false]
+  else
+    let [l:diff, _] = ['git', 'diff']
+    if sha256(l:diff) isnot# l:c[0][2]
+      let s:cache[l:k] = v:none
+      return [v:none, v:false]
+    endif
+  endif
+
+  return [l:c[1], v:true]
+endfun
 
 
 call s:init()  " At end so entire file is parsed.

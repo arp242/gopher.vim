@@ -32,7 +32,6 @@ fun! gopher#go#module() abort
 endfun
 
 " Get the package path for the file in the current buffer.
-" TODO: cache results?
 fun! gopher#go#package() abort
   let [l:out, l:err] = gopher#system#run(['go', 'list', expand('%:h')])
   if l:err || l:out[0] is# '_'

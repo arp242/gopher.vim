@@ -41,7 +41,6 @@ fun! Test_highlight() abort
   let l:got = map(getmatches(), {i, v -> remove(l:v, 'id') is '' ? {} : l:v })
 
   if l:got != l:want
-    " TODO: add diff to testing.vim
     call Errorf("want: %s\ngot:  %s\n", l:want, l:got)
   endif
 

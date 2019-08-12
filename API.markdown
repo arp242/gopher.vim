@@ -45,7 +45,7 @@ Implement motions and text objects.
 Utilities for working with buffers.
 
     gopher#buf#lines()
-      Get all lines in the buffer as a a list.
+      Get all lines in the buffer as a list.
 
     gopher#buf#list()
       Get a list of all Go bufnrs.
@@ -60,6 +60,9 @@ Utilities for working with buffers.
     gopher#buf#cursor(...)
       Returns the byte offset for the cursor.
       If the first argument is non-blank it will return filename:#offset
+
+    gopher#buf#replace(start, end, data)
+      Replace text from byte offset 'start' to offset 'end'.
 
 
 [rename.vim](autoload/gopher/rename.vim)
@@ -143,9 +146,11 @@ Utilities for working with Go files.
     gopher#go#in_gopath()
       Report if the current buffer is inside GOPATH.
 
+    gopher#go#module()
+      Get the Go module name, or -1 if there is none.
+
     gopher#go#package()
       Get the package path for the file in the current buffer.
-      TODO: cache results?
 
     gopher#go#packagepath()
       Get path to file in current buffer as package/path/file.go
@@ -153,6 +158,20 @@ Utilities for working with Go files.
     gopher#go#add_build_tags(flag_list)
       Add g:gopher_build_tags to the flag_list; will be merged with existing tags
       (if any).
+
+
+[compl.vim](autoload/gopher/compl.vim)
+--------------------------------------
+Some helpers to work with commandline completion.
+
+    gopher#compl#filter(lead, list)
+      Return a copy of the list with only the items starting with lead.
+
+    gopher#compl#word(cmdline, cursor)
+      Get the current word that's being completed.
+
+    gopher#compl#prev_word(cmdline, cursor)
+      Get the previous word.
 
 
 [frob.vim](autoload/gopher/frob.vim)
@@ -188,15 +207,11 @@ Modify Go code.
 ----------------------------------
 Utilities for working with Go packages.
 
-    gopher#pkg#list_std()
-      List all stdlib Go packages.
-
-    gopher#pkg#list_deps()
-      List all Go packages and dependencies for the current path.
+    gopher#pkg#list_importable()
+      List all 'importable' packages; this is the stdlib + GOPATH or modules.
 
     gopher#pkg#list_interfaces(pkg)
       List all interfaces for a Go package.
-      TODO: cache.
 
 
 [guru.vim](autoload/gopher/guru.vim)
@@ -222,6 +237,9 @@ Implement :GoDiag.
 ------------------------------------
 Implement :GoTags.
 
+    gopher#tags#complete(lead, cmdline, cursor)
+
+
     gopher#tags#modify(start, end, count, ...)
       Modify tags.
 
@@ -244,10 +262,11 @@ Initialisation of the plugin.
 ----------------------------------------
 Implement :GoImport
 
+    gopher#import#complete(lead, cmdline, cursor)
+      Complete package names.
+
     gopher#import#do(...)
       Add, modify, or remove imports.
-      TODO: implement -rm pkg
-      TODO: implement adding multiple packages (:GoImport a b, or :GoImport addme -rm removeme)
 
 
 [system.vim](autoload/gopher/system.vim)
@@ -285,9 +304,6 @@ Utilities for working with the external programs and the OS.
 
     gopher#system#run(cmd, ...)
       Run an external command.
-      async is a boolean flag to use the async API instead of system().
-      done will be called when the command has finished with exit code and output as
-      a string.
       cmd must be a list, one argument per item. Every list entry will be
       automatically shell-escaped
       An optional second argument is passed to stdin.
@@ -322,6 +338,13 @@ Utilities for working with the external programs and the OS.
       Remove v:none from the command, makes it easier to build commands:
       gopher#system#run(['gosodoff', (a:error ? '-errcheck' : v:none)])
       Without the filter an empty string would be passed.
+
+    gopher#system#store_cache(val, name, ...)
+
+      Store data in the cache.
+
+    gopher#system#cache(name, ...)
+      Retrieve data from the cache.
 
 
 [qf.vim](autoload/gopher/qf.vim)
