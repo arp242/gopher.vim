@@ -152,7 +152,7 @@ fun! gopher#system#run(cmd, ...) abort
       let l:start = reltime()
     endif
 
-    if !gopher#system#platform('win') && executable('/bin/sh')
+    if !has('win32') && executable('/bin/sh')
       set shell=/bin/sh shellredir=>%s\ 2>&1 shellcmdflag=-c
     endif
 
@@ -235,20 +235,7 @@ endfun
 
 " Get the path separator for this platform.
 fun! gopher#system#pathsep() abort
-  return gopher#system#platform('win') ? ';' : ':'
-endfun
-
-" Check if this is the requested OS.
-"
-" Supports 'win', 'unix'.
-fun! gopher#system#platform(n) abort
-  if a:n is? 'win'
-    return has('win16') || has('win32') || has('win64')
-  elseif a:n is? 'unix'
-    return has('unix')
-  endif
-
-  call gopher#error('gopher#system#platform: unknown parameter: ' . a:n)
+  return has('win32') ? ';' : ':'
 endfun
 
 " Download, compile and install a tool if needed.

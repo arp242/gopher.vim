@@ -238,7 +238,7 @@ Implement :GoDiag.
 Implement :GoTags.
 
     gopher#tags#complete(lead, cmdline, cursor)
-
+      Complete flags and common tags.
 
     gopher#tags#modify(start, end, count, ...)
       Modify tags.
@@ -327,10 +327,6 @@ Utilities for working with the external programs and the OS.
     gopher#system#pathsep()
       Get the path separator for this platform.
 
-    gopher#system#platform(n)
-      Check if this is the requested OS.
-      Supports 'win', 'unix'.
-
     gopher#system#join(l, ...)
       Join a list of commands to a string, escaping any shell meta characters.
 
@@ -340,7 +336,6 @@ Utilities for working with the external programs and the OS.
       Without the filter an empty string would be passed.
 
     gopher#system#store_cache(val, name, ...)
-
       Store data in the cache.
 
     gopher#system#cache(name, ...)
