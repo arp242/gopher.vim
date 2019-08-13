@@ -331,8 +331,8 @@ Utilities for working with the external programs and the OS.
       Join a list of commands to a string, escaping any shell meta characters.
 
     gopher#system#sanitize_cmd(cmd)
-      Remove v:none from the command, makes it easier to build commands:
-      gopher#system#run(['gosodoff', (a:error ? '-errcheck' : v:none)])
+      Remove v:null from the command, makes it easier to build commands:
+      gopher#system#run(['gosodoff', (a:error ? '-errcheck' : v:null)])
       Without the filter an empty string would be passed.
 
     gopher#system#store_cache(val, name, ...)

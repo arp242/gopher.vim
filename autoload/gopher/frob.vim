@@ -163,7 +163,7 @@ endfun
 " If error is 1 it will return 'err' and surrounded in an 'if err != nil' check.
 fun! gopher#frob#ret(error) abort
   let [l:out, l:err] = gopher#system#tool(
-        \ ['gosodoff', '-pos=' . gopher#buf#cursor(), (a:error ? '-errcheck' : v:none)],
+        \ ['gosodoff', '-pos=' . gopher#buf#cursor(), (a:error ? '-errcheck' : v:null)],
         \ gopher#buf#lines())
   if l:err
     return gopher#error(l:out)

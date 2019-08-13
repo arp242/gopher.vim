@@ -346,13 +346,13 @@ fun! gopher#system#join(l, ...) abort
   endtry
 endfun
 
-" Remove v:none from the command, makes it easier to build commands:
+" Remove v:null from the command, makes it easier to build commands:
 "
-"   gopher#system#run(['gosodoff', (a:error ? '-errcheck' : v:none)])
+"   gopher#system#run(['gosodoff', (a:error ? '-errcheck' : v:null)])
 "
 " Without the filter an empty string would be passed.
 fun! gopher#system#sanitize_cmd(cmd) abort
-  return filter(a:cmd, {_, v -> l:v isnot v:none})
+  return filter(a:cmd, {_, v -> l:v isnot v:null})
 endfun
 
 fun! s:j_exit_cb(job, exit, ...) abort dict
@@ -397,9 +397,9 @@ endfun
 " Retrieve data from the cache.
 fun! gopher#system#cache(name, ...) abort
   let l:k = a:name . join(a:000)
-  let l:c = get(s:cache, l:k, v:none)
-  if l:c is v:none
-    return [v:none, v:false]
+  let l:c = get(s:cache, l:k, v:null)
+  if l:c is v:null
+    return [v:null, v:false]
   endif
 
   " Cache expiry, in order of cheapest to most expensive:
@@ -412,16 +412,16 @@ fun! gopher#system#cache(name, ...) abort
   " - Files on disk changes: 'git diff | sha256sum'; it takes about 0.01s on my
   "   system with a medium repo (much faster than go list etc.)
   if s:writetick > l:c[0][0]
-    let s:cache[l:k] = v:none
-    return [v:none, v:false]
+    let s:cache[l:k] = v:null
+    return [v:null, v:false]
   elseif localtime() > l:c[0][1] + 60  " Cache for 1 minute only.
-    let s:cache[l:k] = v:none
-    return [v:none, v:false]
+    let s:cache[l:k] = v:null
+    return [v:null, v:false]
   else
     let [l:diff, _] = ['git', 'diff']
     if sha256(l:diff) isnot# l:c[0][2]
-      let s:cache[l:k] = v:none
-      return [v:none, v:false]
+      let s:cache[l:k] = v:null
+      return [v:null, v:false]
     endif
   endif
 
