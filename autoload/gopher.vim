@@ -64,8 +64,15 @@ fun! s:echo(msg, hi, ...) abort
   let l:msg = map(l:msg, 'substitute(v:val, "\t", "        ", "")')
 
   exe 'echohl ' . a:hi
-  for line in l:msg
-    echom 'gopher.vim: ' . line
+  for l:line in l:msg
+    echom 'gopher.vim: ' . l:line
   endfor
   echohl None
+
+  " Add a delay when called from insert mode, because otherwise the user will
+  " never see the message.
+  " TODO: maybe there is a better way? I can't find one if there is...
+  if mode() is# 'i'
+    sleep 1
+  endif
 endfun
