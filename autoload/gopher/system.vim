@@ -385,7 +385,9 @@ fun! s:j_out_cb(ch, msg, ...) abort dict
 endfun
 
 let s:writetick = 0
-au BufWritePost *.go let s:writetick += 1
+augroup gopher.vim
+  au BufWritePost *.go let s:writetick += 1
+augroup end
 let s:cache = {}
 
 " Store data in the cache.

@@ -22,6 +22,11 @@ fun! Test_run() abort
 endfun
 
 fun! Test_job() abort
+  " TODO: doesn't work with nvim.
+  if has('nvim')
+    return
+  endif
+
   let l:done_called = 0
   fun! s:done(exit, out) abort closure
     let l:done_called = 1
