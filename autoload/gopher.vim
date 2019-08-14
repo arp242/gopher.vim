@@ -63,6 +63,9 @@ fun! s:echo(msg, hi, ...) abort
   " Tabs display as ^I or <09>, so manually expand them.
   let l:msg = map(l:msg, 'substitute(v:val, "\t", "        ", "")')
 
+  " Redrawing here means there will be a better chance for messages to show.
+  redraw
+
   exe 'echohl ' . a:hi
   for l:line in l:msg
     echom 'gopher.vim: ' . l:line
@@ -72,7 +75,7 @@ fun! s:echo(msg, hi, ...) abort
   " Add a delay when called from insert mode, because otherwise the user will
   " never see the message.
   " TODO: maybe there is a better way? I can't find one if there is...
-  if mode() is# 'i'
+  if mode() is# 'i' && a:hi is# 'ErrorMsg'
     sleep 1
   endif
 endfun

@@ -59,17 +59,15 @@ fun! gopher#motion#comment(mode) abort
   endtry
 
   let l:loc = json_decode(l:out)
-  if type(l:loc) isnot v:t_dict || !has_key(l:loc, 'comment')
+  if type(l:loc) isnot v:t_dict
     return gopher#error(l:out)
+  endif
+  if !has_key(l:loc, 'comment')
+    return gopher#error(get(l:loc, 'err', l:out))
   endif
 
   let l:info = l:loc.comment
   call cursor(l:info.startLine, l:info.startCol)
-
-  " Adjust cursor to select all whitespace before the first comment marker.
-  if a:mode is# 'a'
-    " TODO
-  endif
 
   " Adjust cursor to exclude start comment markers. Try to be a little bit
   " clever when using multi-line '/*' markers.
@@ -146,7 +144,7 @@ fun! gopher#motion#function(mode) abort
 
     let [l:out, l:err] = gopher#system#tool(l:cmd)
     if l:err
-      return gopher#error(out)
+      return gopher#error(l:out)
     endif
   finally
     if l:tmp
@@ -155,8 +153,11 @@ fun! gopher#motion#function(mode) abort
   endtry
 
   let l:loc = json_decode(l:out)
-  if type(l:loc) isnot v:t_dict || !has_key(l:loc, 'fn')
+  if type(l:loc) isnot v:t_dict
     return gopher#error(l:out)
+  endif
+  if !has_key(l:loc, 'comment')
+    return gopher#error(get(l:loc, 'err', l:out))
   endif
 
   let l:info = l:loc.fn

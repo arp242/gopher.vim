@@ -86,8 +86,6 @@ fun! s:map(key, map) abort
   endif
 endfun
 
-" TODO: errors don't show well from insert mode, e.g. <C-k>i where there's no if
-" (works fine with ;i).
 if g:gopher_map isnot 0
   " Map the popup; the rest of the mappings are handled inside there, so we
   " don't need to map them here.
