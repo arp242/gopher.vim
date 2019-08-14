@@ -61,7 +61,7 @@ fun! gopher#init#config() abort
   let g:gopher_tag_transform  = get(g:, 'gopher_tag_transform', 'snakecase')
   let g:gopher_tag_default    = get(g:, 'gopher_tag_default', 'json')
   let g:gopher_gorename_flags = get(g:, 'gopher_gorename_flags', [])
-  " TODO: respect _detault
+  " TODO: respect _default
   let g:gopher_map =            get(g:, 'gopher_map', {
                                         \ '_default': 1,
                                         \ '_popup': exists('*popup_create') && exists('*popup_close'),

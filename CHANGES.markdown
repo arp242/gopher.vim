@@ -47,6 +47,8 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list).
   minor highlights (e.g. struct tags, highlight erroneous go:generate, few
   more), but also removes a few features that were very slow and complex.
 
+- Indentation is a bit better.
+
 - Template syntax and filetypes are loaded for `.gohtml` (`.tmpl` in vim-go) and
   `.gotxt` (not in vim-go) files. This is that Gogland uses, and seems more
   useful to me. Also renamed the filetypes to `gohtml` and `gotxt` instead of

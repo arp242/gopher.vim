@@ -1,65 +1,66 @@
-" TODO:
-" - function invocations split across lines
-" - general line splits (line ends in an operator)
-
 if exists('b:did_indent')
   finish
 endif
 let b:did_indent = 1
 
-" C indentation is too far off useful, mainly due to Go's := operator.
-" Let's just define our own.
-setlocal nolisp
-setlocal autoindent
-setlocal indentexpr=GoIndent(v:lnum)
-setlocal indentkeys+=<:>,0=},0=)
+" Vim's C indentation doesn't work (mainly due to :=) so define out own.
+setlocal nolisp autoindent indentexpr=GoIndent(v:lnum) indentkeys+=<:>,0=},0=)
 
 if exists('*GoIndent')
   finish
 endif
 
-fun! GoIndent(lnum)
-  let l:prevlnum = prevnonblank(a:lnum - 1)
-
-  " Top of file.
-  if l:prevlnum is 0
+fun! GoIndent(n) abort
+  let l:pn = prevnonblank(a:n - 1)
+  if l:pn is 0  " Top of file.
     return 0
   endif
 
-  " Grab the previous and current line, stripping comments.
-  let l:prevl = substitute(getline(l:prevlnum), '//.*$', '', '')
-  let l:thisl = substitute(getline(a:lnum), '//.*$', '', '')
-  let l:previ = indent(l:prevlnum)
-
-  let l:ind = l:previ
-
-  " Previous line opened a ( or { block.
-  if l:prevl =~# '[({]\s*$'
-    let l:ind += shiftwidth()
-  " Previous line is part of a switch statement.
-  elseif l:prevl =~# '^\s*\(case .\+\|default\):$'
-    let l:ind += shiftwidth()
-  " Previous line was 'if ...' ending with operator.
-  "elseif l:prevl =~# '^\s*if .\{-}\(||\|&&\)$'
-  "  let l:ind += shiftwidth()
+  " Grab the previous and current line, stripping comments and whitespace.
+  let l:pline = trim(substitute(getline(l:pn), '//.*$', '', ''))
+  let l:line = trim(substitute(getline(a:n), '//.*$', '', ''))
+  let l:indent = indent(l:pn)
+  let l:ppn = prevnonblank(a:n - 2)
+  if l:ppn > 0
+    let l:ppline = trim(substitute(getline(l:ppn), '//.*$', '', ''))
   endif
 
-  " TODO: handle if the previous line is a label.
+  " Opened a ( or { block; indent except if we already indented extra because of
+  " a multi-line block.
+  if l:pline =~# '[({]$' && (l:ppn is 0 || l:ppline !~# '[+\-*/%&|^<>=!.]$')
+    let l:indent += shiftwidth()
 
-  " This line closed a block.
-  if l:thisl =~# '^\s*[)}]'
-    let l:ind -= shiftwidth()
+  " Part of a switch statement.
+  elseif l:pline =~# '^\(case .\+\|default\):$'
+    let l:indent += shiftwidth()
+
+  " Function invocation split over multiple lines.
+  " TODO: two conditions as I think that will be faster, but need to benchmark it!
+  elseif l:pline[len(l:pline) - 1] is# ',' && l:pline =~# '\w\k*(.*[^)],$'
+    let l:indent += shiftwidth()
+
+  " Ended with an operator.
+  elseif l:pline =~# '[+\-*/%&|^<>=!.]$' && (l:ppn is 0 || l:ppline !~# '[+\-*/%&|^<>=!.]$')
+    let l:indent += shiftwidth()
   endif
 
-  " Colons are tricky.
-  " We want to outdent if it's part of a switch ("case foo:" or "default:").
-  " We ignore trying to deal with jump labels because (a) they're rare, and
-  " (b) they're hard to disambiguate from a composite literal key.
-  if l:thisl =~# '^\s*\(case .*\|default\):$'
-    let l:ind -= shiftwidth()
+  " Closed a block.
+  if l:line =~# '^[)}]'
+    let l:indent -= shiftwidth()
+
+  " Closed function call that was extra indented.
+  elseif l:pline[len(l:pline) - 1] is# ')' && (l:ppline[len(l:ppline) - 1] is ',' || l:ppline[len(l:ppline) - 1] is '(')
+    let l:indent -= shiftwidth()
+
+  " Label
+  elseif l:line =~# '^\k\+:$'
+    let l:indent -= shiftwidth()
+
+  " Switch case.
+  elseif l:line =~# '^\(case .*\|default\):$'
+    let l:indent -= shiftwidth()
+
   endif
 
-  return l:ind
+  return l:indent
 endfun
-
-" vim: sw=2 sts=2 et
