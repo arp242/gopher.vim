@@ -80,6 +80,8 @@ Settings for mappings:
             |(gopher-if)|           i
             |(gopher-implement)|    m
             |(gopher-return)|       r
+            |(gopher-struct)|       w
+            |(gopher-switch)|       s
 
         Some examples:
 
@@ -142,6 +144,12 @@ default prefixes.
 ;e  <C-k>e              Generate a return statement with the appropriate zero
                         values for the current function, wrapped in an 'err !=
                         nil' check.
+
+                                                             *(gopher-struct)*
+;s  <C-k>s              Fill a struct with all missing entries.
+
+                                                             *(gopher-switch)*
+;w  <C-k>w              Fill a type switch with all missing entries.
 
 ==============================================================================
 FILETYPES                                                   *gopher-filetypes*
