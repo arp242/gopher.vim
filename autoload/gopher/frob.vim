@@ -1,13 +1,4 @@
 " frob.vim: Modify Go code.
-"
-" TODO(popup): using stuff like 'normal! k' from the popup menu doesn't really
-" work very well, so we use:
-"
-"    let l:pos = getpos('.')
-"    let l:pos[1] -= 1
-"    call setpos('.', l:pos)
-"
-" I'm not sure if this is a Vim bug/issue or expected.
 
 scriptencoding utf-8
 
@@ -130,10 +121,7 @@ fun! gopher#frob#if() abort
       return gopher#error('No if statement on current or next line')
     endif
 
-    "normal! j
-    let l:pos = getpos('.')
-    let l:pos[1] += 1
-    call setpos('.', l:pos)
+    normal! j
   endif
 
   let l:line = substitute(l:line, '^\s*', '', '')
@@ -168,13 +156,10 @@ fun! gopher#frob#ret(error) abort
     return gopher#error(l:out)
   endif
 
-  " Go up one line if the current line is blank (assume cursor is below 'err := ... ').
+  " Go up one line if the current line is blank (assume cursor is below 'err := ... ).
   if getline('.') =~# '^\s*$'
-    "delete _
-    "normal! k
-    let l:pos = getpos('.')
-    let l:pos[1] -= 1
-    call setpos('.', l:pos)
+    delete _
+    normal! k
   endif
 
   " Copy indent.
@@ -185,45 +170,33 @@ fun! gopher#frob#ret(error) abort
 
   call append('.', map(split(l:out, "\n"), {_, l -> l:indent . l:l}))
 
-  "normal! j^
-  let l:pos = getpos('.')
-  let l:pos[1] += 1
-  call setpos('.', l:pos)
+  normal! j^
 
+  " Position cursor on 'err'.
   if a:error
-    " Position cursor on 'err'.
-    "normal! j$b
-    let l:pos[1] += 1
-    call setpos('.', l:pos)
-    let l:pos = getpos('.')
-
-    if getline(line('.') + 1) =~# 'return$'
-      call setpos('.', l:pos)
-    else
-      let l:pos[2] = col('$') - 3
-      call setpos('.', l:pos)
-    end
+    normal! j$b
   endif
 endfun
 
-let s:desc = {
-          \ 'if':        'Toggle if style',
-          \ 'return':    'Add return',
-          \ 'error':     'Add return with if err != nil',
-          \ 'implement': 'Add interface methods',
-      \ }
+let s:popup_items = [
+      \ ['if',        'Toggle if style'],
+      \ ['return',    'Add return'],
+      \ ['error',     'Add return with if err != nil'],
+      \ ['implement', 'Add interface methods'],
+  \ ]
 
 " key -> action mapping (reverse of g:gopher_map).
 let s:map = {}
 
 " Show a popup menu with mappings to choose from.
 fun! gopher#frob#popup() abort
-  " TODO(popup): dict so order isn't stable.
+  " Makes s:map and desciption list.
   let l:items = []
-  for [l:k, l:v] in items(g:gopher_map)
-    if l:k[0] isnot# '_'
-      let l:items = add(l:items, printf('(%s) %s', l:v, s:desc[l:k]))
-      let s:map[l:v] = l:k
+  for l:item in s:popup_items
+    let l:map = get(g:gopher_map, l:item[0], v:null)
+    if l:map isnot v:null
+      let s:map[l:map] = l:item[0]
+      let l:items = add(l:items, printf('(%s) %s', l:map, l:item[1]))
     endif
   endfor
 
@@ -245,11 +218,11 @@ fun! gopher#frob#popup() abort
     let l:o = extend(l:o, l:CB())
   endif
 
-  " TODO(popup): disabled for now as I can't figure out how to get selection to work.
-        " \ 'cursorline':      1,
   call popup_create(l:items, gopher#dict#merge({
         \ 'filter':          function('s:filter'),
         \ 'callback':        function('s:run_cmd'),
+        \ 'mapping':         0,
+        \ 'cursorline':      1,
         \ 'line':            'cursor+1',
         \ 'col':             'cursor',
         \ 'moved':           'WORD',
@@ -260,24 +233,16 @@ fun! gopher#frob#popup() abort
       \ }, l:o))
 endfun
 
-" TODO(popup): weird stuff happens when pressing mapping to open twice (;;). Not sure
-" if we're doing it wrong or Vim bug.
 fun! s:filter(id, key) abort
-  if a:key is# "\n" || a:key is# "\r" || a:key is# ' ' || a:key is# "\t"
-    " TODO(popup): run selection; not entirely obvious how to do that
-    "getbufline(a:id, 1)     -> always []
-    "popup_getoptions(a:id)  -> not in here
-    " popup_getpos(a:id))    -> idem
-
+  if a:key is# 'x' || a:key is# ''
+    call popup_clear()
     return 1
   endif
 
-  let l:action = get(s:map, a:key, 0)
-  if l:action is 0
-    " No shortcut, pass to generic filter
-    " TODO(popup): disabled for now as I can't figure out how to get selection to work.
-    "return popup_filter_menu(a:id, a:key)
-    return 0
+  " No shortcut, pass to generic filter
+  let l:action = get(s:map, a:key, -1)
+  if l:action is -1
+    return popup_filter_menu(a:id, a:key)
   endif
 
   call popup_close(a:id, l:action)
@@ -285,17 +250,24 @@ fun! s:filter(id, key) abort
 endfun
 
 fun! s:run_cmd(id, cmd, ...) abort
-  if a:cmd is# 'if'
-    call gopher#frob#if()
-  elseif a:cmd is# 'return'
-    call gopher#frob#ret(0)
-  elseif a:cmd is# 'error'
-    call gopher#frob#ret(1)
-  elseif a:cmd is# 'implement'
-    if a:id > 0
-      call popup_close(a:id)
-    endif
+  " Fixes some problems with the popup menu's buffer still being open when we
+  " start doing various operations (wrong text, infinite recursion, etc.)
+  " TODO(popup): I think this is a Vim bug? Or am I using it wrong? Need to look
+  " deeper.
+  call popup_clear()
 
+  let l:cmd = a:cmd
+  if type(l:cmd) is v:t_number
+    let l:cmd = s:popup_items[a:cmd - 1][0]
+  endif
+
+  if l:cmd is# 'if'
+    call gopher#frob#if()
+  elseif l:cmd is# 'return'
+    call gopher#frob#ret(0)
+  elseif l:cmd is# 'error'
+    call gopher#frob#ret(1)
+  elseif l:cmd is# 'implement'
     if a:0 is 0
       let l:in = [input('interface? ', '', 'customlist,gopher#frob#complete')]
     else
@@ -305,7 +277,7 @@ fun! s:run_cmd(id, cmd, ...) abort
     for l:i in l:in
       call gopher#frob#implement(l:i)
     endfor
-  elseif a:cmd isnot -1
-    call gopher#error('unknown command: %s', a:cmd)
+  elseif l:cmd isnot -1
+    call gopher#error('unknown command: %s', l:cmd)
   endif
 endfun
