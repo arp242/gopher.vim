@@ -60,6 +60,8 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list).
 - `:GoAddTags` and `:GoRemoveTags` is now `:GoTags`. Use `:GoTags -rm json` to
   remove a tag.
 
+- Many small improvements in quality.
+
 Features not in vim-go
 ----------------------
 

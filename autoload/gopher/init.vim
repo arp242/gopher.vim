@@ -55,24 +55,43 @@ fun! gopher#init#config() abort
   " Set defaults.
   let g:gopher_build_tags     = get(g:, 'gopher_build_tags', [])
   let g:gopher_build_flags    = get(g:, 'gopher_build_flags', [])
-        \ + (len(get(g:, 'gopher_build_tags', [])) > 0 ? ['-tags', join(g:gopher_build_tags, ' ')] : [])
+        \ + (len(g:gopher_build_tags) > 0 ? ['-tags', join(g:gopher_build_tags, ' ')] : [])
   let g:gopher_highlight      = get(g:, 'gopher_highlight', ['string-spell', 'string-fmt'])
   let g:gopher_debug          = get(g:, 'gopher_debug', [])
   let g:gopher_tag_transform  = get(g:, 'gopher_tag_transform', 'snakecase')
   let g:gopher_tag_default    = get(g:, 'gopher_tag_default', 'json')
-  let g:gopher_gorename_flags = get(g:, 'gopher_gorename_flags', [])
-  " TODO: respect _default
-  let g:gopher_map =            get(g:, 'gopher_map', {
-                                        \ '_default': 1,
-                                        \ '_popup': exists('*popup_create') && exists('*popup_close'),
-                                        \ '_nmap_prefix': ';',
-                                        \ '_imap_prefix': '<C-k>',
-                                        \ '_imap_ctrl': 1,
-                                        \ 'if':     'i',
-                                        \ 'return': 'r',
-                                        \ 'error':  'e',
-                                        \ 'implement':  'm',
-                                        \ })
+
+  call s:map()
 
   let s:config_done = 1
+endfun
+
+fun! s:map() abort
+  if exists('g:gopher_map') && g:gopher_map is 0
+    return
+  endif
+
+  let l:settings = {
+        \ '_default':     1,
+        \ '_popup':       exists('*popup_create') && exists('*popup_close'),
+        \ '_nmap_prefix': ';',
+        \ '_imap_prefix': '<C-k>',
+        \ '_imap_ctrl':   1,
+    \ }
+  let l:maps = {
+        \ 'if':        'i',
+        \ 'return':    'r',
+        \ 'error':     'e',
+        \ 'implement': 'm',
+    \ }
+
+  if !exists('g:gopher_map')
+    let g:gopher_map = extend(l:settings, l:maps)
+    return
+  endif
+
+  let g:gopher_map = extend(l:settings, g:gopher_map)
+  if g:gopher_map['_default']
+    call extend(g:gopher_map, l:maps)
+  endif
 endfun

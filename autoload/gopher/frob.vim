@@ -1,7 +1,7 @@
 " frob.vim: Modify Go code.
 "
-" TODO: using stuff like 'normal! k' from the popup menu doesn't really work
-" very well, so we use:
+" TODO(popup): using stuff like 'normal! k' from the popup menu doesn't really
+" work very well, so we use:
 "
 "    let l:pos = getpos('.')
 "    let l:pos[1] -= 1
@@ -58,7 +58,6 @@ fun! gopher#frob#implement(iface) abort
 
     let l:type = split(getline('.'), ' ')
     if len(l:type) < 3 || l:type[0] isnot# 'type'
-      " TODO: doesn't account for type ( .. ) blocks.
       return gopher#error('no type definition on this line')
     endif
     let l:type = l:type[1]
@@ -71,7 +70,7 @@ fun! gopher#frob#implement(iface) abort
       return gopher#error(l:out)
     endif
 
-    " TODO: everything beyond here is hacky. Should improve impl tool.
+    " TODO(impl): everything beyond here is hacky. Should improve impl tool.
 
     " Get just the function signatures.
     let l:out =  map(split(l:out, '}')[:-2], { _, v -> split(l:v, "\n")[0][:-3]})
@@ -219,7 +218,7 @@ let s:map = {}
 
 " Show a popup menu with mappings to choose from.
 fun! gopher#frob#popup() abort
-  " TODO: dict so order isn't stable.
+  " TODO(popup): dict so order isn't stable.
   let l:items = []
   for [l:k, l:v] in items(g:gopher_map)
     if l:k[0] isnot# '_'
@@ -246,7 +245,7 @@ fun! gopher#frob#popup() abort
     let l:o = extend(l:o, l:CB())
   endif
 
-  " TODO: disabled for now as I can't figure out how to get selection to work.
+  " TODO(popup): disabled for now as I can't figure out how to get selection to work.
         " \ 'cursorline':      1,
   call popup_create(l:items, gopher#dict#merge({
         \ 'filter':          function('s:filter'),
@@ -261,11 +260,11 @@ fun! gopher#frob#popup() abort
       \ }, l:o))
 endfun
 
-" TODO: weird stuff happens when pressing mapping to open twice (;;). Not sure
+" TODO(popup): weird stuff happens when pressing mapping to open twice (;;). Not sure
 " if we're doing it wrong or Vim bug.
 fun! s:filter(id, key) abort
   if a:key is# "\n" || a:key is# "\r" || a:key is# ' ' || a:key is# "\t"
-    " TODO: run selection; not entirely obvious how to do that
+    " TODO(popup): run selection; not entirely obvious how to do that
     "getbufline(a:id, 1)     -> always []
     "popup_getoptions(a:id)  -> not in here
     " popup_getpos(a:id))    -> idem
@@ -276,7 +275,7 @@ fun! s:filter(id, key) abort
   let l:action = get(s:map, a:key, 0)
   if l:action is 0
     " No shortcut, pass to generic filter
-    " TODO: disabled for now as I can't figure out how to get selection to work.
+    " TODO(popup): disabled for now as I can't figure out how to get selection to work.
     "return popup_filter_menu(a:id, a:key)
     return 0
   endif

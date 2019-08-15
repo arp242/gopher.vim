@@ -49,7 +49,7 @@ fun! GoIndent(n) abort
     let l:indent -= shiftwidth()
 
   " Closed function call that was extra indented.
-  elseif l:pline[len(l:pline) - 1] is# ')' && (l:ppline[len(l:ppline) - 1] is ',' || l:ppline[len(l:ppline) - 1] is '(')
+  elseif l:pline[len(l:pline) - 1] is# ')' && (l:ppline[len(l:ppline) - 1] is# ',' || l:ppline[len(l:ppline) - 1] is# '(')
     let l:indent -= shiftwidth()
 
   " Label
