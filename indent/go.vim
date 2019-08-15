@@ -36,7 +36,7 @@ fun! GoIndent(n) abort
 
   " Function invocation split over multiple lines.
   " TODO: two conditions as I think that will be faster, but need to benchmark it!
-  elseif l:pline[len(l:pline) - 1] is# ',' && l:pline =~# '\w\k*(.*[^)],$'
+  elseif l:pline[len(l:pline) - 1] is# ',' && l:pline =~# '\h\w*(.*[^)],$'
     let l:indent += shiftwidth()
 
   " Ended with an operator.

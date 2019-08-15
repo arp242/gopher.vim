@@ -24,17 +24,13 @@ syn keyword     goConditional     if else switch select
 syn keyword     goLabel           case default
 syn keyword     goRepeat          for range
 
-" Predefined identifiers.
-" TODO: a method named error or true is valid, and shouldn't be highlighted.
-syn keyword     goType            chan map bool string error
-syn keyword     goType            int int8 int16 int32 int64 rune
-syn keyword     goType            byte uint uint8 uint16 uint32 uint64 uintptr
-syn keyword     goType            float32 float64
-syn keyword     goType            complex64 complex128
-syn keyword     goBoolean         true false nil iota
+" Predefined identifiers; don't use keywords to ensure that method names and
+" cals don't get highlighted.
+syn match        goBoolean        /\v\.@<!%(true|false|nil|iota)>\ze([^\(]|$)/
+syn match        goType           /\v<\.@<!%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)>\ze([^\(]|$)/
 
-" Highlight builtin functions, to prevent accidental overriding.
-" Do not match when it's a method function name or method call.
+" Highlight builtin functions, to prevent accidental overriding. Do not match
+" when it's a method function name or method call.
 " Test: builtin.go
 "
 " TODO: this is a bit slow (second slowest is goSingleDecl at ~0.35); different
@@ -45,13 +41,7 @@ syn keyword     goBoolean         true false nil iota
 " 0.761366   5328   194     0.000943    0.000143  goBuiltins         \v(\.|\) )@<!(append|cap|..
 " 1.000724   5328   194     0.000956    0.000188  goBuiltins         \v[^.]@<=(append|cap|..
 " TOTAL      COUNT  MATCH   SLOWEST     AVERAGE   NAME               PATTERN
-syn match goBuiltins /\v(\.|\) )@<!<(append|cap|close|complex|copy|delete|imag|len|make|new|panic|print|println|real|recover)\ze[^a-zA-Z0-9_]/
-
-" avoid highlighting attributes as builtins
-"   syn match   pythonAttribute	/\.\h\w*/hs=s+1
-" 	\ contains=ALLBUT,pythonBuiltin,pythonFunction,pythonAsync
-" 	\ transparent
-
+syn match goBuiltins /\v%(\.|\) )@<!<(append|cap|close|complex|copy|delete|imag|len|make|new|panic|print|println|real|recover)\ze[^a-zA-Z0-9_]/
 
 " Comments blocks.
 syn keyword     goTodo            contained TODO FIXME XXX BUG
@@ -74,8 +64,7 @@ syn region      goGenerate        contained matchgroup=goGenerateKW start="^//go
 " pragmaValue in cmd/compile/internal/gc/lex.go
 " TODO: //go:linkname localname importpath.name
 " TODO: support line directives.
-syn match       goCompilerDir     display contained
-      \ "\v^//go:(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)$"
+syn match       goCompilerDir     display contained "\v^//go:(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)$"
 
 " Adding a space between the // and go: is an error.
 syn region      goDirectiveErr    contained matchgroup=Error start="^// go:\w\+" end="$"
@@ -221,7 +210,6 @@ hi def link goBoolean             Boolean
 
 hi def link goComment             Comment
 hi def link goTodo                Todo
-
 
 hi def link goGenerateKW          Special
 hi def link goGenerateVars        Special

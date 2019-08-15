@@ -4,7 +4,7 @@ scriptencoding utf-8
 call gopher#init#config()
 
 fun! Test_basic() abort
-    call TestSyntax(g:test_packdir . '/syntax/test/basic.go',
+    call TestSyntax(g:test_packdir . '/syntax/testdata/basic.go',
         \ [
         \ [['goPackage', 1, 8]],
         \ [],
@@ -18,7 +18,7 @@ fun! Test_basic() abort
 endfun
 
 fun! Test_fmt() abort
-    call TestSyntax(g:test_packdir . '/syntax/test/fmt.go',
+    call TestSyntax(g:test_packdir . '/syntax/testdata/fmt.go',
         \ [
         \ [['goPackage', 1, 8]],
         \ [],
@@ -29,7 +29,7 @@ fun! Test_fmt() abort
 endfun
 
 fun! Test_builtin() abort
-    call TestSyntax(g:test_packdir . '/syntax/test/builtin.go',
+    call TestSyntax(g:test_packdir . '/syntax/testdata/builtin.go',
         \ [
         \ [['goPackage', 1, 8]],
         \ [],
@@ -42,11 +42,17 @@ fun! Test_builtin() abort
         \ [['goDeclaration', 1, 5]],
         \ [['goBuiltins', 2, 8], ['goDecimalInt', 12, 12]],
         \ [['goBuiltins', 11, 17]],
+        \ [['goBuiltins', 6, 12]],
         \ [],
         \ [['goBuiltins', 14, 17], ['goString', 18, 20]],
         \ [],
         \ [],
         \ [['goDeclaration', 1, 5]],
+        \ [],
+        \ [['goDeclaration', 1, 5]],
+        \ [],
+        \ [['goType', 8, 11]],
+        \ [['goVar', 2, 5], ['goType', 8, 11], ['goDecimalInt', 14, 14]],
         \ [],
     \ ])
 endfun

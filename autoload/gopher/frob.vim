@@ -74,7 +74,7 @@ fun! gopher#frob#implement(iface) abort
 
     " Get just the function signatures.
     let l:out =  map(split(l:out, '}')[:-2], { _, v -> split(l:v, "\n")[0][:-3]})
-    let l:existing = map(split(execute('g/func (\w\k* \*\w\k*) '), "\n"), { _, v -> v[:-3]})
+    let l:existing = map(split(execute('g/func (\h\w* \*\h\w*) '), "\n"), { _, v -> v[:-3]})
 
     " Move to end of struct.
     call winrestview(l:save)
