@@ -5,12 +5,10 @@ fun! gopher#init#version() abort
   let l:msg = ''
 
   " Make sure it's using a new-ish version of Vim.
-  if has('nvim') && !has('nvim-0.2.0')
-    let l:msg = 'gopher.vim requires Neovim 0.2.0 or newer'
-  " Why this version? Because it's the version that's about two years old at the
-  " time of writing, which is a more than reasonable time period to support.
-  elseif v:version < 800 || (v:version == 800 && !has('patch0400'))
-    let l:msg = 'gopher.vim requires Vim 8.0.0400 or newer'
+  if has('nvim') && !has('nvim-0.3.2')
+    let l:msg = 'gopher.vim requires Neovim 0.3.2 or newer'
+  elseif v:version < 800 || (v:version == 800 && !has('patch1630'))
+    let l:msg = 'gopher.vim requires Vim 8.0.1630 or newer'
   endif
 
   " Ensure people have Go installed correctly.

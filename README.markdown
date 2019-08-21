@@ -23,11 +23,11 @@ changes.
 Installation
 ------------
 
-Installation can be done using the usual suspects. **Vim 8.0.400** or **Neovim
-0.2.0** are supported; older versions may work but are not supported. **Vim
-8.1.1513** is recommended, mainly for the popup feature, which vastly improves
-the UX for key mappings. [How can I get a newer version of Vim on Ubuntu?][new]
-might be useful.
+Installation can be done using the usual suspects. **Vim 8.0.1630** or **Neovim
+0.3.2** are supported; older versions will *not* work due to missing features.
+**Vim 8.1.1513** is recommended, mainly for the popup feature, which vastly
+improves the UX for key mappings. [How can I get a newer version of Vim on
+Ubuntu?][new] might be useful.
 
 This plugin **requires Go 1.11** or newer; older versions will *not* work as the
 internal vendoring uses modules.
