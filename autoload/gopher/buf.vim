@@ -66,6 +66,7 @@ fun! gopher#buf#replace(start, end, data) abort
   try
     let l:save = winsaveview()
     let l:a = @a
+    let l:lastline = line('$')
 
     let @a = trim(a:data)
     keepjumps exe 'goto' a:start
@@ -74,8 +75,13 @@ fun! gopher#buf#replace(start, end, data) abort
     keepjumps exe 'goto' a:end
     normal! m>gv"ap
   finally
+    " Keep cursor on the same line as it was before.
+    let l:save['lnum']    += line('$') - l:lastline
+    let l:save['topline'] += line('$') - l:lastline
+
     call winrestview(l:save)
     let @a = l:a
+
     " TODO: restore visual selection as well, but I don't think that's possible.
   endtry
 endfun
