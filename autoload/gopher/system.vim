@@ -260,9 +260,7 @@ fun! s:tool(name) abort
   try
     let l:old_gobin =  exists('$GOBIN')       ? $GOBIN       : -1
     let l:old_gomod =  exists('$GO111MODULE') ? $GO111MODULE : -1
-    let l:old_gopath = exists('$GOPATH')      ? $GOPATH      : -1
 
-    let $GOPATH = ''   " TODO(8.0.1832): use unlet; this is also okay.
     let $GOBIN = s:gobin
     let $GO111MODULE = 'on'  " In case user set to 'off'
 
@@ -277,7 +275,6 @@ fun! s:tool(name) abort
   finally
     call gopher#system#restore_env('GOBIN', l:old_gobin)
     call gopher#system#restore_env('GO111MODULE', l:old_gomod)
-    call gopher#system#restore_env('GOPATH', l:old_gopath)
   endtry
 
   return a:name
