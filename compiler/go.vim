@@ -15,6 +15,12 @@ let &l:makeprg = printf('go install %s %s',
 " # a
 " runtime.main_main·f: function main is undeclared in the main package
 
+" TODO: this error isn't recognized:
+"
+" go: finding zgo.at/goatcounter/stripe latest
+" go: zgo.at/goatcounter/stripe@v0.0.0-20190819234703-ac5b4e6c06cf: parsing go.mod: unexpected module path "zgo.at/goatcounter"
+" go: error loading module requirements
+
 setl errorformat =%-G#\ %.%#                   " Ignore lines beginning with '#' ('# command-line-arguments' line sometimes appears?)
 setl errorformat+=%-G%.%#panic:\ %m            " Ignore lines containing 'panic: message'
 setl errorformat+=%Ecan\'t\ load\ package:\ %m " Start of multiline error string is 'can\'t load package'
