@@ -1,22 +1,5 @@
 " str.vim: Utilities for working with strings.
 
-" Trim leading and trailing whitespace from a string.
-fun! gopher#str#trim_space(s) abort
-  return gopher#str#trim(a:s, ' \t\r\n')
-endfun
-
-" Trim leading and trailing instances of all characters in cutset.
-"
-" Note that the curset characters need to be regexp-escaped!
-fun! gopher#str#trim(s, cutset) abort
-  if a:cutset is# ''
-    return a:s
-  endif
-
-  let l:pat = printf('^[%s]*\(.\{-}\)[%s]*$', a:cutset, a:cutset)
-  return substitute(a:s, l:pat, '\1', '')
-endfun
-
 " Report if s begins with prefix.
 fun! gopher#str#has_prefix(s, prefix) abort
   return a:s[:len(a:prefix) - 1] is# a:prefix

@@ -27,5 +27,11 @@ fun! gopher#import#do(...) abort
     return gopher#error(l:out)
   endtry
 
+  " If there are no imports then goimport outputs just 'import "fmt"', without
+  " newlines.
+  if l:json['end'] is 0
+    let l:json['code'] .= "\n\n"
+  endif
+
   call gopher#buf#replace(l:json['start'], l:json['end'], l:json['code'])
 endfun

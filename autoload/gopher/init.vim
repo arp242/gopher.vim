@@ -79,10 +79,10 @@ fun! s:map() abort
         \ '_imap_ctrl':   1,
     \ }
   let l:maps = {
-        \ 'if':        'i',
-        \ 'return':    'r',
         \ 'error':     'e',
+        \ 'if':        'i',
         \ 'implement': 'm',
+        \ 'return':    'r',
     \ }
 
   if !exists('g:gopher_map')

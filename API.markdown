@@ -99,13 +99,6 @@ Implement :GoCoverage.
 ----------------------------------
 Utilities for working with strings.
 
-    gopher#str#trim_space(s)
-      Trim leading and trailing whitespace from a string.
-
-    gopher#str#trim(s, cutset)
-      Trim leading and trailing instances of all characters in cutset.
-      Note that the curset characters need to be regexp-escaped!
-
     gopher#str#has_prefix(s, prefix)
       Report if s begins with prefix.
 

@@ -63,17 +63,25 @@ endfun
 
 " Replace text from byte offset 'start' to offset 'end'.
 fun! gopher#buf#replace(start, end, data) abort
+  let l:data = a:data
+  if type(l:data) is v:t_list
+    let l:data = join(l:data, "\n")
+  endif
+
   try
     let l:save = winsaveview()
     let l:a = @a
     let l:lastline = line('$')
 
-    let @a = trim(a:data)
+    let @a = l:data
     keepjumps exe 'goto' a:start
-    normal! m<
-
-    keepjumps exe 'goto' a:end
-    normal! m>gv"ap
+    if a:end is 0
+      normal! "aP
+    else
+      normal! m<
+      keepjumps exe 'goto' a:end
+      normal! m>gv"aP
+    endif
   finally
     " Keep cursor on the same line as it was before.
     let l:save['lnum']    += line('$') - l:lastline

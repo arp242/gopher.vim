@@ -58,10 +58,11 @@ fun! gopher#motion#comment(mode) abort
     endif
   endtry
 
-  let l:loc = json_decode(l:out)
-  if type(l:loc) isnot v:t_dict
+  try
+    let l:loc = json_decode(l:out)
+  catch
     return gopher#error(l:out)
-  endif
+  endtry
   if !has_key(l:loc, 'comment')
     return gopher#error(get(l:loc, 'err', l:out))
   endif
@@ -152,10 +153,11 @@ fun! gopher#motion#function(mode) abort
     endif
   endtry
 
-  let l:loc = json_decode(l:out)
-  if type(l:loc) isnot v:t_dict
+  try
+    let l:loc = json_decode(l:out)
+  catch
     return gopher#error(l:out)
-  endif
+  endtry
   if !has_key(l:loc, 'comment')
     return gopher#error(get(l:loc, 'err', l:out))
   endif

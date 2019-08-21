@@ -20,7 +20,7 @@ fun! gopher#frob#complete(lead, cmdline, cursor) abort
   if getcmdtype() is# '@' || a:cmdline[:16] is# 'GoFrob implement '
     return gopher#compl#filter(a:lead, s:find_interface(a:lead))
   endif
-  return gopher#compl#filter(a:lead, ['if', 'return', 'error', 'implement'])
+  return gopher#compl#filter(a:lead, ['error', 'if', 'implement', 'return'])
 endfun
 
 " Find all interfaces starting with lead.
@@ -179,10 +179,10 @@ fun! gopher#frob#ret(error) abort
 endfun
 
 let s:popup_items = [
-      \ ['if',        'Toggle if style'],
-      \ ['return',    'Add return'],
       \ ['error',     'Add return with if err != nil'],
+      \ ['if',        'Toggle if style'],
       \ ['implement', 'Add interface methods'],
+      \ ['return',    'Add return'],
   \ ]
 
 " key -> action mapping (reverse of g:gopher_map).

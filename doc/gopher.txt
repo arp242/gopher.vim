@@ -76,10 +76,10 @@ Settings for mappings:
         mode. Use an empty string to not map a key.
 
             Map                   Default value ~
-            |(gopher-if)|           i
-            |(gopher-return)|       r
             |(gopher-error)|        e
+            |(gopher-if)|           i
             |(gopher-implement)|    m
+            |(gopher-return)|       r
 
         Some examples:
 

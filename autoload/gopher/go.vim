@@ -73,7 +73,7 @@ fun! gopher#go#add_build_tags(flag_list) abort
     endif
 
     if a:flag_list[l:i] is# '-tags'
-      let l:tags = uniq(split(gopher#str#trim(a:flag_list[l:i+1], "\"'"), ' ') + g:gopher_build_tags)
+      let l:tags = uniq(split(trim(a:flag_list[l:i+1], "\"'"), ' ') + g:gopher_build_tags)
       return a:flag_list[:l:i]
             \ + ['"' . join(l:tags, ' ') . '"']
             \ +  a:flag_list[l:i+2:]

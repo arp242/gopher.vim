@@ -36,7 +36,7 @@ fun! gopher#override_vimgo() abort
   au! vim-go-hi
 
   let l:comm = map(split(execute('comm Go'), "\n"), { i, v ->
-        \ split(gopher#str#trim_space(substitute(l:v, '^\!', ' ', '')), ' ')[0]
+        \ split(trim(substitute(l:v, '^\!', ' ', '')), ' ')[0]
         \ })[1:]
   for l:c in l:comm
     exe 'delcommand ' . l:c

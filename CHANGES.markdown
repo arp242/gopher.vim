@@ -103,8 +103,8 @@ Feature table
                                   Or use LSP, ALE, or other generic linting plugin.
     :GoMetaLinterAutoSaveToggle   autocmd
 
-    :GoFmt                        = (equalprg is set to gofmt)
-    :GoImports                    :set equalprg=goimports (see :help ft-go)
+    :GoFmt                        = (equalprg is set to gofmt), also LSP feature
+    :GoImports                    :set equalprg=goimports (see :help ft-go), also LSP feature
     :GoFmtAutoSaveToggle          autocmd or plugin like ALE
     :GoAsmFmtAutoSaveToggle       ⤶
 
@@ -131,6 +131,7 @@ Feature table
     :GoSameIdsAutoToggle          ⤶
     :GoSameIdsClear               ⤶
     :GoSameIdsToggle              ⤶
+    :GoAutoTypeInfoToggle         ⤶
 
     :GoFiles                      :!go list ...; probably rare enough to not need a command on its own.
     :GoDeps                       ⤶
@@ -174,8 +175,8 @@ Feature table
 
 ### Code modification
 
-    :GoIfErr                      :GoFrob if; also mapped to ;e/<C-k>e and ;i/<C-k>i
-    :GoImpl                       :GoFrob impl; also mapped to ;m/<C-k>m
+    :GoIfErr                      :GoFrob if; also mapped to ;e (normal) <C-k>e (insert) and ;i / <C-k>i
+    :GoImpl                       :GoFrob impl; also mapped to ;m (normal) and <C-k>m (insert)
 
 ### Other
 
@@ -192,10 +193,9 @@ Feature table
 
     :GoAlternate                  Pretty useful, would prefer external plugin.
     :GoModFmt                     go mod edit -fmt doesn't read from stdin so can't use formatprg
-    :GoAutoTypeInfoToggle         Should probably be LSP feature?
 
     :GoCoverageBrowser            Not sure if it's worth having these?
-    :GoPlay                       ⤶
+    :GoPlay                       ⤶ can also be done by external "send to pastebin"-like plugin
 
 ### N/A
 
