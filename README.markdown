@@ -1,4 +1,4 @@
-[![This project is considered experimental](https://img.shields.io/badge/Status-experimental-red.svg)](https://arp242.net/status/experimental)
+[![This project is considered stable](https://img.shields.io/badge/Status-stable-green.svg)](https://arp242.net/status/stable)
 [![Build Status](https://travis-ci.org/arp242/gopher.vim.svg?branch=master)](https://travis-ci.org/arp242/gopher.vim)
 [![codecov](https://codecov.io/gh/arp242/gopher.vim/branch/master/graph/badge.svg)](https://codecov.io/gh/arp242/gopher.vim)
 
@@ -17,20 +17,18 @@ Goals:
 It's currently pre-1.0, but I've been using this as my daily workhorse for the
 last half year or so, and it works quite well for me.
 
-Also see [CHANGES.markdown](CHANGES.markdown) for a more detailed list of
-changes.
+See [CHANGES.markdown](CHANGES.markdown) for a more detailed list of changes.
 
 Installation
 ------------
 
-Installation can be done using the usual suspects. **Vim 8.0.1630** or **Neovim
-0.3.2** are supported; older versions will *not* work due to missing features.
+Installation can be done using the usual methods. You will **need** Go **1.11**
+and **Vim 8.0.1630** or **Neovim 0.3.2**. Older versions will *not* work due to
+missing features.
+
 **Vim 8.1.1513** is recommended, mainly for the popup feature, which vastly
 improves the UX for key mappings. [How can I get a newer version of Vim on
 Ubuntu?][new] might be useful.
-
-This plugin **requires Go 1.11** or newer; older versions will *not* work as the
-internal vendoring uses modules.
 
 Installation of external tools is done automatically on first usage, but can be
 done manually with `:GoSetup`.
@@ -45,7 +43,8 @@ By default the compiler is set to `go`; you can switch it to `gotest` with
 `:comp gotest`.
 
 You can use `:make` to compile or test the code. This is a synchronous process,
-there are plugins to make it async (see "Companion plugins" below).
+there are plugins to make it run in the background (see "Companion plugins"
+below).
 
 Running `go generate` or passing `-run` to `:GoTest` can be done by switching
 the `makeprg` setting:
@@ -64,13 +63,14 @@ You could even set `makeprg` to just `go`:
 	:make run main.go
 	...
 
-Setting `g:gopher_install_package` can be pretty useful, especially if you have
-a `./cmd/proj` you want to compile:
+Setting `g:gopher_install_package` can be useful if you have a `./cmd/proj` you
+want to compile:
 
     autocmd BufReadPre /home/martin/code/proj/*.go
             \ let g:gopher_install_package = 'example.com/proj/cmd/proj'
 
-All motions that work in vim-go also work in gopher.vim: `[[`, `]]`, `af`, etc.
+All motions and text objects that work in vim-go also work in gopher.vim: `[[`,
+`]]`, `af`, `ac`, etc.
 
 Overview of other commands:
 
@@ -120,7 +120,8 @@ various plugins.
 
 - [vim-delve](https://github.com/sebdah/vim-delve) – Debugger.
   Alternatives:
-  [vim-godebug](https://github.com/jodosha/vim-godebug).
+  [vim-godebug](https://github.com/jodosha/vim-godebug),
+  [vimspector](https://github.com/puremourning/vimspector).
 
 
 ### Other resources
@@ -163,6 +164,15 @@ Some things you can stick in your vimrc:
 FAQ
 ---
 
+### I'm missing X from vim-go
+
+That's probably intentional. An important reason for this plugin's existence is
+to remove features better handled by external plugins.
+See [the feature table in CHANGES.markdown](CHANGES.markdown#feature-table).
+
+If you really think there's a good reason for something from vim-go to exist in
+gopher.vim then feel free to open an issue and explain why existing generic
+
 ### Some things that were asynchronous in vim-go are no longer, what gives?
 
 Async can be nice but it's also hard. For example the code for `:GoCoverage` is
@@ -186,14 +196,12 @@ all that useful. It doesn't even work all that well because enabling all options
 would slow everything down to a crawl and testing all the combinations is
 tricky.
 
-The syntax file in gopher.vim has fewer features, but is also much faster and
-easier to maintain.
+So the syntax file in gopher.vim has fewer features, but is also much faster and
+easier to maintain. Maybe I'll add some features back once I figure out a better
+way to maintain this stuff.
 
 You can still copy vim-go's `syntax/go.vim` file to your `~/.vim/syntax`
 directory if you want your Christmas tree back 🎄
-
-Maybe I'll add some features back once I figure out a better way to maintain
-this stuff.
 
 ### Why do some commands conflict with vim-go? Why not prefix commands with `:Gopher`?
 
@@ -233,14 +241,9 @@ generic tools were non-existent or in their infancy. In the meanwhile these
 tools have matured significantly; what were the best choices in 2014 are not
 necessarily the best choices today.
 
-gopher.vim is my idea of what "vim-go 2.0" could look like. I hope that a number
-of features will get merged back to vim-go, and it's possible this plugin may
-get retired eventually; or perhaps it will continue to exist alongside vim-go.
-We'll see.
-
-It retains vim-go's commit history. While there have been large changes, it also
-retains some concepts and ideas. vim-go is the giant's shoulders on which
-gopher.vim stands.
+gopher.vim is my idea of "vim-go 2.0". It retains vim-go's commit history. While
+there have been large changes, it also retains some concepts and ideas. vim-go
+is the giant's shoulders on which gopher.vim stands.
 
 [govim](https://github.com/myitcv/govim) is another attempt at a modern Go
 plugin, and seems to have the same conceptual approach as vim-go: reinvent all

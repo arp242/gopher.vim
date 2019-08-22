@@ -7,7 +7,7 @@ overview.
 Changes from vim-go
 -------------------
 
-Some of the biggest changes/improvements from vim-go (not a comprehensive list).
+Some of the biggest changes/improvements from vim-go (not a comprehensive list):
 
 - No need to run `:GoInstallBinaries` or `:GoUpdateBinaries`. It's all done
   automatically on first command use.
@@ -16,19 +16,22 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list).
   essentially the same in most respects, except that it doesn't re-implement
   quite a bit of native Vim features.
 
-- `:GoImpl` is now `:Gofrob implements` (also mapped to `;m` and `<C-k>m`) and
-  has a number of improvements:
+- `:GoImpl` is now `:GoFrob implements`. All code change commands are now behind
+  one `:GoFrob` command. They're also mapped to `;[letter]` in normal mode, and
+  `<C-k>[letter]` in insert mode. `implements` is `;m` and `<C-k>m`.
+
+  There are a number of improvements:
 
   - It just needs the interface name. I always thought it was very confusing
     before with the reciever name etc. If you want a different name then it
     should be easy to `:s/../../`.
-  - Don't generate for methods that don't exist.
+  - Don't generate for methods that already exist.
   - Add return with zero values and comment, instead of panic.
-  - Accept more than one interface.
+  - Accept more than one interface (`:GoFrob implements io.Reader io.Writer`).
 
 - `:GoIfErr` is now `:GoFrob error` and has a few fixes: the code is placed
   smarter (e.g. not outside of a function), is properly indented, has better
-  cursor positioning, etc.
+  cursor positioning, etc. Also works via `;e` and `<C-k>e`.
 
 - `:GoRename` is still the same, with some minor improvements mostly relating to
   race conditions where the buffer on disk was changed but Vim didn't pick up on
@@ -44,10 +47,10 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list).
   with `html/template`.
 
 - Several improvements to the syntax highlighting; it's much faster, adds a few
-  minor highlights (e.g. struct tags, highlight erroneous go:generate, few
+  minor highlights (e.g. struct tags, highlight erroneous `go:generate`, few
   more), but also removes a few features that were very slow and complex.
 
-- Indentation is a bit better.
+- Indentation is a bit smarter.
 
 - Template syntax and filetypes are loaded for `.gohtml` (`.tmpl` in vim-go) and
   `.gotxt` (not in vim-go) files. This is that Gogland uses, and seems more
@@ -55,12 +58,14 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list).
   `gohtmltmpl` and `gotxttmpl`.
 
 - All the `go guru` commands are now in just one command: `:GoGuru`. Use e.g.
-  `:GoGuru whicherrs` instead of `:GoWhichErrs`.
+  `:GoGuru whicherrs` instead of `:GoWhichErrs`. Note: `guru` doesn't always
+  work well with modules, and `gopls` is expected to replace much of it
+  eventually.
 
 - `:GoAddTags` and `:GoRemoveTags` is now `:GoTags`. Use `:GoTags -rm json` to
   remove a tag.
 
-- Many small improvements in quality.
+- Many small improvements in edge cases and code quality.
 
 Features not in vim-go
 ----------------------
@@ -69,9 +74,11 @@ Features not in vim-go
   normal mode or `<C-k>` in insert mode gives you a popup menu (Vim 8.1.1513
   recommended).
 
-- `:GoFrob return` to insert a `return` statement with zero values.
+- `:GoFrob return` (`;r`/`<C-k>r`) can be used to generate just a blank return
+  statement with zero values.
 
-- `:GoFrob if` to toggle between `if` style.
+- `:GoFrob if` (`;i` / `<C-k>i`) to toggle between single-line `if a := f(); a`
+  and normal `if` statements.
 
 - Basic support for present files.
 
