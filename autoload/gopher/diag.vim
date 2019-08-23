@@ -2,8 +2,20 @@
 
 let s:root = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 
+fun! gopher#diag#complete(lead, cmdline, cursor) abort
+  return gopher#compl#filter(a:lead, ['report'])
+endfun
+
 " Get diagnostic information about gopher.vim
-fun! gopher#diag#do(to_clipboard) abort
+fun! gopher#diag#do(to_clipboard, ...) abort
+  if a:0 > 1
+    return gopher#error('too many arguments for gopher#diag#do')
+  endif
+  if a:0 is 1 && a:1 isnot? 'report'
+    return gopher#error('invalid argument for gopher#diag#do: %s', a:1)
+  endif
+  let l:report = a:0 is 1
+
   let l:state = []
 
   " Disable 'commands' debug flag, as this will add a bunch of commands to history,
@@ -72,13 +84,23 @@ fun! gopher#diag#do(to_clipboard) abort
     endif
   endtry
 
+  " Make a GitHub report.
+  if l:report
+    let @+ = "\n\n\n"
+    let @+ .= printf("<details>\n<summary>:GoDiag</summary>\n\n<pre>\n%s\n</pre></details>\n", join(l:state, "\n"))
+    let @+ .= printf("<details>\n<summary>:set</summary>\n\n<pre>\n%s\n</pre></details>\n", execute(':set'))
+    return gopher#info('GitHub issue template copied to clipboard')
+  endif
+
+  " Show output.
   if a:to_clipboard
     let @+ = join(l:state, "\n")
-  else
-    for l:line in l:state
-      echom l:line
-    endfor
+    return gopher#info('copied to clipboard')
   endif
+
+  for l:line in l:state
+    echom l:line
+  endfor
 endfun
 
 fun! s:indent(out) abort

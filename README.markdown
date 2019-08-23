@@ -22,7 +22,7 @@ See [CHANGES.markdown](CHANGES.markdown) for a more detailed list of changes.
 Installation
 ------------
 
-Installation can be done using the usual methods. You will **need** Go **1.11**
+Installation can be done using the usual methods. You will **need Go 1.11**
 and **Vim 8.0.1630** or **Neovim 0.3.2**. Older versions will *not* work due to
 missing features.
 
@@ -167,27 +167,28 @@ FAQ
 ### I'm missing X from vim-go
 
 That's probably intentional. An important reason for this plugin's existence is
-to remove features better handled by external plugins.
-See [the feature table in CHANGES.markdown](CHANGES.markdown#feature-table).
+to remove features better handled with native Vim features or generic external
+plugins.
+See the [feature table in CHANGES.markdown](CHANGES.markdown#feature-table).
 
-If you really think there's a good reason for something from vim-go to exist in
-gopher.vim then feel free to open an issue and explain why existing generic
+If you think there's a good reason for something from vim-go to exist in
+gopher.vim then feel free to open an issue with an explanation why existing Vim
+features or generic plugins aren't enough.
 
-### Some things that were asynchronous in vim-go are no longer, what gives?
+### Some things that were async in vim-go are no longer, what gives?
 
 Async can be nice but it's also hard. For example the code for `:GoCoverage` is
 now 120 lines shorter while also fixing a few bugs and adding features.
 
 There is also a user interface aspect: if I ask Vim to do something then I want
-it to do something now. When it's run in the background feedback is often poor.
-Is it still running? Did I miss a message? Who knows, messages are sometimes
-lost. How do you cancel a background job from the UI? Often you can't. What if I
-switch buffers or modify a file? *Weird Stuff*™ happens.
+that done now. When it's run in the background feedback is often poor. Is it
+still running? Did I miss a message? Who knows, messages are sometimes lost. How
+do you cancel a background job from the UI? Often you can't. What if I switch
+buffers or modify a file? *Weird Stuff*™ happens.
 
 This doesn't mean I'm against async, just not for every last thing. Some things
 in gopher.vim are still async. It's a trade-off. If you have a good case for
-something to be async then feel free to open an issue and try and convince me
-:-)
+something to be async then feel free to open an issue.
 
 ### The syntax has fewer colours, it's so boring!
 

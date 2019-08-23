@@ -1,4 +1,4 @@
-" buf.vim: Utilities for working with the external programs and the OS.
+" system.vim: Utilities for working with the external programs and the OS.
 
 let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 let s:gotools = s:root . '/tools'         " Our Go tools.
