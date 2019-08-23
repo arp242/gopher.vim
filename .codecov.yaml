@@ -1,3 +1,4 @@
 # Syntax files are pretty much impossible to test, so just exclude them.
 # https://docs.codecov.io/docs/ignoring-paths
 ignore: ["syntax/*"]
+comment: off
