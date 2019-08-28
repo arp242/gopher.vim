@@ -16,3 +16,9 @@ endfun
 fun! gopher#str#escape(s) abort
   return escape(a:s, '$.*~\')
 endfun
+
+" URL encode a string.
+fun! gopher#str#url_encode(s) abort
+    return substitute(a:s, '[^A-Za-z0-9_.~-]',
+          \ '\="%".printf(''%02X'', char2nr(submatch(0)))', 'g')
+endfun

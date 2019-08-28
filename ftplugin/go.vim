@@ -101,12 +101,11 @@ if g:gopher_map isnot 0
 endif
 
 " Commands
-command! -bang                                                  GoDiag     call gopher#diag#do(<bang>0)
-command!                                                        GoSetup    call gopher#system#setup()
-
-command! -nargs=* -complete=customlist,gopher#coverage#complete GoCoverage call gopher#coverage#do(<f-args>)
-command! -nargs=* -complete=customlist,gopher#frob#complete     GoFrob     call gopher#frob#cmd(<f-args>)
-command! -nargs=+ -complete=customlist,gopher#guru#complete     GoGuru     call gopher#guru#do(<f-args>)
-command! -nargs=* -complete=customlist,gopher#import#complete   GoImport   call gopher#import#do(<f-args>)
-command! -nargs=? -complete=customlist,gopher#rename#complete   GoRename   call gopher#rename#do(<f-args>)
-command! -nargs=* -range -complete=customlist,gopher#tags#complete GoTags  call gopher#tags#modify(<line1>, <line2>, <count>, <f-args>)
+command!                                                               GoSetup    call gopher#system#setup()
+command! -nargs=? -bang  -complete=customlist,gopher#diag#complete     GoDiag     call gopher#diag#do(<bang>0, <f-args>)
+command! -nargs=*        -complete=customlist,gopher#coverage#complete GoCoverage call gopher#coverage#do(<f-args>)
+command! -nargs=*        -complete=customlist,gopher#frob#complete     GoFrob     call gopher#frob#cmd(<f-args>)
+command! -nargs=*        -complete=customlist,gopher#import#complete   GoImport   call gopher#import#do(<f-args>)
+command! -nargs=* -range -complete=customlist,gopher#tags#complete     GoTags     call gopher#tags#modify(<line1>, <line2>, <count>, <f-args>)
+command! -nargs=+        -complete=customlist,gopher#guru#complete     GoGuru     call gopher#guru#do(<f-args>)
+command! -nargs=?        -complete=customlist,gopher#rename#complete   GoRename   call gopher#rename#do(<f-args>)

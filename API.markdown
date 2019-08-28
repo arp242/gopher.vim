@@ -109,6 +109,9 @@ Utilities for working with strings.
       Escape a user-provided string so it can be safely used in regexps.
       NOTE: this only works with the default value of 'magic'!
 
+    gopher#str#url_encode(s)
+      URL encode a string.
+
 
 [dict.vim](autoload/gopher/dict.vim)
 ------------------------------------
@@ -222,7 +225,10 @@ implement the :GoGuru command.
 ------------------------------------
 Implement :GoDiag.
 
-    gopher#diag#do(to_clipboard)
+    gopher#diag#complete(lead, cmdline, cursor)
+      Completion for :GoDiag
+
+    gopher#diag#do(to_clipboard, ...)
       Get diagnostic information about gopher.vim
 
 

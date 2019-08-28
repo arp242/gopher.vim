@@ -25,7 +25,7 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list):
   - It just needs the interface name. I always thought it was very confusing
     before with the reciever name etc. If you want a different name then it
     should be easy to `:s/../../`.
-  - Don't generate for methods that already exist.
+  - Don't generate methods that already exist.
   - Add return with zero values and comment, instead of panic.
   - Accept more than one interface (`:GoFrob implements io.Reader io.Writer`).
 
@@ -37,10 +37,9 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list):
   race conditions where the buffer on disk was changed but Vim didn't pick up on
   it, etc. Overall, it should have a smoother experience.
 
-- `:GoCoverage` commands are just one `:GoCoverage` command.
-  The most notable improvement is that all buffers are now updated. If you run
-  `:GoCoverage` on `a.go` and you also have `b.go` open, then `b.go` will be
-  highlighted as well.
+- `:GoCoverage*` commands are just one `:GoCoverage` command. The most notable
+  improvement is that all buffers are now updated: if you run `:GoCoverage` on
+  `a.go` and you also have `b.go` open, then `b.go` will be highlighted as well.
 
 - `GoImport` was completely reimplemented using an external tool instead of
   regexps; it's smarter about various things, such as replacing `text/template`
@@ -70,14 +69,18 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list):
 Features not in vim-go
 ----------------------
 
-- Normal and insert mode mappings. See the help for details, but pressing `;` in
-  normal mode or `<C-k>` in insert mode gives you a popup menu (Vim 8.1.1513
-  recommended).
+- Use `:GoDiag` to get useful debugging information. Even more useful with
+  `g:gopher_debug = ['commands']` to record the input/output of all commands
+  that are run.
 
-- `:GoFrob return` (`;r`/`<C-k>r`) can be used to generate just a blank return
-  statement with zero values.
+- Normal and insert mode mappings. Pressing `;` in normal mode or `<C-k>` in
+  insert mode gives you a popup menu (Vim 8.1.1513 recommended). See `:help
+  gopher-mappings` for details.
 
-- `:GoFrob if` (`;i` / `<C-k>i`) to toggle between single-line `if a := f(); a`
+- `:GoFrob return` (`;r`/`<C-k>r`) generates a blank return statement with zero
+  values.
+
+- `:GoFrob if` (`;i` / `<C-k>i`) toggles between single-line `if a := f(); a`
   and normal `if` statements.
 
 - Basic support for present files.
@@ -182,8 +185,8 @@ Feature table
 
 ### Code modification
 
-    :GoIfErr                      :GoFrob if; also mapped to ;e (normal) <C-k>e (insert) and ;i / <C-k>i
-    :GoImpl                       :GoFrob impl; also mapped to ;m (normal) and <C-k>m (insert)
+    :GoIfErr                      :GoFrob if; also mapped to ;e (normal) and <C-k>e (insert)
+    :GoImpl                       :GoFrob implement; also mapped to ;m (normal) and <C-k>m (insert)
 
 ### Other
 
@@ -191,6 +194,7 @@ Feature table
     text objects (af, etc.)       Works as vim-go
     :GoPath                       :let $GOPATH = '..'
     :GoTemplateAutoCreateToggle   Easy to use an autocmd.
+    :GoReportGitHubIssue          :GoDiag report
 
 ### Not implemented (yet)
 
@@ -208,4 +212,3 @@ Feature table
 
     :GoInstallBinaries            Managed automatically; :GoSetup if you want.
     :GoUpdateBinaries             ⤶
-    :GoReportGitHubIssue          Not needed now; might add ":GoDiag report" later
