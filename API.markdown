@@ -226,7 +226,7 @@ implement the :GoGuru command.
 Implement :GoDiag.
 
     gopher#diag#complete(lead, cmdline, cursor)
-
+      Completion for :GoDiag
 
     gopher#diag#do(to_clipboard, ...)
       Get diagnostic information about gopher.vim

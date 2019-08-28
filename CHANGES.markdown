@@ -38,7 +38,7 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list):
   it, etc. Overall, it should have a smoother experience.
 
 - `:GoCoverage*` commands are just one `:GoCoverage` command. The most notable
-  improvement is that all buffers are now updated. If you run `:GoCoverage` on
+  improvement is that all buffers are now updated: if you run `:GoCoverage` on
   `a.go` and you also have `b.go` open, then `b.go` will be highlighted as well.
 
 - `GoImport` was completely reimplemented using an external tool instead of

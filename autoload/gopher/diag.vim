@@ -2,6 +2,7 @@
 
 let s:root = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 
+" Completion for :GoDiag
 fun! gopher#diag#complete(lead, cmdline, cursor) abort
   return gopher#compl#filter(a:lead, ['report'])
 endfun
@@ -89,6 +90,7 @@ fun! gopher#diag#do(to_clipboard, ...) abort
     let @+ = "\n\n\n"
     let @+ .= printf("<details>\n<summary>:GoDiag</summary>\n\n<pre>\n%s\n</pre></details>\n", join(l:state, "\n"))
     let @+ .= printf("<details>\n<summary>:set</summary>\n\n<pre>\n%s\n</pre></details>\n", execute(':set'))
+    let @+ .= printf("<details>\n<summary>:autocmd</summary>\n\n<pre>\n%s\n</pre></details>\n", s:autocmd())
     return gopher#info('GitHub issue template copied to clipboard')
   endif
 
@@ -110,4 +112,26 @@ fun! s:indent(out) abort
   endif
 
   return map(l:out, { i, v -> '    ' . l:v })
+endfun
+
+" List all autocmds, but filter the filetypedetect ones as they're not that
+" useful and very long.
+fun! s:autocmd() abort
+  let l:autocmd = ''
+  let l:skip = 0
+
+  for l:line in split(execute('autocmd'), '\n')[1:]
+    if l:line[0] is# ' ' && l:skip
+      continue
+    endif
+
+    let l:skip = l:line[:13] is# 'filetypedetect'
+    if l:skip
+      continue
+    endif
+
+    let l:autocmd .= l:line . "\n"
+  endfor
+
+  return l:autocmd
 endfun
