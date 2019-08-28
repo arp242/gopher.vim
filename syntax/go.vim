@@ -24,10 +24,14 @@ syn keyword     goConditional     if else switch select
 syn keyword     goLabel           case default
 syn keyword     goRepeat          for range
 
+" TODO: Use @42<! instead of @<! ?
+
 " Predefined identifiers; don't use keywords to ensure that method names and
 " cals don't get highlighted.
+"
+" /\v<\.@<!%(int)>\ze(\((.{} .{})?\))@!
 syn match        goBoolean        /\v\.@<!%(true|false|nil|iota)>\ze([^\(]|$)/
-syn match        goType           /\v<\.@<!%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)>\ze([^\(]|$)/
+syn match        goType           /\v<(\k\.)@<!%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)>\ze(\((.{} .{})?\))@!/
 
 " Highlight builtin functions, to prevent accidental overriding. Do not match
 " when it's a method function name or method call.

@@ -16,8 +16,17 @@ func (x m) delete() {
 
 func (x m) int() {}
 
+func (x m) int(arg int) {}
+
 func newT() {
 	inst := m{}
 	m.int(int)
 	var x int = 1
+	var y = int(1)
+	var z int
+	b = []byte("x")
+
+}
+
+func splat(i ...int) {
 }
