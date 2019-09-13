@@ -1,5 +1,7 @@
 module tools
 
+go 1.13
+
 require (
 	arp242.net/goimport v1.0.1
 	arp242.net/gosodoff v0.0.0-20190808150955-78886b9cf0e3
