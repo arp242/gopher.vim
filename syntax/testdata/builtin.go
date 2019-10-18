@@ -18,6 +18,14 @@ func (x m) int() {}
 
 func (x m) int(arg int) {}
 
+func (x m) int(arg1 int, arg2 int) {}
+
+func (x m) int(
+	arg1 int,
+	arg2 int,
+) {
+}
+
 func newT() {
 	inst := m{}
 	m.int(int)
@@ -25,7 +33,10 @@ func newT() {
 	var y = int(1)
 	var z int
 	b = []byte("x")
+	fmt.Println(int(1), int(1))
 
+	if x := bool(true); x {
+	}
 }
 
 func splat(i ...int) {

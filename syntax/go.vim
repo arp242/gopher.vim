@@ -30,8 +30,19 @@ syn keyword     goRepeat          for range
 " cals don't get highlighted.
 "
 " /\v<\.@<!%(int)>\ze(\((.{} .{})?\))@!
+"
+" (\k\) )@<!          Don't match 'e) ' in '(recv type) int'
+" (\k\.)@<!           Don't match Match 'o.' in 'foo.int'
+"
+" Don't match int():
+"   \ze                 Set end of match here
+"   (
+"     \(                Literal (
+"     ([^,]{} [^,]{})?        Match argument; 'a string' in 'func int(a string)'
+"     \)                Literal )
+"   )@!                 Match zero-width if group does NOT match
 syn match        goBoolean        /\v\.@<!%(true|false|nil|iota)>\ze([^\(]|$)/
-syn match        goType           /\v<(\k\.)@<!%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)>\ze(\((.{} .{})?\))@!/
+syn match        goType           /\v(\k\) )@<!<(\k\.)@<!%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)>/
 
 " Highlight builtin functions, to prevent accidental overriding. Do not match
 " when it's a method function name or method call.
