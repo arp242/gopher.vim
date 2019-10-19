@@ -61,7 +61,7 @@ fun! s:echo(msg, hi, ...) abort
   endif
 
   " Tabs display as ^I or <09>, so manually expand them.
-  let l:msg = map(l:msg, 'substitute(v:val, "\t", "        ", "")')
+  let l:msg = map(l:msg, { _, v -> substitute(l:v, "\t", '      ', '') })
 
   " Redrawing here means there will be a better chance for messages to show.
   redraw

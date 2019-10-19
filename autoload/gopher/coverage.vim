@@ -45,6 +45,10 @@ fun! gopher#coverage#do(...) abort
       return gopher#error(l:out)
     endif
 
+    if l:out =~# '[no tests to run]'
+      return gopher#error('no tests to run')
+    endif
+
     let l:profile = readfile(l:tmp)
   finally
     call delete(l:tmp)
