@@ -1,6 +1,7 @@
 " coverage.vim: Implement :GoCoverage.
 
 let s:visible = 0
+let s:coverage = {}
 
 " Highlights.
 fun! s:hi() abort
@@ -12,12 +13,19 @@ fun! s:hi() abort
     hi def      goCoverageUncover    guibg=#ffdfdf ctermbg=223
   endif
 endfun
-augroup gopher-coverage
-  au!
-  au ColorScheme *    call s:hi()
-  au BufWinLeave *.go call gopher#coverage#clear()
-augroup end
 call s:hi()
+
+fun! s:au() abort
+  augroup gopher-coverage
+    au!
+    au ColorScheme *    call s:hi()
+    au BufWinLeave *.go call gopher#coverage#clear_hi()
+    au BufWinEnter *.go
+          \  for s:cov in get(s:coverage, gopher#go#packagepath(), [])
+          \|   call gopher#coverage#_highlight_(s:cov)
+          \| endfor
+  augroup end
+endfun
 
 " Complete the special flags and some common flags people might want to use.
 fun! gopher#coverage#complete(lead, cmdline, cursor) abort
@@ -27,7 +35,7 @@ endfun
 " Apply or clear coverage highlights.
 fun! gopher#coverage#do(...) abort
   if a:0 is 1 && (a:1 is# 'clear' || (a:1 is# 'toggle' && s:visible))
-    return gopher#coverage#clear()
+    return gopher#coverage#stop()
   endif
 
   let l:args = a:000
@@ -62,14 +70,44 @@ fun! gopher#coverage#is_visible() abort
   return s:visible
 endfun
 
-" Clear any existing highlights.
-fun! gopher#coverage#clear() abort
-  let s:visible = 0
+" Clear any existing highlights for the current buffer.
+fun! gopher#coverage#clear_hi() abort
   for l:m in getmatches()
     if l:m.group is# 'goCoverageCovered' || l:m.group is# 'goCoverageUncover'
       call matchdelete(l:m.id)
     endif
   endfor
+endfun
+
+" Stop coverage mode.
+fun! gopher#coverage#stop() abort
+  let s:visible = 0
+  let s:coverage = {}
+  silent! au! gopher-coverage
+
+  call gopher#coverage#clear_hi()
+
+  " TODO: Not sure why gopher#buf#doall() doesn't work here?
+  let l:s = bufnr('%')
+  let l:lz = &lazyredraw
+  let l:swb = &switchbuf
+  try
+    set lazyredraw
+    set switchbuf=useopen,usetab,newtab
+
+    for l:b in gopher#buf#list()
+      if l:b is l:s || !bufloaded(l:b)
+        continue
+      endif
+
+      silent exe l:b . 'sbuf'
+      call gopher#coverage#clear_hi()
+    endfor
+  finally
+    silent exe 'sbuf ' . l:s
+    let &lazyredraw = l:lz
+    let &switchbuf = l:swb
+  endtry
 endfun
 
 " Read the coverprofile file and annotate all loaded buffers.
@@ -79,22 +117,23 @@ fun! s:apply(profile) abort
     return
   endif
 
+  call s:au()
   let s:visible = 1
+  let s:coverage = {}  " Script-local so it can be accessed from autocmd.
 
-  let l:other_files = {}
   for l:line in a:profile[1:]
     let l:cov = s:parse_line(l:line)
 
     if l:path is# l:cov.file
       call gopher#coverage#_highlight_(l:cov)
-      continue
+      "continue
     endif
 
     " Highlight other buffers later to prevent switching back and forth.
-    if get(l:other_files, l:cov.file) is 0
-      let l:other_files[l:cov.file] = []
+    if get(s:coverage, l:cov.file) is 0
+      let s:coverage[l:cov.file] = []
     endif
-    call add(l:other_files[l:cov.file], l:cov)
+    call add(s:coverage[l:cov.file], l:cov)
   endfor
 
   " Highlight all the other buffers.
@@ -110,7 +149,7 @@ fun! s:apply(profile) abort
       endif
 
       silent exe l:b . 'sbuf'
-      for l:cov in get(l:other_files, gopher#go#packagepath(), [])
+      for l:cov in get(s:coverage, gopher#go#packagepath(), [])
         call gopher#coverage#_highlight_(l:cov)
       endfor
     endfor
