@@ -47,16 +47,14 @@ fun! gopher#frob#implement(iface) abort
   try
     let l:save = winsaveview()
 
-    let l:type = split(getline('.'), ' ')
-    if len(l:type) < 3 || l:type[0] isnot# 'type'
-      return gopher#error('no type definition on this line')
+    let l:type = s:get_type()
+    if l:type is# v:null
+      return gopher#error('no type definition found')
     endif
-    let l:type = l:type[1]
-    let l:recv = tolower(l:type)[0]
 
     let [l:out, l:err] = gopher#system#tool(['impl',
           \ '-dir', expand('%:p:h'),
-          \ printf('%s *%s', l:recv, l:type), a:iface])
+          \ printf('%s *%s', tolower(l:type)[0], l:type), a:iface])
     if l:err
       return gopher#error(l:out)
     endif
@@ -64,14 +62,19 @@ fun! gopher#frob#implement(iface) abort
     " TODO(impl): everything beyond here is hacky. Should improve impl tool.
 
     " Get just the function signatures.
-    let l:out =  map(split(l:out, '}')[:-2], { _, v -> split(l:v, "\n")[0][:-3]})
-    let l:existing = map(split(execute('g/func (\h\w* \*\h\w*) '), "\n"), { _, v -> v[:-3]})
+    try
+      let l:s = winsaveview()
+      let l:out =  map(split(l:out, '}')[:-2], { _, v -> split(l:v, "\n")[0][:-3]})
+      let l:existing = map(split(execute('g/func (\h\w* \*\h\w*) '), "\n"), { _, v -> v[:-3]})
+    finally
+      call winrestview(l:s)
+    endtry
 
     " Move to end of struct.
-    call winrestview(l:save)
-    if getline('.')[-9:] is# ' struct {'
-      normal! $%
-    endif
+    "call winrestview(l:save)
+    "if getline('.')[-9:] is# ' struct {'
+    "  normal! $%
+    "endif
 
     for l:f in l:out
       " Filter out methods that already exist.
@@ -101,6 +104,45 @@ fun! gopher#frob#implement(iface) abort
     call winrestview(l:save)
   endtry
 endfun
+
+" Get current type name.
+"
+" Note: moves the cursor!
+fun! s:get_type() abort
+  if getline('.') is# '}'
+    normal! %
+  endif
+
+  " type x int
+  " type x struct {
+  let l:type = split(getline('.'), ' ')
+  if l:type[0] is# 'type' && (len(l:type) is# 3 || len(l:type) is# 4)
+    normal! $%
+    return l:type[1]
+  endif
+
+  " type (
+  "     foo int
+  "     x int
+  " )
+  let l:loc = search('\v^[^ \t]', 'Wbn')
+  if getline(l:loc) is# 'type ('
+    call search('^)$', 'W')
+    return l:type[0]
+  endif
+
+  " type x struct {
+  "     field int
+  " }
+  let l:type = split(getline(l:loc), ' ')
+  if l:type[0] is# 'type' && (len(l:type) is# 3 || len(l:type) is# 4)
+    call search('^}$', 'W')
+    return l:type[1]
+  endif
+
+  return v:null
+endfun
+
 
 " Toggle between 'single-line' and 'normal' if checks:
 "
