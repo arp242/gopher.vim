@@ -45,7 +45,7 @@ fun! gopher#coverage#do(...) abort
       return gopher#error(l:out)
     endif
 
-    if l:out =~# '[no tests to run]'
+    if l:out =~# '\[no tests to run\]'
       return gopher#error('no tests to run')
     endif
 
@@ -109,7 +109,6 @@ fun! s:apply(profile) abort
         continue
       endif
 
-      "silent exe l:b . 'buf'
       silent exe l:b . 'sbuf'
       for l:cov in get(l:other_files, gopher#go#packagepath(), [])
         call gopher#coverage#_highlight_(l:cov)
