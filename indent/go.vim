@@ -35,9 +35,18 @@ fun! GoIndent(n) abort
     let l:indent += shiftwidth()
 
   " Function invocation split over multiple lines.
+  " \h        Head of word
+  " \w*       0 or more words
+  " (         (
+  " .*        Anything
+  " [^)]      Anything except )
+  " ,         Command
+  " $         End of line
+
   " TODO: two conditions as I think that will be faster, but need to benchmark it!
-  elseif l:pline[len(l:pline) - 1] is# ',' && l:pline =~# '\h\w*(.*[^)],$'
-    let l:indent += shiftwidth()
+  " TODO: #21, 2nd comment
+  " elseif l:pline[len(l:pline) - 1] is# ',' && l:pline =~# '\h\w*(.*[^)],$'
+  "   let l:indent += shiftwidth()
 
   " Ended with an operator.
   elseif l:pline =~# '[+\-*/%&|^<>=!.]$' && (l:ppn is 0 || l:ppline !~# '[+\-*/%&|^<>=!.]$')
@@ -53,8 +62,9 @@ fun! GoIndent(n) abort
     let l:indent -= shiftwidth()
 
   " Label
-  elseif l:line =~# '^\k\+:$'
-    let l:indent -= shiftwidth()
+  " TODO: Breaks struct fields, see #21, 1st comment
+  " elseif l:line =~# '^\k\+:$'
+  "   let l:indent -= shiftwidth()
 
   " Switch case.
   elseif l:line =~# '^\(case .*\|default\):$'
