@@ -2,7 +2,15 @@
 
 " Complete flags and common tags.
 fun! gopher#tags#complete(lead, cmdline, cursor) abort
-  return gopher#compl#filter(a:lead, ['-rm', 'json', 'json,omitempty', 'db', 'yaml'])
+  let l:word = gopher#compl#word(a:cmdline, a:cursor)
+  if l:word =~# ','
+    let l:F = {_, v -> gopher#str#has_prefix(l:v, l:word)}
+  else
+    let l:F = {_, v -> l:v !~# ','}
+  endif
+
+  return gopher#compl#filter(a:lead,
+        \ ['-rm'] + filter(copy(g:gopher_tag_complete), l:F))
 endfun
 
 " Modify tags.

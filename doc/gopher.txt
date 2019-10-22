@@ -417,6 +417,9 @@ COMMANDS                                                     *gopher-commands*
                 any valid set of arguments for |:GoTags| (for example
                 `json,omitempty -rm yaml`).
 
+        *g:gopher_tag_complete* = `['db', 'json', 'json,omitempty', 'yaml']`
+                Values for tab-completion.
+
         *g:gopher_tag_transform* = `'snakecase'`
                 Transform the struct field name when adding a tag. Supported
                 values:

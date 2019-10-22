@@ -58,6 +58,7 @@ fun! gopher#init#config() abort
   let g:gopher_debug          = get(g:, 'gopher_debug', [])
   let g:gopher_tag_transform  = get(g:, 'gopher_tag_transform', 'snakecase')
   let g:gopher_tag_default    = get(g:, 'gopher_tag_default', 'json')
+  let g:gopher_tag_complete   = get(g:, 'gopher_tag_complete', ['db', 'json', 'json,omitempty', 'yaml'])
 
   call s:map()
 
