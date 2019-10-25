@@ -223,6 +223,7 @@ endfun
 " Fill a type switch.
 fun! gopher#frob#switch() abort
   " TODO: doesn't seem to work with modules?
+  " TODO: interface{} will fill with all types! Not useful
   let [l:out, l:err] = gopher#system#tool(['fillswitch',
         \ '-file', bufname(''),
         \ '-offset', gopher#buf#cursor()],
