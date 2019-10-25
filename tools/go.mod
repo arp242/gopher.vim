@@ -1,6 +1,6 @@
 module tools
 
-go 1.13
+go 1.12
 
 require (
 	arp242.net/goimport v1.0.2
@@ -8,5 +8,5 @@ require (
 	github.com/fatih/gomodifytags v1.0.1
 	github.com/fatih/motion v1.0.0
 	github.com/josharian/impl v0.0.0-20190715203526-f0d59e96e372
-	golang.org/x/tools v0.0.0-20190916034716-92af9d69eff2
+	golang.org/x/tools v0.0.0-20191025023517-2077df36852e
 )

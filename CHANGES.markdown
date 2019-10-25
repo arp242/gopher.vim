@@ -185,8 +185,6 @@ vim-go on left, gopher.vim on right.
     :GoImportAs                   :GoImport foo:alias
     :GoDrop                       :GoImport -rm foo
 
-### Code modification
-
     :GoIfErr                      :GoFrob if; also mapped to ;e (normal) and <C-k>e (insert)
     :GoImpl                       :GoFrob implement; also mapped to ;m (normal) and <C-k>m (insert)
 
@@ -201,17 +199,14 @@ vim-go on left, gopher.vim on right.
     :GoReportGitHubIssue          :GoDiag report
     :GoAlternate                  Several external plugins for this.
 
-### Not implemented (yet)
+### Not implemented
 
     :GoKeyify                     Doesn't work well with Go Modules, build tags; would be good to
                                   have, but tool is 'too broken' atm.
     :GoFillStruct                 fillstruct (also: add fillswitch)
 
+    :GoCoverageBrowser            Not sure if it's worth having? Could add ":GoCoverage browser" if there's demand.
+    :GoPlay                       ⤶ can also be done by external "send to pastebin"-like plugin.
     :GoModFmt                     go mod edit -fmt doesn't read from stdin so can't use formatprg:
                                   https://github.com/golang/go/issues/28118
-                                  Can still modify after write and re-read; not sure how often this
-                                  command is used.
-
-    :GoCoverageBrowser            Not sure if it's worth having these? Could add
-                                  as ":GoCoverage browser" if someone asks.
-    :GoPlay                       ⤶ can also be done by external "send to pastebin"-like plugin
+                                  Can modify after write and re-read; not sure how often this command is used.
