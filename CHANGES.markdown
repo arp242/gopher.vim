@@ -88,6 +88,8 @@ Features not in vim-go
 Feature table
 -------------
 
+vim-go on left, gopher.vim on right.
+
 ### Building
 
     :GoInstall                    :make
@@ -190,11 +192,14 @@ Feature table
 
 ### Other
 
+    :GoInstallBinaries            Managed automatically; :GoSetup if you want.
+    :GoUpdateBinaries             ⤶
     motions ([[, ]], etc.)        Implemented, but different from vim-go.
     text objects (af, etc.)       Works as vim-go
     :GoPath                       :let $GOPATH = '..'
     :GoTemplateAutoCreateToggle   Easy to use an autocmd.
     :GoReportGitHubIssue          :GoDiag report
+    :GoAlternate                  Several external plugins for this.
 
 ### Not implemented (yet)
 
@@ -202,13 +207,11 @@ Feature table
                                   have, but tool is 'too broken' atm.
     :GoFillStruct                 fillstruct (also: add fillswitch)
 
-    :GoAlternate                  Pretty useful, would prefer external plugin.
-    :GoModFmt                     go mod edit -fmt doesn't read from stdin so can't use formatprg
+    :GoModFmt                     go mod edit -fmt doesn't read from stdin so can't use formatprg:
+                                  https://github.com/golang/go/issues/28118
+                                  Can still modify after write and re-read; not sure how often this
+                                  command is used.
 
-    :GoCoverageBrowser            Not sure if it's worth having these?
+    :GoCoverageBrowser            Not sure if it's worth having these? Could add
+                                  as ":GoCoverage browser" if someone asks.
     :GoPlay                       ⤶ can also be done by external "send to pastebin"-like plugin
-
-### N/A
-
-    :GoInstallBinaries            Managed automatically; :GoSetup if you want.
-    :GoUpdateBinaries             ⤶

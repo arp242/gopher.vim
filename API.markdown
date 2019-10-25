@@ -91,8 +91,11 @@ Implement :GoCoverage.
     gopher#coverage#is_visible()
       Report if the coverage display is currently visible.
 
-    gopher#coverage#clear()
-      Clear any existing highlights.
+    gopher#coverage#clear_hi()
+      Clear any existing highlights for the current buffer.
+
+    gopher#coverage#stop()
+      Stop coverage mode.
 
 
 [str.vim](autoload/gopher/str.vim)

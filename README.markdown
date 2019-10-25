@@ -106,6 +106,13 @@ various plugins.
 
 - [vim-makejob](https://git.danielmoch.com/vim-makejob) – Async `:make`.
 
+- [switchy.vim](https://github.com/arp242/switchy.vim) – Switch to `_test.go`
+  files. Alternatives:
+  [vim-altr](https://github.com/kana/vim-altr),
+  [alternate-lite](https://github.com/LucHermitte/alternate-lite),
+  [FSwitch](https://www.vim.org/scripts/script.php?script_id=2590),
+  [a.vim](https://www.vim.org/scripts/script.php?script_id=31).
+
 - [vim-qf](https://github.com/romainl/vim-qf) – Make working with the quickfix
   list/window a bit smoother.
 
