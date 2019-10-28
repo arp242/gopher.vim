@@ -147,10 +147,7 @@ fun! gopher#system#run(cmd, ...) abort
     let l:shell = &shell
     let l:shellredir = &shellredir
     let l:shellcmdflag = &shellcmdflag
-
-    if gopher#has_debug('commands')
-      let l:start = reltime()
-    endif
+    let l:start = reltime()
 
     if !has('win32') && executable('/bin/sh')
       set shell=/bin/sh shellredir=>%s\ 2>&1 shellcmdflag=-c
@@ -169,10 +166,10 @@ fun! gopher#system#run(cmd, ...) abort
     let l:out = l:out[:-2]
   endif
 
-  if gopher#has_debug('commands')
+  " Hack to prevent :GoDiag from adding commands.
+  if a:0 is 0 || a:1 isnot# 'NO_HISTORY'
     call gopher#system#_hist_(a:cmd, l:start, v:shell_error, l:out, 0)
   endif
-
   return [l:out, l:err]
 endfun
 
@@ -308,21 +305,26 @@ endfun
 " Add item to history.
 " TODO: add information about stdin too.
 fun! gopher#system#_hist_(cmd, start, exit, out, job) abort
-    if !gopher#has_debug('commands')
-      return
-    endif
-
     " Full path is too noisy.
     let l:debug_cmd = a:cmd
     let l:debug_cmd[0] = substitute(a:cmd[0], "'", '', '')
     if l:debug_cmd[0][:len(s:gobin) - 1] is# s:gobin
       let l:debug_cmd[0] = 's:gobin/' . l:debug_cmd[0][len(s:gobin) + 1:]
     endif
-    let s:history = insert(s:history, [
+
+    let l:out = a:out
+    if !gopher#has_debug('commands')
+      if len(l:out) > 100
+        let l:out = l:out[:100] . '…'
+      endif
+      let s:history = s:history[:3]
+    endif
+
+    call insert(s:history, [
           \ a:exit,
           \ s:since(a:start),
           \ gopher#system#join(l:debug_cmd),
-          \ a:out,
+          \ l:out,
           \ !a:job], 0)
 endfun
 
