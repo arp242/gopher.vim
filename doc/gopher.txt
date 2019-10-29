@@ -96,7 +96,7 @@ Settings for mappings:
             don't want that, for example to just just |(gopher-if)|: >
                 let g:gopher_map = {'_default': 0, 'if': 'x'}
 <
-            Use `<Leader>i` and `<C-g>i`;
+            Use `<Leader>i` and `<C-g>i`; >
                 let g:gopher_map = {'_nmap_prefix': '<Leader>', '_imap_prefix': '<C-g>'}
 <
             A more complex example which 1) doesn't map any defaults, 2) doesn't
@@ -148,7 +148,6 @@ FILETYPES                                                   *gopher-filetypes*
 
                                                                        *ft-go*
 go~
-
         The go filetype sets the following settings:
 
                 'equalprg'     `gofmt 2>/dev/null || cat /dev/stdin`
