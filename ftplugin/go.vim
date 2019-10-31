@@ -68,17 +68,17 @@ inoremap <buffer> <Plug>(gopher-if)     <C-o>:call gopher#frob#if()<CR>
 inoremap <buffer> <Plug>(gopher-impl)   <C-o>:call gopher#frob#impl()<CR>
 inoremap <buffer> <Plug>(gopher-return) <C-o>:call gopher#frob#ret(0)<CR>
 
-fun! s:map(key, map) abort
+fun! s:map(key, map, norm, ins) abort
   let l:key = get(g:gopher_map, a:key, '')
   if type(a:key) is v:t_string
     let l:key = [l:key, l:key]
   endif
 
-  if l:key[0] isnot# ''
+  if a:norm && l:key[0] isnot# ''
     exe printf('nmap %s%s %s', g:gopher_map['_nmap_prefix'], l:key[0], a:map)
   endif
 
-  if l:key[1] isnot# ''
+  if a:ins && l:key[1] isnot# ''
     exe printf('imap %s%s %s', g:gopher_map['_imap_prefix'], l:key[1], a:map)
     if g:gopher_map['_imap_ctrl']
       exe printf('imap %s<C-%s> %s', g:gopher_map['_imap_prefix'], l:key[1], a:map)
@@ -87,16 +87,35 @@ fun! s:map(key, map) abort
 endfun
 
 if g:gopher_map isnot 0
+  let s:has_norm = mapcheck(g:gopher_map['_nmap_prefix'], 'n') isnot# ''
+  let s:has_ins  = mapcheck(g:gopher_map['_imap_prefix'], 'i') isnot# ''
+
+  if s:has_norm
+    call gopher#error('skipping normal mode mappings as %s is already mapped to %s',
+          \ g:gopher_map['_nmap_prefix'], mapcheck(g:gopher_map['_nmap_prefix'], 'n'))
+  endif
+  if s:has_ins
+    call gopher#error('skipping insert mode mappings as %s is already mapped to %s',
+          \ g:gopher_map['_imap_prefix'], mapcheck(g:gopher_map['_imap_prefix'], 'i'))
+  endif
+  if s:has_norm || s:has_ins
+    sleep 1
+  endif
+
   " Map the popup; the rest of the mappings are handled inside there, so we
   " don't need to map them here.
   if g:gopher_map['_popup']
-    exe printf('nmap %s <Plug>(gopher-popup)', g:gopher_map['_nmap_prefix'])
-    exe printf('imap %s <Plug>(gopher-popup)', g:gopher_map['_imap_prefix'])
+    if !s:has_norm
+      exe printf('nmap %s <Plug>(gopher-popup)', g:gopher_map['_nmap_prefix'])
+    endif
+    if !s:has_ins
+      exe printf('imap %s <Plug>(gopher-popup)', g:gopher_map['_imap_prefix'])
+    endif
   else
-    call s:map('error',  '<Plug>(gopher-error)')
-    call s:map('if',     '<Plug>(gopher-if)')
-    call s:map('impl',   '<Plug>(gopher-impl)')
-    call s:map('return', '<Plug>(gopher-return)')
+    call s:map('error',  '<Plug>(gopher-error)',  !s:has_norm, !s:has_ins)
+    call s:map('if',     '<Plug>(gopher-if)',     !s:has_norm, !s:has_ins)
+    call s:map('impl',   '<Plug>(gopher-impl)',   !s:has_norm, !s:has_ins)
+    call s:map('return', '<Plug>(gopher-return)', !s:has_norm, !s:has_ins)
   endif
 endif
 
