@@ -8,5 +8,6 @@ require (
 	github.com/fatih/gomodifytags v1.0.1
 	github.com/fatih/motion v1.0.0
 	github.com/josharian/impl v0.0.0-20190715203526-f0d59e96e372
-	golang.org/x/tools v0.0.0-20191025023517-2077df36852e
+	golang.org/x/tools v0.0.0-20191105003958-c33799150868
+	golang.org/x/tools/gopls v0.2.0-pre2 // indirect
 )
