@@ -76,3 +76,52 @@ fun! Test_builtin() abort
         \ [],
     \ ])
 endfun
+
+fun! Test_invalid_numbers() abort
+    call TestSyntax(g:test_packdir . '/syntax/testdata/invalid_numbers.go',
+        \ [
+        \ [['goBuildTagStart', 1, 1], ['goBuildTag', 3, 3], ['goBuildKeyword', 4, 4], ['goBuildTag', 10, 20]],
+        \ [],
+        \ [['goPackage', 1, 8]],
+        \ [],
+        \ [['goVar', 1, 4]],
+        \ [['goOctalError', 22, 25]],
+        \ [['goOctalError', 22, 26]],
+        \ [['goOctalError', 22, 30]],
+        \ [['goBinaryError', 22, 27]],
+        \ [['goHexError', 22, 25]],
+        \ [],
+        \ [['goComment', 3, 58]],
+        \ [['goDecimalInt', 22, 24]],
+        \ [['goDecimalInt', 22, 24]],
+        \ [['goDecimalInt', 22, 25]],
+        \ [],
+    \ ])
+endfun
+
+fun! Test_numbers() abort
+    call TestSyntax(g:test_packdir . '/syntax/testdata/numbers.go',
+        \ [
+        \ [['goPackage', 1, 8]],
+        \ [],
+        \ [['goVar', 1, 4]],
+        \ [['goDecimalInt', 11, 13]],
+        \ [['goOctalInt', 11, 14]],
+        \ [['goOctalInt', 11, 15]],
+        \ [['goHexadecimalInt', 11, 16]],
+        \ [['goBinaryInt', 11, 16]],
+        \ [],
+        \ [],
+        \ [['goFloat', 11, 15]],
+        \ [['goFloat', 11, 16]],
+        \ [['goComment', 2, 23]],
+        \ [],
+        \ [['goDecimalInt', 13, 15]],
+        \ [['goHexadecimalInt', 13, 16]],
+        \ [],
+        \ [['goDecimalInt', 12, 18]],
+        \ [['goHexadecimalInt', 12, 18]],
+        \ [['goBinaryInt', 12, 22]],
+        \ [],
+    \ ])
+endfun

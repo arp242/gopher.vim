@@ -167,29 +167,34 @@ endif
 " Single-line var, const, and import.
 syn match       goSingleDecl      /\v(^\s*)@<=(import|var|const) [^(]/me=e-2 contains=goImport,goVar,goConst
 
-"   <         # Word boundary
-"   -?        # Optional -
-"   \d+       # Any amount of digits
+" Numbers.
+"   -?            # Optional -
+"   <             # Word boundary
+"   [0-9_]+       # Any amount of digits and underscores.
 "   %(
-"      [Ee]   # Optionally match exponent part of scientific notation.
+"      e          # Optionally match exponent part of scientific notation.
 "      [-+]?
-"      \d+
+"      [0-9_]+
 "   )?
-syn match       goDecimalInt      /\v<-?\d+%([Ee][-+]?\d+)?>/
-syn match       goHexadecimalInt  /\v<-?0[xX]\x+>/
-syn match       goOctalInt        /\v<-?0\o+>/
-syn match       goOctalError      /\v<-?0\o*[89]\d*>/
+syn match       goDecimalInt      /\v\c<[0-9_]+%(e[-+]?[0-9_]+)?>/
+syn match       goHexadecimalInt  /\v\c<0x[0-9a-f_]+>/
+syn match       goOctalInt        /\v\c<0o?[0-7_]+>/
+syn match       goBinaryInt       /\v\c<0b[01_]+>/
+
+syn match       goOctalError      /\v\c<0o?[0-7_]*[89]+[0-9_]*>/
+syn match       goBinaryError     /\v\c<0b[01_]*[2-9]+[0-9_]*>/
+syn match       goHexError        /\v\c<0x[0-9a-f_]*[g-z]+[0-9a-f_]*>/
 
 " Floating points.
-syn match       goFloat           /\v<-?\d+\.\d*%([Ee][-+]?\d+)?>/
-syn match       goFloat           /\v<-?\.\d+%([Ee][-+]?\d+)?>/
+syn match       goFloat           /\v\c<[0-9_]+\.[0-9_]*%(e[-+]?[0-9_]+)?>/
+syn match       goFloat           /\v\c<\.[0-9_]+%(e[-+]?[0-9_]+)?>/
 
 " Complex numbers.
 if s:has('complex')
-  syn match     goImaginary       /\v<-?\d+i>/
-  syn match     goImaginary       /\v<-?\d+[Ee][-+]?\d+i>/
-  syn match     goImaginaryFloat  /\v<-?\d+\.\d*%([Ee][-+]?\d+)?i>/
-  syn match     goImaginaryFloat  /\v<-?\.\d+%([Ee][-+]?\d+)?i>/
+  syn match     goImaginary       /\v\c<[0-9_]+i>/
+  syn match     goImaginary       /\v\c<[0-9_]+e[-+]?[0-9_]+i>/
+  syn match     goImaginaryFloat  /\v\c<[0-9_]+\.[0-9_]*%(e[-+]?[0-9_]+)?i>/
+  syn match     goImaginaryFloat  /\v\c<\.[0-9_]+%(e[-+]?[0-9_]+)?i>/
 endif
 
 " One or more line comments that are followed immediately by a "package"
@@ -256,7 +261,10 @@ hi def link goCharacter           Character
 hi def link goDecimalInt          Integer
 hi def link goHexadecimalInt      Integer
 hi def link goOctalInt            Integer
+hi def link goBinaryInt           Integer
 hi def link goOctalError          Error
+hi def link goBinaryError         Error
+hi def link goHexError            Error
 hi def link Integer               Number
 
 hi def link goFloat               Float
