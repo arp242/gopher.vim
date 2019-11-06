@@ -14,11 +14,11 @@ func (x m) delete() {
 	fmt.Println(len(""))
 }
 
-func (x m) int() {}
+func (x m) int() (named int, named2 int) {}
 
 func (x m) int(arg int) {}
 
-func (x m) int(arg1 int, arg2 int) {}
+func (x m) int(arg1 int, arg2 int) (int, int) {}
 
 func (x m) int(
 	arg1 int,
@@ -26,7 +26,7 @@ func (x m) int(
 ) {
 }
 
-func newT() {
+func newT() int {
 	inst := m{}
 	m.int(int)
 	var x int = 1
@@ -39,5 +39,5 @@ func newT() {
 	}
 }
 
-func splat(i ...int) {
+func splat(i ...int) int {
 }

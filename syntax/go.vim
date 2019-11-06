@@ -4,10 +4,7 @@ endif
 
 " The ftplugin is loaded after the syntax file, so load it here too.
 call gopher#init#config()
-
-fun! s:has_setting(n)
-  return index(g:gopher_highlight, a:n) > -1
-endfun
+let s:has = {n -> index(g:gopher_highlight, l:n) > -1 }
 
 syn case match
 
@@ -17,8 +14,6 @@ syn keyword     goImport          import    contained
 syn keyword     goVar             var       contained
 syn keyword     goConst           const     contained
 syn keyword     goDeclaration     func type struct interface
-
-" Keywords within functions.
 syn keyword     goStatement       defer go goto return break continue fallthrough
 syn keyword     goConditional     if else switch select
 syn keyword     goLabel           case default
@@ -44,6 +39,12 @@ syn keyword     goRepeat          for range
 syn match        goBoolean        /\v\.@<!%(true|false|nil|iota)>\ze([^\(]|$)/
 syn match        goType           /\v(\k\) )@<!<(\k\.)@<!%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)>/
 
+" Highlight single return values: 'func splat() int {'
+"
+" It's too hard to integrate in above regexp, and aside from duplicating the
+" type list this is easier and probably faster.
+syn match goType /\v%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)\ze( *)?\{$/
+
 " Highlight builtin functions, to prevent accidental overriding. Do not match
 " when it's a method function name or method call.
 " Test: builtin.go
@@ -62,7 +63,7 @@ syn match goBuiltins /\v%(\.|\) )@<!<(append|cap|close|complex|copy|delete|imag|
 syn keyword     goTodo            contained TODO FIXME XXX BUG
 syn region      goComment         start="//" end="$"    contains=goCompilerDir,goGenerate,goDirectiveErr,goBuildTag,goTodo,@Spell
 
-if s:has_setting('fold-comment')
+if s:has('fold-comment')
   syn region    goComment         start="/\*" end="\*/" contains=goTodo,@Spell fold
   syn match     goComment         "\v(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goDirectiveErr,goBuildTag,goTodo,@Spell fold
 else
@@ -108,7 +109,7 @@ syn match       goEscapeError     display contained +\\[^0-7xuUabfnrtv\\'"]+
 syn cluster     goStringGroup     contains=goEscapeOctal,goEscapeC,goEscapeX,goEscapeU,goEscapeBigU,goEscapeError
 
 " Strings
-if s:has_setting('string-spell')
+if s:has('string-spell')
   syn region    goString          start=/"/ end=/"/ contains=@goStringGroup,@Spell
   syn region    goRawString       start=/`/ end=/`/ contains=@Spell
 else
@@ -119,7 +120,7 @@ endif
 " Struct tag name.
 syn match       goStructTagName   /\w\{-1,}:"/he=e-2 contained containedin=goRawString
 
-if s:has_setting('string-fmt')
+if s:has('string-fmt')
   " [n] notation is valid for specifying explicit argument indexes
   " 1. literal % not preceded by a %.
   " 2. any number of -, #, 0, space, or +
@@ -141,21 +142,21 @@ syn region      goCharacter       start=/'/ end=/'/ contains=@goCharacterGroup
 
 " Regions
 syn region      goParen           start='(' end=')' transparent
-if s:has_setting('fold-block')
+if s:has('fold-block')
   syn region    goBlock           start="{" end="}" transparent fold
 else
   syn region    goBlock           start="{" end="}" transparent
 endif
 
 " import
-if s:has_setting('fold-import')
+if s:has('fold-import')
   syn region    goImport          start='import (' end=')' transparent fold contains=goImport,goString,goComment
 else
   syn region    goImport          start='import (' end=')' transparent contains=goImport,goString,goComment
 endif
 
 " var, const
-if s:has_setting('fold-varconst')
+if s:has('fold-varconst')
   syn region    goVar             start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock
   syn region    goConst           start='const (' end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock
 else
@@ -184,7 +185,7 @@ syn match       goFloat           /\v<-?\d+\.\d*%([Ee][-+]?\d+)?>/
 syn match       goFloat           /\v<-?\.\d+%([Ee][-+]?\d+)?>/
 
 " Complex numbers.
-if s:has_setting('complex')
+if s:has('complex')
   syn match     goImaginary       /\v<-?\d+i>/
   syn match     goImaginary       /\v<-?\d+[Ee][-+]?\d+i>/
   syn match     goImaginaryFloat  /\v<-?\d+\.\d*%([Ee][-+]?\d+)?i>/
@@ -201,11 +202,11 @@ endif
 exe 'syn region  goPackageComment    start=/\v(\/\/.*\n)+\s*package/'
       \ . ' end=/\v\n\s*package/he=e-7,me=e-7,re=e-7'
       \ . ' contains=goTodo,@Spell'
-      \ . (s:has_setting('fold-pkg-comment') ? ' fold' : '')
+      \ . (s:has('fold-pkg-comment') ? ' fold' : '')
 exe 'syn region  goPackageComment    start=/\v^\s*\/\*.*\n(.*\n)*\s*\*\/\npackage/'
       \ . ' end=/\v\*\/\n\s*package/he=e-7,me=e-7,re=e-7'
       \ . ' contains=goTodo,@Spell'
-      \ . (s:has_setting('fold-pkg-comment') ? ' fold' : '')
+      \ . (s:has('fold-pkg-comment') ? ' fold' : '')
 
 " Link
 hi def link goPackage             Statement
