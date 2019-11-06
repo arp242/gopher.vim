@@ -133,7 +133,7 @@ if s:has('string-fmt')
         \@<=%[-#0 +]*\
         \v%(%(%(\[\d+])?\*)|\d+)?\
         \v%(\.%(%(%(\[\d+])?\*)|\d+)?)?\
-        \v%(\[\d+])?[vTtbcdoqxXUeEfFgGspw]/ contained containedin=goString,goRawString
+        \v%(\[\d+])?[vTtbcdoOqxXUeEfFgGspw]/ contained containedin=goString,goRawString
 endif
 
 " Character.
