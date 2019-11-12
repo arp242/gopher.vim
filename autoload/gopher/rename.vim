@@ -1,5 +1,7 @@
 " rename.vim: Implement :GoRename.
 
+" TODO: There is command-line support for 'gopls rename'
+
 " Commandline completion: original, unexported camelCase, and exported
 " CamelCase.
 fun! gopher#rename#complete(lead, cmdline, cursor) abort
