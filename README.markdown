@@ -2,6 +2,8 @@
 [![Build Status](https://travis-ci.org/arp242/gopher.vim.svg?branch=master)](https://travis-ci.org/arp242/gopher.vim)
 [![codecov](https://codecov.io/gh/arp242/gopher.vim/branch/master/graph/badge.svg)](https://codecov.io/gh/arp242/gopher.vim)
 
+<p align="center"><a href="https://app.codefund.io/properties/633/visit-sponsor"><img src="https://app.codefund.io/properties/633/sponsor" /></a></p>
+
 gopher.vim is a Vim plugin for the Go programming language.
 
 Goals:
