@@ -16,9 +16,9 @@ fun! gopher#guru#complete(lead, cmdline, cursor) abort
   return gopher#compl#filter(a:lead, l:list)
 endfun
 
-" TODO: commands need range: freevars
 fun! gopher#guru#do(...) abort
   " Prepend -scope flag unless given in the command.
+  " TODO: commands need range: freevars
   let l:flags = a:000
   if index(l:flags, '-scope') is -1
     let l:flags = ['-scope', get(g:, 'gopher_guru_scope', gopher#go#package())] + l:flags

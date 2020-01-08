@@ -1,6 +1,28 @@
 " rename.vim: Implement :GoRename.
 
 " TODO: There is command-line support for 'gopls rename'
+"
+"   $ gopls rename './site.go:#1029' XXX
+"   admin.go:
+"   package foo
+"   [..]
+"   init.go:
+"   package foo
+"   [..]
+"
+" Can also use -w to write immediately:
+"
+"     $ gopls rename -w './site.go:#1029' XXX
+"     /home/martin/code/goatcounter/admin.go
+"     /home/martin/code/goatcounter/init.go
+"     /home/martin/code/goatcounter/site.go
+"     /home/martin/code/goatcounter/site_test.go
+"     /home/martin/code/goatcounter/test.go
+"     /home/martin/code/goatcounter/user.go
+"
+" Note: will clobber work tree with .orig files.
+" Limitation: only current package, not e.g. ./handlers subpackage.
+"
 
 " Commandline completion: original, unexported camelCase, and exported
 " CamelCase.

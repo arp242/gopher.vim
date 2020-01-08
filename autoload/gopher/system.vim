@@ -3,6 +3,7 @@
 let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 let s:gotools = s:root . '/tools'         " Our Go tools.
 let s:gobin   = s:gotools . '/bin'
+let s:jobs    = []                        " List of running jobs.
 
 " Command history; every item is a list with the exit code, time it took to run,
 " command that was run, its output, and a boolean to signal it was run from
@@ -53,6 +54,12 @@ endfun
 " appended).
 fun! gopher#system#history() abort
   return s:history
+endfun
+
+" Get a list of currently running jobs. Use job_info() to get more information
+" about a job.
+fun! gopher#system#jobs() abort
+  return s:jobs
 endfun
 
 " Restore an environment variable back to its original value.
@@ -183,7 +190,6 @@ endfun
 "
 " TODO: Don't run multiple jobs that modify the buffer at the same time. For
 " some tools (like gorename) we need a global lock.
-" TODO: allow inspecting which jobs are running (in :GoDiag?)
 fun! gopher#system#job(done, cmd) abort
   if type(a:cmd) isnot v:t_list
     return gopher#error('must pass a list')
@@ -206,11 +212,14 @@ fun! gopher#system#job(done, cmd) abort
           \ })
   endif
 
-  return job_start(a:cmd, {
+  let l:job = job_start(a:cmd, {
         \ 'callback': function('s:j_out_cb',   [], l:state),
         \ 'exit_cb':  function('s:j_exit_cb',  [], l:state),
         \ 'close_cb': function('s:j_close_cb', [], l:state),
         \})
+
+  call add(s:jobs, l:job)
+  return l:job
 endfun
 
 " Wait for a job to finish. Note that the exit_cb or close_cb may still be
@@ -359,6 +368,13 @@ fun! s:j_exit_cb(job, exit, ...) abort dict
 
   if self.closed
     call gopher#system#_hist_(self.cmd, self.start, self.exit, self.out, 1)
+    for l:i in range(0, len(s:jobs) - 1)
+      if s:jobs[l:i] is a:job
+        call remove(s:jobs, l:i)
+        break
+      endif
+    endfor
+
     call self.done(self.exit, self.out)
   endif
 endfun

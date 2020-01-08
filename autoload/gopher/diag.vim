@@ -53,9 +53,19 @@ fun! gopher#diag#do(to_clipboard, ...) abort
 
   " List all config variables.
   let l:state = add(l:state, 'VARIABLES')
-  " TODO: wrap very long variable names a bit more nicely.
+  " TODO: wrap very long variable values a bit more nicely.
   let l:state += s:indent(filter(split(execute('let'), "\n"), { i, v -> l:v =~# '^gopher_' }))
   let l:state = add(l:state, ' ')
+
+  " List running jobs.
+  if len(gopher#system#jobs()) > 0
+    let l:state = add(l:state, 'JOBS')
+    for l:j in gopher#system#jobs()
+      let l:info = job_info(l:j)
+      let l:state = add(l:state, printf('    %s PID %d: %s', l:info['status'], l:info['process'], l:info['cmd']))
+    endfor
+    let l:state = add(l:state, ' ')
+  endif
 
   " List command history (if any).
   let l:state = add(l:state, 'COMMAND HISTORY (newest on top)')
@@ -86,7 +96,7 @@ fun! gopher#diag#do(to_clipboard, ...) abort
   endif
 
   for l:line in l:state
-    echom l:line
+    echo l:line
   endfor
 endfun
 
