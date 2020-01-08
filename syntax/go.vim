@@ -176,7 +176,7 @@ syn match       goSingleDecl      /\v(^\s*)@<=(import|var|const) [^(]/me=e-2 con
 "      [-+]?
 "      [0-9_]+
 "   )?
-syn match       goDecimalInt      /\v\c<[0-9_]+%(e[-+]?[0-9_]+)?>/
+syn match       goDecimalInt      /\v\c<[0-9][0-9_]*%(e[-+]?[0-9_]+)?>/
 syn match       goHexadecimalInt  /\v\c<0x[0-9a-f_]+>/
 syn match       goOctalInt        /\v\c<0o?[0-7_]+>/
 syn match       goBinaryInt       /\v\c<0b[01_]+>/

@@ -92,9 +92,11 @@ fun! Test_invalid_numbers() abort
         \ [['goHexError', 22, 25]],
         \ [],
         \ [['goComment', 3, 58]],
-        \ [['goDecimalInt', 22, 24]],
+        \ [],
         \ [['goDecimalInt', 22, 24]],
         \ [['goDecimalInt', 22, 25]],
+        \ [['goFloat', 22, 26]],
+        \ [['goFloat', 22, 26]],
         \ [],
     \ ])
 endfun
@@ -122,6 +124,7 @@ fun! Test_numbers() abort
         \ [['goDecimalInt', 12, 18]],
         \ [['goHexadecimalInt', 12, 18]],
         \ [['goBinaryInt', 12, 22]],
+        \ [['goDecimalInt', 12, 12]],
         \ [],
     \ ])
 endfun

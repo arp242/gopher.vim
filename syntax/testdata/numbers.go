@@ -18,4 +18,5 @@ var (
 	sep_i   = 123_123
 	sep_hex = 0X1F_99
 	sep_bin = 0B1111_0000
+	_       = 0
 )
