@@ -1,10 +1,8 @@
-// +build tag
-
-//go:generate foo
+// go:generate foo
 
 package main
 
-//go:nosplit
+// go:nosplit
 func noescape() int {
 	return 42
 }

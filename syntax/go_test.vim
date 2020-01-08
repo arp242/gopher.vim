@@ -17,17 +17,6 @@ fun! Test_basic() abort
     \ ])
 endfun
 
-fun! Test_fmt() abort
-    call TestSyntax(g:test_packdir . '/syntax/testdata/fmt.go',
-        \ [
-        \ [['goPackage', 1, 8]],
-        \ [],
-        \ [['goImport', 1, 7], ['goString', 8, 12]],
-        \ [],
-        \ [['goVar', 1, 4], ['goString', 21, 21], ['goFormatSpecifier', 22, 22], ['goString', 24, 25], ['goString', 27, 30]],
-    \ ])
-endfun
-
 fun! Test_builtin() abort
     call TestSyntax(g:test_packdir . '/syntax/testdata/builtin.go',
         \ [
@@ -74,6 +63,47 @@ fun! Test_builtin() abort
         \ [],
         \ [['goDeclaration', 1, 5], ['goType', 17, 20], ['goType', 22, 25]],
         \ [],
+    \ ])
+endfun
+
+fun! Test_directive() abort
+    call TestSyntax(g:test_packdir . '/syntax/testdata/directive.go',
+        \ [
+        \ [['goBuildTagStart', 1, 1], ['goBuildTag', 3, 3], ['goBuildKeyword', 4, 4], ['goBuildTag', 10, 13]],
+        \ [],
+        \ [['goGenerateKW', 1, 1], ['goGenerate', 14, 17]],
+        \ [],
+        \ [['goPackage', 1, 8]],
+        \ [],
+        \ [['goCompilerDir', 1, 12]],
+        \ [['goDeclaration', 1, 5], ['goType', 17, 20]],
+        \ [['goStatement', 2, 8], ['goDecimalInt', 9, 10]],
+        \ [],
+    \ ])
+endfun
+
+fun! Test_directive_error() abort
+    call TestSyntax(g:test_packdir . '/syntax/testdata/directive_error.go',
+        \ [
+        \ [['goDirectiveError', 1, 1], ['goComment', 15, 18]],
+        \ [],
+        \ [['goPackage', 1, 8]],
+        \ [],
+        \ [['goDirectiveError', 1, 13]],
+        \ [['goDeclaration', 1, 5], ['goType', 17, 20]],
+        \ [['goStatement', 2, 8], ['goDecimalInt', 9, 10]],
+        \ [],
+    \ ])
+endfun
+
+fun! Test_fmt() abort
+    call TestSyntax(g:test_packdir . '/syntax/testdata/fmt.go',
+        \ [
+        \ [['goPackage', 1, 8]],
+        \ [],
+        \ [['goImport', 1, 7], ['goString', 8, 12]],
+        \ [],
+        \ [['goVar', 1, 4], ['goString', 21, 21], ['goFormatSpecifier', 22, 22], ['goString', 24, 25], ['goString', 27, 30]],
     \ ])
 endfun
 

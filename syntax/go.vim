@@ -61,11 +61,11 @@ syn match goBuiltins /\v%(\.|\) )@<!<(append|cap|close|complex|copy|delete|imag|
 
 " Comments blocks.
 syn keyword     goTodo            contained TODO FIXME XXX BUG
-syn region      goComment         start="//" end="$"    contains=goCompilerDir,goGenerate,goDirectiveErr,goBuildTag,goTodo,@Spell
+syn region      goComment         start="//" end="$"    contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell
 
 if s:has('fold-comment')
   syn region    goComment         start="/\*" end="\*/" contains=goTodo,@Spell fold
-  syn match     goComment         "\v(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goDirectiveErr,goBuildTag,goTodo,@Spell fold
+  syn match     goComment         "\v(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell fold
 else
   syn region    goComment         start="/\*" end="\*/" contains=goTodo,@Spell
 endif
@@ -80,10 +80,13 @@ syn region      goGenerate        contained matchgroup=goGenerateKW start="^//go
 " pragmaValue in cmd/compile/internal/gc/lex.go
 " TODO: //go:linkname localname importpath.name
 " TODO: support line directives.
-syn match       goCompilerDir     display contained "\v^//go:(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)$"
+" TODO: ideally this should end with "$", but then goComment breaks and the next
+"       line is highlighted as a comment even when it's not. I think this is a
+"       bug in Vim. Same applues for goDirectiveError.
+syn match       goCompilerDir     display contained "\v^//go:(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)"
 
 " Adding a space between the // and go: is an error.
-syn region      goDirectiveErr    contained matchgroup=Error start="^// go:\w\+" end="$"
+syn match      goDirectiveError  contained "^// go:\w\+"
 
 " Build tags; standard build tags from cmd/dist/build.go and go doc go/build.
 syn match   goBuildKeyword        display contained "+build"
@@ -236,6 +239,7 @@ hi def link goGenerateKW          Special
 hi def link goGenerateVars        Special
 
 hi def link goCompilerDir         Special
+hi def link goDirectiveError      Error
 
 hi def link goBuildTagStart       Comment
 hi def link goStdBuildTags        Special
