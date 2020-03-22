@@ -12,7 +12,7 @@ fun! gopher#init#version() abort
   endif
 
   " Ensure people have Go installed correctly.
-  let l:v = system('go version')
+  let l:v = split(system('go version'), '\n')[-1]
   if v:shell_error > 0 || !gopher#init#version_check(l:v)
     let l:msg = "Go doesn't seem installed correctly? 'go version' failed with:\n" . l:v
   " Ensure sure people have Go 1.11.
