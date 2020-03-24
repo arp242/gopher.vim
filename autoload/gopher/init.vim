@@ -20,9 +20,14 @@ fun! gopher#init#version() abort
   endif
 
   if l:msg isnot# ''
+    echohl Error
     for l:l in split(l:msg, "\n")
-      echoerr l:l
+      echom l:l
     endfor
+    echohl None
+
+    " Make sure people see any warnings.
+    sleep 2
   endif
 endfun
 
