@@ -1,0 +1,2 @@
+
+	if SMTP == "stdout" && Print {
