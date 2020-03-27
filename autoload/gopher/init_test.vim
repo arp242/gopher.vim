@@ -10,7 +10,7 @@ fun! Test_version_check() abort
                 \ "go version go1.11.13 linux/amd64\nSome wrapper script outputs stuff after"]
   for l:tt in l:tests
     let l:out = gopher#init#version_check(l:tt)
-    if l:out isnot ''
+    if l:out isnot# ''
       call Errorf('version check failed for %s: "%s"', l:tt, l:out)
     endif
   endfor
