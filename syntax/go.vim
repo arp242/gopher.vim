@@ -23,7 +23,15 @@ syn keyword     goRepeat          for range
 
 " Predefined identifiers; don't use keywords to ensure that method names and
 " cals don't get highlighted.
-"
+
+" \.@<!       Don't match .
+" <           Word boundary
+" %(..)       Match keywords
+" >           Word boundary
+" \ze         Set end of match
+" ([^\(]|$)   Don't match ( unless it's at the end of the line (TODO: Why?)
+syn match        goBoolean        /\v\.@<!<%(true|false|nil|iota)>\ze([^\(]|$)/
+
 " /\v<\.@<!%(int)>\ze(\((.{} .{})?\))@!
 "
 " (\k\) )@<!          Don't match 'e) ' in '(recv type) int'
@@ -36,14 +44,21 @@ syn keyword     goRepeat          for range
 "     ([^,]{} [^,]{})?        Match argument; 'a string' in 'func int(a string)'
 "     \)                Literal )
 "   )@!                 Match zero-width if group does NOT match
-syn match        goBoolean        /\v\.@<!%(true|false|nil|iota)>\ze([^\(]|$)/
 syn match        goType           /\v(\k\) )@<!<(\k\.)@<!%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)>/
 
 " Highlight single return values: 'func splat() int {'
 "
 " It's too hard to integrate in above regexp, and aside from duplicating the
 " type list this is easier and probably faster.
-syn match goType /\v%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)\ze( *)?\{$/
+"
+" <                   Word boundary
+" %(..)               Match words
+" \ze                 Set end of match
+" %(
+"   \)?%( *)?\{$      Match function signatures in declarations and assignments.
+"   |$                End of line.
+" )
+syn match goType /\v<%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)\ze%(\)?%( *)?\{$|$)/
 
 " Highlight builtin functions, to prevent accidental overriding. Do not match
 " when it's a method function name or method call.

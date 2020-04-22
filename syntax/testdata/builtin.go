@@ -10,6 +10,10 @@ func (x m) delete() {
 	append := 0
 	m.delete(append)
 	x = append(x, y)
+	isnil := val == nil
+	Print := true
+	if Print {
+	}
 	newT()
 	fmt.Println(len(""))
 }
@@ -40,4 +44,17 @@ func newT() int {
 }
 
 func splat(i ...int) int {
+}
+
+var nformat func(int) int
+
+func callback(fn func(int) int) {
+	var x func(int) int
+	x := func(i int) int {
+		return 1
+	}
+
+	fn(func(i int) int {
+		return ""
+	})
 }
