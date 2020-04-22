@@ -16,17 +16,25 @@ au BufRead *.go
       \| set fileformats=unix fileencodings=utf-8 | setf go
 au BufReadPost *.go let &fileformats = s:ffs | let &fileencodings = s:fencs
 
-" Set the filetype if the first non-comment and non-blank line starts with
-" 'module <path>'.
+" The .mod filetype is already used by lprolog and modsim; to make matters
+" worse, lprolog already uses the keywork 'module'; from filetype.vim:
+"
+"   if getline(1) =~ '\<module\>'
+"     setf lprolog
+"   else
+"     setf modsim3
+"   endif
+"
+" So detect if this is a go.mod file based on the presence of the 'go 1.13'
+" keyword so it won't break anything for people who happen to have a lprolog or
+" modsim3 file named 'go.mod'.
 fun! s:gomod()
   for l:i in range(1, line('$'))
-    let l:l = getline(l:i)
-    if l:l ==# '' || l:l[:1] ==# '//'
-      continue
+    if getline(l:i) =~# '^go 1\.\d\+'
+      unlet b:did_ftplugin
+      set ft=gomod
+      setl fileencoding=utf-8 fileformat=unix
+      break
     endif
-    if l:l =~# '^module .\+'
-      set filetype=gomod
-    endif
-    break
   endfor
 endfun
