@@ -9,3 +9,5 @@ call gopher#init#version()
 setlocal noexpandtab
 
 compiler go
+
+command! -nargs=* GoModReplace call gopher#mod#replace(<f-args>)

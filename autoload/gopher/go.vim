@@ -31,6 +31,23 @@ fun! gopher#go#module() abort
   return l:out
 endfun
 
+" Get the go.mod file location, or -1 if there is none.
+fun! gopher#go#gomod() abort
+  let l:dir = expand('%:p:h')
+  while 1
+    " len() check is for Windows; not sure how that's represented.
+    if l:dir is# '/' || len(l:dir) <= 4
+      return -1
+    endif
+
+    if filereadable(l:dir + '/go.mod')
+      return l:dir + '/go.mod'
+    endif
+
+    let l:dir = fnamemodify(l:dir, ':h')
+  endwhile
+endfun
+
 " Get the package path for the file in the current buffer.
 fun! gopher#go#package() abort
   let [l:out, l:err] = gopher#system#run(['go', 'list', './' . expand('%:h')])

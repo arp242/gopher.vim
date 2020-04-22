@@ -37,3 +37,32 @@ fun! gopher#pkg#list_interfaces(pkg) abort
 
   return l:out
 endfun
+
+" List all imports for the current buffer.
+fun! gopher#pkg#list_imports() abort
+  let [l:out, l:err] = gopher#system#run(['go', 'list', '-f', '{{.Imports}}', expand('%')])
+  if l:err
+    call gopher#error(l:out)
+    return []
+  endif
+  return split(trim(l:out, '[]'), ' ')
+endfun
+
+" Resolve a package name to the full import path for the current buffer.
+"
+"   fmt  → fmt
+"   http → net/http
+"   pq   → github.com/lib/pq
+"
+" Returns empty string if the import is not found.
+fun! gopher#pkg#resolve(pkg) abort
+  let l:slash = '/' + a:pkg
+
+  for l:import in gopher#pkg#list_imports()
+    if l:import is# a:pkg || gopher#str#has_suffix(l:import, l:slash)
+      return l:import
+    endif
+  endfor
+
+  return ''
+endfun

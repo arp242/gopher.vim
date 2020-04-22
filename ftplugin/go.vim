@@ -109,3 +109,5 @@ command! -nargs=*        -complete=customlist,gopher#import#complete   GoImport 
 command! -nargs=* -range -complete=customlist,gopher#tags#complete     GoTags     call gopher#tags#modify(<line1>, <line2>, <count>, <f-args>)
 command! -nargs=+        -complete=customlist,gopher#guru#complete     GoGuru     call gopher#guru#do(<f-args>)
 command! -nargs=?        -complete=customlist,gopher#rename#complete   GoRename   call gopher#rename#do(<f-args>)
+
+command! -nargs=* GoModReplace call gopher#mod#replace(<f-args>)
