@@ -379,6 +379,16 @@ COMMANDS                                                     *gopher-commands*
         *g:gopher_gorename_flags* = `[]`
                 List of flags to add to the `gorename` command.
 
+:GoReplace [module] [path]                                        *:GoReplace*
+
+        Add a `replace` directive in the project's go.mod. This currently only
+        works in the `go.mod` buffer.
+
+        [module] is a module name; if it's omitted the module on the current
+        line is used.
+
+        [path] is the replacement path; if it's omitted `../` is used.
+
 :{range}GoTags [flags]                                               *:GoTags*
         Add, modify, or remove struct tags. Will only apply to the fields in
         {range} if it's given, or applied to all fields in the struct if it's
