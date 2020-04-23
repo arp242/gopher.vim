@@ -46,8 +46,9 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list):
   with `html/template`.
 
 - Several improvements to the syntax highlighting; it's much faster, adds a few
-  minor highlights (e.g. struct tags, highlight erroneous `go:generate`, few
-  more), but also removes a few features that were very slow and complex.
+  minor highlights (e.g. struct tags, highlight erroneous `go:generate`,
+  highlight cgo directives, few more), but also removes a few features that were
+  very slow and complex.
 
 - Indentation is a bit smarter.
 

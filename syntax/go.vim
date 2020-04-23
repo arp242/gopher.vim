@@ -9,16 +9,16 @@ let s:has = {n -> index(g:gopher_highlight, l:n) > -1 }
 syn case match
 
 " Keywords.
-syn keyword     goPackage         package
-syn keyword     goImport          import    contained
-syn keyword     goVar             var       contained
-syn keyword     goConst           const     contained
-syn keyword     goDeclaration     func type struct interface
-syn keyword     goStatement       defer go goto return break continue fallthrough
-syn keyword     goConditional     if else switch select
-syn keyword     goLabel           case default
-syn keyword     goRepeat          for range
-syn keyword     goBoolean         true false nil iota
+syn keyword     goPackage      package
+syn keyword     goImport       import    contained
+syn keyword     goVar          var       contained
+syn keyword     goConst        const     contained
+syn keyword     goDeclaration  func type struct interface
+syn keyword     goStatement    defer go goto return break continue fallthrough
+syn keyword     goConditional  if else switch select
+syn keyword     goLabel        case default
+syn keyword     goRepeat       for range
+syn keyword     goBoolean      true false nil iota
 
 " Predefined types.
 syn keyword     goType      chan map bool string error float32 float64 complex64 complex128
@@ -26,15 +26,15 @@ syn keyword     goType      int int8 int16 int32 int64 rune byte uint uint8 uint
 syn keyword     goBuiltins  append cap close complex copy delete imag len
 syn keyword     goBuiltins  make new panic print println real recover
 
-" Comments blocks.
-syn keyword     goTodo            contained TODO FIXME XXX BUG
-syn region      goComment         start="//" end="$"    contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell
+" Comment blocks.
+syn keyword     goTodo      contained TODO FIXME XXX BUG
+syn region      goComment   start="//" end="$"    contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell
 
 if s:has('fold-comment')
-  syn region    goComment         start="/\*" end="\*/" contains=goTodo,@Spell fold
-  syn match     goComment         "\v(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell fold
+  syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell fold
+  syn match     goComment   "\v(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell fold
 else
-  syn region    goComment         start="/\*" end="\*/" contains=goTodo,@Spell
+  syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell
 endif
 
 " go:generate; see go help generate
@@ -58,16 +58,30 @@ syn match      goDirectiveError  contained "^// go:\w\+"
 " Build tags; standard build tags from cmd/dist/build.go and go doc go/build.
 syn match   goBuildKeyword        display contained "+build"
 syn keyword goStdBuildTags        contained
-      \ 386 amd64 amd64p32 arm arm64 mips mipsle mips64 mips64le ppc64 ppc64le
+      \ 386 amd64 amd64p32 arm arm64 mips mipsle mips64 mips64le ppc ppc64 ppc64le
       \ riscv64 s390x wasm darwin dragonfly hurd js linux android solaris
       \ freebsd nacl netbsd openbsd plan9 windows gc gccgo cgo race
-syn match   goVersionBuildTags    contained /\v<go1\.(10|11|1|2|3|4|5|6|7|8|9)>/
+syn match   goVersionBuildTags    contained /\v<go1\.[0-9]{1,2}>[^.]/
 
 " The rs=s+2 option lets the \s*+build portion be part of the inner region
 " instead of the matchgroup so it will be highlighted as a goBuildKeyword.
 syn region  goBuildTag            contained matchgroup=goBuildTagStart
       \ start="^//\s*+build\s"rs=s+2 end="$"
       \ contains=goBuildKeyword,goStdBuildTags,goVersionBuildTags
+
+" cgo
+syn match goCgoError contained containedin=goComment "^\%(\/\/\)\?\s*#cgo .*"
+syn match goCgoError contained containedin=goComment "^\%(\/\/\)\?\s*#\s*include .*"
+
+syn match goCgo contained containedin=goComment "//export \i\+"
+syn match goCgo contained containedin=goComment /^\%(\/\/\)\?\s*#\s*include [<"]\f\+\.h[>"]/
+syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#\s*%(ifdef \w+|ifndef \w+|else|endif)/
+syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#cgo pkg-config:%( \f+)+/
+syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#cgo
+      \ %(!?%(386|amd64|amd64p32|arm|arm64|mips|mipsle|mips64|mips64le|ppc|ppc64|ppc64le|riscv64|s390x|wasm|darwin|dragonfly|hurd|js|linux|android|solaris|freebsd|nacl|netbsd|openbsd|plan9|windows|gc|gccgo)[, ]*)*
+      \%(CFLAGS|CPPFLAGS|CXXFLAGS|FFLAGS|LDFLAGS):.+/
+
+hi def link goCgoError            Error
 
 " String escapes.
 syn match       goEscapeOctal     display contained "\\[0-7]\{3}"
@@ -88,10 +102,13 @@ else
 endif
 
 " Struct tag name.
-syn match       goStructTagName   /\w\{-1,}:"/he=e-2 contained containedin=goRawString
+syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2 contained containedin=goRawString
+" Spaces before or after : are an error.
+syn match       goStructTagName   /\w\{-1,}:"/ contained containedin=goRawString
+" TODO: also highlight attributes: `json:"foo,omitempty"`
+" TODO: also highlight quote, space error: `json:foo, omitempty`
 
 if s:has('string-fmt')
-  " [n] notation is valid for specifying explicit argument indexes
   " 1. literal % not preceded by a %.
   " 2. any number of -, #, 0, space, or +
   " 3. * or [n]* or any number or nothing before a .
@@ -138,6 +155,7 @@ endif
 syn match       goSingleDecl      /\v(^\s*)@<=(import|var|const) [^(]/me=e-2 contains=goImport,goVar,goConst
 
 " Numbers.
+"
 "   -?            # Optional -
 "   <             # Word boundary
 "   [0-9_]+       # Any amount of digits and underscores.
@@ -172,16 +190,16 @@ endif
 " matched as comments to avoid looking like working build constraints.
 " The he, me, and re options let the "package" itself be highlighted by
 " the usual rules.
+if s:has('fold-pkg-comment')
+  " TODO: runs out of memory in mattn/go-gtk
+  syn region  goPackageComment fold contains=goTodo,@Spell
+                             \ start=/\v(\/\/.*\n)+\s*package/
+                             \ end=/\v\n\s*package/he=e-7,me=e-7,re=e-7
 
-" TODO: runs out of memory in mattn/gtk
-exe 'syn region  goPackageComment    start=/\v(\/\/.*\n)+\s*package/'
-      \ . ' end=/\v\n\s*package/he=e-7,me=e-7,re=e-7'
-      \ . ' contains=goTodo,@Spell'
-      \ . (s:has('fold-pkg-comment') ? ' fold' : '')
-exe 'syn region  goPackageComment    start=/\v^\s*\/\*.*\n(.*\n)*\s*\*\/\npackage/'
-      \ . ' end=/\v\*\/\n\s*package/he=e-7,me=e-7,re=e-7'
-      \ . ' contains=goTodo,@Spell'
-      \ . (s:has('fold-pkg-comment') ? ' fold' : '')
+  syn region  goPackageComment fold contains=goTodo,@Spell
+                             \ start=/\v^\s*\/\*.*\n(.*\n)*\s*\*\/\npackage/
+                             \ end=/\v\*\/\n\s*package/he=e-7,me=e-7,re=e-7
+endif
 
 " Link
 hi def link goPackage             Statement
@@ -200,6 +218,7 @@ hi def link goBuiltins            Keyword
 hi def link goBoolean             Boolean
 
 hi def link goComment             Comment
+hi def link goPackageComment      Comment
 hi def link goTodo                Todo
 
 hi def link goGenerateKW          Special
@@ -212,6 +231,8 @@ hi def link goBuildTagStart       Comment
 hi def link goStdBuildTags        Special
 hi def link goVersionBuildTags    Special
 hi def link goBuildKeyword        Special
+hi def link goCgo                 Special
+
 
 hi def link goEscapeOctal         goSpecialString
 hi def link goEscapeC             goSpecialString
@@ -226,6 +247,7 @@ hi def link goFormatSpecifier     goSpecialString
 hi def link goString              String
 hi def link goRawString           String
 hi def link goStructTagName       Keyword
+hi def link goStructTagError      Error
 
 hi def link goCharacter           Character
 
@@ -242,8 +264,6 @@ hi def link goFloat               Float
 
 hi def link goImaginary           Number
 hi def link goImaginaryFloat      Float
-
-hi def link goPackageComment      Comment
 
 " Search backwards for a global declaration to start processing the syntax.
 syn sync match goSync grouphere NONE /\v^(const|var|type|func)>/
