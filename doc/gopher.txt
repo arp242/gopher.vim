@@ -75,13 +75,12 @@ Settings for mappings:
         is a string. Use a list to map different keys for normal and insert
         mode. Use an empty string to not map a key.
 
-            Map                   Default value ~
-            |(gopher-error)|        e
-            |(gopher-if)|           i
-            |(gopher-implement)|    m
-            |(gopher-return)|       r
-            |(gopher-struct)|       w
-            |(gopher-switch)|       s
+            Map                      Default value ~
+            |(gopher-error)|           e
+            |(gopher-if)|              i
+            |(gopher-implement)|       m
+            |(gopher-return)|          r
+            |(gopher-fillstruct)|      f
 
         Some examples:
 
@@ -145,11 +144,8 @@ default prefixes.
                         values for the current function, wrapped in an 'err !=
                         nil' check.
 
-                                                             *(gopher-struct)*
-;s  <C-k>s              Fill a struct with all missing entries.
-
-                                                             *(gopher-switch)*
-;w  <C-k>w              Fill a type switch with all missing entries.
+                                                         *(gopher-fillstruct)*
+;f  <C-k>f              Fill a struct with all missing entries.
 
 ==============================================================================
 FILETYPES                                                   *gopher-filetypes*
