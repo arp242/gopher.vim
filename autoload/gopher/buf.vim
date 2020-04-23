@@ -84,6 +84,8 @@ fun! gopher#buf#replace(start, end, data) abort
     endif
   finally
     " Keep cursor on the same line as it was before.
+    " TODO: if lines were added below the cursor then this is borked; only works
+    " if lines were modified above the cursor.
     let l:save['lnum']    += line('$') - l:lastline
     let l:save['topline'] += line('$') - l:lastline
 

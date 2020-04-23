@@ -84,7 +84,8 @@ Features not in vim-go
 - `:GoFrob if` (`;i` / `<C-k>i`) toggles between single-line `if a := f(); a`
   and normal `if` statements.
 
-- `:GoFrob switch` creates a type switch with all possible type values in.
+- `:GoFrob fillswitch` (`;w/`<C->w`) creates a type switch with all possible
+  type values.
 
 - Basic support for present files.
 
@@ -190,8 +191,7 @@ vim-go on left, gopher.vim on right.
 
     :GoIfErr                      :GoFrob if; also mapped to ;e (normal) and <C-k>e (insert)
     :GoImpl                       :GoFrob implement; also mapped to ;m (normal) and <C-k>m (insert)
-    :GoFillStruct                 :GoFrob fill and ;f / <C->f mappings
-    :GoKeyify                     ⤶
+    :GoFillStruct                 :GoFrob fillstruct and ;f / <C-k>f mappings
 
 ### Other
 
@@ -206,6 +206,8 @@ vim-go on left, gopher.vim on right.
 
 ### Not implemented
 
+    :GoKeyify                     Doesn't work well with Go Modules, build tags; would be good to
+                                  have, but tool is 'too broken' atm.
     :GoCoverageBrowser            Not sure if it's worth having? Could add ":GoCoverage browser" if there's demand.
     :GoPlay                       ⤶ can also be done by external "send to pastebin"-like plugin.
     :GoModFmt                     go mod edit -fmt doesn't read from stdin so can't use formatprg:
