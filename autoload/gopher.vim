@@ -17,6 +17,12 @@ fun! gopher#has_debug(flag) abort
   return index(g:gopher_debug, a:flag) >= 0
 endfun
 
+" Get a buffer-local b:gopher_ setting, falling back to the g: one if it's
+" undefined, and returning a:default if that's undefined too.
+fun! gopher#bufsetting(name, default) abort
+  return get(b:, a:name, get(g:, a:name, a:default))
+endfun
+
 let s:overriden = 0
 
 " Override vim-go.

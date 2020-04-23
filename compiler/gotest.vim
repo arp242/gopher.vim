@@ -74,7 +74,7 @@ let &l:errorformat .= ',%A' . s:indent . "%#%\\t%\\+%f:%l: "
 " want when writing a newline into their test output.
 let &l:errorformat .= ',%G' . s:indent . "%#%\\t%\\{2}%m"
 " }}}1
- 
+
 " work with 1.14 'go test -v'
 let &l:errorformat .= ',%A' . s:indent . "%\\+%[%^:]%\\+: %f:%l: %m"
 let &l:errorformat .= ',%A' . s:indent . "%\\+%[%^:]%\\+: %f:%l: "

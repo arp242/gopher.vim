@@ -24,11 +24,18 @@ endfun
 
 " Get the Go module name, or -1 if there is none.
 fun! gopher#go#module() abort
-  let [l:out, l:err] = gopher#system#run(['go', 'list', '-m'])
-  if l:err
-    return -1
-  endif
-  return l:out
+  let l:wd = getcwd()
+
+  try
+    call chdir(expand('%:h'))
+    let [l:out, l:err] = gopher#system#run(['go', 'list', '-m'])
+    if l:err
+      return -1
+    endif
+    return l:out
+  finally
+    call chdir(l:wd)
+  endtry
 endfun
 
 " Get the package path for the file in the current buffer.
@@ -54,8 +61,8 @@ let s:go_commands = ['go', 'bug', 'build', 'clean', 'doc', 'env', 'fix', 'fmt',
                    \ 'generate', 'get', 'install', 'list', 'mod', 'run', 'test',
                    \ 'tool', 'version', 'vet']
 
-" Add g:gopher_build_tags to the flag_list; will be merged with existing tags
-" (if any).
+" Add b:gopher_build_tags or g:gopher_build_tags to the flag_list; will be
+" merged with existing tags (if any).
 fun! gopher#go#add_build_tags(flag_list) abort
   if get(g:, 'gopher_build_tags', []) == []
     return a:flag_list
@@ -66,6 +73,8 @@ fun! gopher#go#add_build_tags(flag_list) abort
     return a:flag_list
   endif
 
+  let l:tags = gopher#bufsetting('gopher_build_tags', [])
+
   let l:last_flag = 0
   for l:i in range(len(a:flag_list))
     if a:flag_list[l:i][0] is# '-' || index(s:go_commands, a:flag_list[l:i]) > -1
@@ -73,7 +82,7 @@ fun! gopher#go#add_build_tags(flag_list) abort
     endif
 
     if a:flag_list[l:i] is# '-tags'
-      let l:tags = uniq(split(trim(a:flag_list[l:i+1], "\"'"), ' ') + g:gopher_build_tags)
+      let l:tags = uniq(split(trim(a:flag_list[l:i+1], "\"'"), ',') + l:tags)
       return a:flag_list[:l:i]
             \ + ['"' . join(l:tags, ' ') . '"']
             \ +  a:flag_list[l:i+2:]
@@ -81,6 +90,26 @@ fun! gopher#go#add_build_tags(flag_list) abort
   endfor
 
   return a:flag_list[:l:last_flag]
-        \ + ['-tags', '"' . join(g:gopher_build_tags, ' ') . '"']
+        \ + ['-tags', '"' . join(l:tags, ',') . '"']
         \ + a:flag_list[l:last_flag+1:]
+endfun
+
+" Set b:gopher_install_package to ./cmd/[module-name] if it exists.
+fun! gopher#go#set_install_package()
+  if gopher#bufsetting('gopher_install_package', '') isnot ''
+    return
+  endif
+
+  let l:module = gopher#go#module()
+  if l:module is# -1
+    return
+  endif
+
+  " TODO: maybe cache this a bit? Don't need to do it for every buffer in the
+  " same directory.
+  let l:name = fnamemodify(l:module, ':t')
+  if isdirectory(gopher#system#closest(l:name) . '/cmd/' . l:name)
+    let b:gopher_install_package = l:module . '/cmd/' . l:name
+    compiler go
+  endif
 endfun

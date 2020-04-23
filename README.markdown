@@ -163,11 +163,6 @@ Some things you can stick in your vimrc:
         "             \  let s:save = winsaveview()
         "             \| exe 'keepjumps %!goimports 2>/dev/null || cat /dev/stdin'
         "             \| call winrestview(s:save)
-
-        " Ensure that the example.com/proj/cmd/proj package is installed with
-        " :make regardless of the current directory or file you have open.
-        " autocmd BufReadPre /home/martin/code/proj/*.go
-        "             \ let g:gopher_install_package = 'example.com/proj/cmd/proj'
     augroup end
 
 FAQ

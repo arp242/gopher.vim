@@ -8,7 +8,7 @@ set cpoptions-=C
 " CompilerSet makeprg=golangci-lint
 let &l:makeprg = 'golangci-lint run --out-format tab'
 if len(get(g:, 'gopher_build_tags', [])) > 0
-  let &l:makeprg .= printf(' --build-tags "%s"', join(g:gopher_build_tags, ' '))
+  let &l:makeprg .= printf(' --build-tags "%s"', join(gopher#bufsetting('gopher_build_tags', []) ' '))
 endif
 
 " benchmark_test.go:34:2   deadcode  `valFormT2` is unused

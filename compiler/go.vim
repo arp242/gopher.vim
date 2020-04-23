@@ -7,8 +7,8 @@ set cpoptions-=C
 
 " CompilerSet makeprg=go
 let &l:makeprg = printf('go install %s %s',
-      \ gopher#system#join(get(g:, 'gopher_build_flags', [])),
-      \ get(g:, 'gopher_install_package', ''))
+      \ gopher#system#join(gopher#bufsetting('gopher_build_flags', [])),
+      \ gopher#bufsetting('gopher_install_package', ''))
 
 setl errorformat =%-G#\ %.%#                   " Ignore lines beginning with '#' ('# command-line-arguments' line sometimes appears?)
 setl errorformat+=%-G%.%#panic:\ %m            " Ignore lines containing 'panic: message'

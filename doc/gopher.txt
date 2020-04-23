@@ -203,20 +203,24 @@ go~
         automatically).
 
                                                     *g:gopher_install_package*
-        Can be set to a package name to install with |:make|; default is to
-        use the current directory. This is especially useful if the main
-        package is a `./cmd/proj` package. You typically want to set this
-        per-project with an |autocmd|:
+                                                    *b:gopher_install_package*
+        Can be set to a package name to install with |:make|; default is to set
+        the buffer-local setting to `[module]/cmd/[module-name]` if the
+        package exists.
+
+        You typically want to set this per-project with an |autocmd|:
 >
             autocmd BufReadPre /home/martin/code/proj/*.go
-                        \ let g:gopher_install_package = 'example.com/proj/cmd/proj'
+                        \ let b:gopher_install_package = 'example.com/proj/cmd/xxx'
 <
-        This ensures that the `example.com/proj/cmd/proj` package is installed
+        This ensures that the `example.com/proj/cmd/xxx` package is installed
         with |:make| regardless of the current directory or file you have
         open. This is only used by the go |compiler|, not gotest or golint.
 
-        Note: run |:e| to reload after changing this during runtime.
+        Set to `-1` to disable the automatic `cmd/[module-name]` detection.
 
+        Note: reset the compiler with `:compiler go` (or just run |:e|) to
+              reload after changing this during runtime.
 
                                                                     *ft-gomod*
 gomod~
@@ -363,6 +367,7 @@ COMMANDS                                                     *gopher-commands*
                               |g:gopher_guru_scope|.
 
         *g:gopher_guru_scope* = `gopher#go#package()`
+        *b:gopher_guru_scope* = (undefined)
                 Limit the analysis to these package, comma-separated list.
 
                 Some guru commands are slow and expensive, so for reasons of
@@ -484,9 +489,11 @@ General options or options that affect many commands; options specific for
 just a command are documented in the command.
 
 *g:gopher_build_tags* = `[]`
+*b:gopher_build_tags* = (undefined)
         List of build tags added to all commands that support it.
 
 *g:gopher_build_flags* = `['-tags'] + g:gopher_build_tags`
+*b:gopher_build_flags* = (undefined)
         List of flags to add to all `go` commands.
 
 *g:gopher_debug* = `[]`

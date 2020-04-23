@@ -21,7 +21,7 @@ fun! gopher#guru#do(...) abort
   " TODO: commands need range: freevars
   let l:flags = a:000
   if index(l:flags, '-scope') is -1
-    let l:flags = ['-scope', get(g:, 'gopher_guru_scope', gopher#go#package())] + l:flags
+    let l:flags = ['-scope', gopher#bufsetting('gopher_guru_scope', gopher#go#package())] + l:flags
   endif
 
   " TODO: pass stdin to tool_job: gopher#system#archive()

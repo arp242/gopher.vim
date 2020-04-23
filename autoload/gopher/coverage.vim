@@ -16,7 +16,7 @@ endfun
 call s:hi()
 
 fun! s:au() abort
-  augroup gopher-coverage
+  augroup gopher.vim-coverage
     au!
     au ColorScheme *    call s:hi()
     au BufWinLeave *.go call gopher#coverage#clear_hi()

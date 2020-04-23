@@ -116,7 +116,7 @@ vim-go on left, gopher.vim on right.
     :GoTestCompile                :make -c or :make -c -o/dev/null
     :GoTestFunc                   :make -run ..
 
-    :GoBuildTags                  let g:gopher_build_tags = [..]
+    :GoBuildTags                  let g:gopher_build_tags = [..], or b:gopher_build_tags
 
 ### Linting
 
