@@ -4,7 +4,7 @@ let s:root = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
 
 " Completion for :GoDiag
 fun! gopher#diag#complete(lead, cmdline, cursor) abort
-  return gopher#compl#filter(a:lead, ['report'])
+  return gopher#compl#filter(a:lead, ['report', 'clear'])
 endfun
 
 " Get diagnostic information about gopher.vim
@@ -12,6 +12,10 @@ fun! gopher#diag#do(to_clipboard, ...) abort
   if a:0 > 1
     return gopher#error('too many arguments for gopher#diag#do')
   endif
+  if a:0 is 1 && a:1 is# 'clear'
+    return gopher#system#clear_history()
+  endif
+
   if a:0 is 1 && a:1 isnot? 'report'
     return gopher#error('invalid argument for gopher#diag#do: %s', a:1)
   endif

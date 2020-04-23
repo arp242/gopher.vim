@@ -221,7 +221,7 @@ implement the :GoGuru command.
 
 
     gopher#guru#do(...)
-      TODO: commands need range: freevars
+
 
 
 [diag.vim](autoload/gopher/diag.vim)
@@ -283,6 +283,13 @@ Utilities for working with the external programs and the OS.
       variable. Note that the list is reversed (new entries are prepended, not
       appended).
 
+    gopher#system#clear_history()
+      Clear command history.
+
+    gopher#system#jobs()
+      Get a list of currently running jobs. Use job_info() to get more information
+      about a job.
+
     gopher#system#restore_env(name, val)
       Restore an environment variable back to its original value.
 
@@ -319,7 +326,6 @@ Utilities for working with the external programs and the OS.
       order (hopefully).
       TODO: Don't run multiple jobs that modify the buffer at the same time. For
       some tools (like gorename) we need a global lock.
-      TODO: allow inspecting which jobs are running (in :GoDiag?)
 
     gopher#system#job_wait(job)
       Wait for a job to finish. Note that the exit_cb or close_cb may still be

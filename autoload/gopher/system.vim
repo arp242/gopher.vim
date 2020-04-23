@@ -56,6 +56,11 @@ fun! gopher#system#history() abort
   return s:history
 endfun
 
+" Clear command history.
+fun! gopher#system#clear_history() abort
+  let s:history = []
+endfun
+
 " Get a list of currently running jobs. Use job_info() to get more information
 " about a job.
 fun! gopher#system#jobs() abort

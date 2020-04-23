@@ -238,7 +238,7 @@ COMMANDS                                                     *gopher-commands*
         It's may still be useful to run as post-install/update hook, so you
         don't have to wait for stuff to install or update on first usage.
 
-:GoDiag[!] {report}                                                  *:GoDiag*
+:GoDiag[!] {report, clear}                                           *:GoDiag*
         Print diagnostic information. Also see |g:gopher_debug|.
 
         When the [!] is included the output will be copied to the clipboard
@@ -247,6 +247,8 @@ COMMANDS                                                     *gopher-commands*
         When `report` is given the output will include your Vim's settings,
         formatted for a GitHub issue, and copied to a clipboard (opening it in
         the browser isn't foolproof due to URL length limits).
+
+        `clear` erases the command history.
 
 :GoCoverage [flags]                                              *:GoCoverage*
         Run `go test -cover` and highlight lines reported as covered and
