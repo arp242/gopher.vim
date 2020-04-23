@@ -18,61 +18,13 @@ syn keyword     goStatement       defer go goto return break continue fallthroug
 syn keyword     goConditional     if else switch select
 syn keyword     goLabel           case default
 syn keyword     goRepeat          for range
+syn keyword     goBoolean         true false nil iota
 
-" TODO: Use @42<! instead of @<! ?
-
-" Predefined identifiers; don't use keywords to ensure that method names and
-" cals don't get highlighted.
-
-" \.@<!       Don't match .
-" <           Word boundary
-" %(..)       Match keywords
-" >           Word boundary
-" \ze         Set end of match
-" ([^\(]|$)   Don't match ( unless it's at the end of the line (TODO: Why?)
-syn match        goBoolean        /\v\.@<!<%(true|false|nil|iota)>\ze([^\(]|$)/
-
-" /\v<\.@<!%(int)>\ze(\((.{} .{})?\))@!
-"
-" (\k\) )@<!          Don't match 'e) ' in '(recv type) int'
-" (\k\.)@<!           Don't match Match 'o.' in 'foo.int'
-"
-" Don't match int():
-"   \ze                 Set end of match here
-"   (
-"     \(                Literal (
-"     ([^,]{} [^,]{})?        Match argument; 'a string' in 'func int(a string)'
-"     \)                Literal )
-"   )@!                 Match zero-width if group does NOT match
-syn match        goType           /\v(\k\) )@<!<(\k\.)@<!%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)>/
-
-" Highlight single return values: 'func splat() int {'
-"
-" It's too hard to integrate in above regexp, and aside from duplicating the
-" type list this is easier and probably faster.
-"
-" <                   Word boundary
-" %(..)               Match words
-" \ze                 Set end of match
-" %(
-"   \)?%( *)?\{$      Match function signatures in declarations and assignments.
-"   |$                End of line.
-" )
-syn match goType /\v<%(chan|map|bool|string|error|int64|int8|int16|int32|int|rune|byte|uint64|uint8|uint16|uint32|uintptr|uint|float32|float64|complex64|complex128)\ze%(\)?%( *)?\{$|$)/
-
-" Highlight builtin functions, to prevent accidental overriding. Do not match
-" when it's a method function name or method call.
-" Test: builtin.go
-"
-" TODO: this is a bit slow (second slowest is goSingleDecl at ~0.35); different
-" variants I tried:
-" 0.064089   5294   160     0.000059    0.000012  goBuiltins         \v(\.|\))@<!<(append|cap|..
-" 0.074896   5278   132     0.000367    0.000014  goBuiltins         \v(\.|\) )@<!<(append|..)\ze[^a-zA-Z0-9_]
-" 0.165187   5294   160     0.000152    0.000031  goBuiltins         \v<(\.|\))@<!(append|cap|..
-" 0.761366   5328   194     0.000943    0.000143  goBuiltins         \v(\.|\) )@<!(append|cap|..
-" 1.000724   5328   194     0.000956    0.000188  goBuiltins         \v[^.]@<=(append|cap|..
-" TOTAL      COUNT  MATCH   SLOWEST     AVERAGE   NAME               PATTERN
-syn match goBuiltins /\v%(\.|\) )@<!<(append|cap|close|complex|copy|delete|imag|len|make|new|panic|print|println|real|recover)\ze[^a-zA-Z0-9_]/
+" Predefined types.
+syn keyword     goType      chan map bool string error float32 float64 complex64 complex128
+syn keyword     goType      int int8 int16 int32 int64 rune byte uint uint8 uint16 uint32 uint64 uintptr
+syn keyword     goBuiltins  append cap close complex copy delete imag len
+syn keyword     goBuiltins  make new panic print println real recover
 
 " Comments blocks.
 syn keyword     goTodo            contained TODO FIXME XXX BUG
