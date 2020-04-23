@@ -20,7 +20,7 @@ fun! gopher#frob#complete(lead, cmdline, cursor) abort
   if getcmdtype() is# '@' || a:cmdline[:16] is# 'GoFrob implement '
     return gopher#compl#filter(a:lead, s:find_interface(a:lead))
   endif
-  return gopher#compl#filter(a:lead, ['error', 'if', 'implement', 'return'])
+  return gopher#compl#filter(a:lead, ['error', 'if', 'implement', 'fillstruct', 'return'])
 endfun
 
 " Find all interfaces starting with lead.
@@ -220,11 +220,45 @@ fun! gopher#frob#ret(error) abort
   endif
 endfun
 
+" Fill a struct.
+fun! gopher#frob#fillstruct() abort
+  " TODO: fillstruct panics on mail.Address{"", ""}
+  " can maybe merge keyify, fillstruct, and fillswitch?
+  let [l:out, l:err] = gopher#system#tool(['fillstruct',
+        \ '-modified',
+        \ '-file', bufname(''),
+        \ '-offset', gopher#buf#cursor()],
+        \ gopher#system#archive())
+  if l:err
+    return gopher#error(l:out)
+  endif
+
+  try
+    let l:json = json_decode(l:out)
+  catch
+    return gopher#error(l:out)
+  endtry
+
+  " Always one result when using -offset
+  let l:json = l:json[0]
+  let l:json['code'] = split(l:json['code'], "\n")
+
+  " Indent every line except the first one; makes it look nice.
+  let l:indent = repeat("\t", indent(byte2line(l:json['start'])) / shiftwidth())
+  for l:i in range(1, len(l:json['code']) - 1)
+    let l:json['code'][l:i] = l:indent . l:json['code'][l:i]
+  endfor
+
+  " Add any code before the struct.
+  call gopher#buf#replace(l:json['start'], l:json['end'], l:json['code'])
+endfun
+
 let s:popup_items = [
-      \ ['error',     'Add return with if err != nil'],
-      \ ['if',        'Toggle if style'],
-      \ ['implement', 'Add interface methods'],
-      \ ['return',    'Add return'],
+      \ ['error',      'Add return with if err != nil'],
+      \ ['if',         'Toggle if style'],
+      \ ['implement',  'Add interface methods'],
+      \ ['return',     'Add return'],
+      \ ['fillstruct', 'Fill struct with keyed fields'],
   \ ]
 
 " key -> action mapping (reverse of g:gopher_map).
@@ -309,7 +343,9 @@ fun! s:run_cmd(id, cmd, ...) abort
     call gopher#frob#ret(0)
   elseif l:cmd is# 'error'
     call gopher#frob#ret(1)
-  elseif l:cmd is# 'implement'
+  elseif a:cmd is# 'fillstruct'
+    call gopher#frob#fillstruct()
+  elseif a:cmd is# 'implement'
     if a:0 is 0
       let l:in = [input('interface? ', '', 'customlist,gopher#frob#complete')]
     else

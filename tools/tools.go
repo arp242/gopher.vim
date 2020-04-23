@@ -8,6 +8,7 @@ package tools
 import (
 	_ "arp242.net/goimport"
 	_ "arp242.net/gosodoff"
+	_ "github.com/davidrjenni/reftools/cmd/fillstruct"
 	_ "github.com/fatih/gomodifytags"
 	_ "github.com/fatih/motion"
 	_ "github.com/josharian/impl"

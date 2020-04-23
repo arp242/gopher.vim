@@ -5,6 +5,7 @@ go 1.12
 require (
 	arp242.net/goimport v1.0.2
 	arp242.net/gosodoff v0.0.0-20190808150955-78886b9cf0e3
+	github.com/davidrjenni/reftools v0.0.0-20191222082827-65925cf01315
 	github.com/fatih/gomodifytags v1.4.0
 	github.com/fatih/motion v1.1.0
 	github.com/fatih/structtag v1.2.0 // indirect
