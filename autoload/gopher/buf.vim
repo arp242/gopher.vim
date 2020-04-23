@@ -75,12 +75,16 @@ fun! gopher#buf#replace(start, end, data) abort
 
     let @a = l:data
     keepjumps exe 'goto' a:start
+
+    " No end given, just paste at this location.
     if a:end is 0
       normal! "aP
     else
+      normal! v
       normal! m<
       keepjumps exe 'goto' a:end
-      normal! m>gv"aP
+      normal! m>
+      normal! gv"_d"ap
     endif
   finally
     " Keep cursor on the same line as it was before.

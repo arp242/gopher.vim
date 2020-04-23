@@ -225,6 +225,7 @@ fun! gopher#frob#fillstruct() abort
   " TODO: fillstruct panics on mail.Address{"", ""}
   " can maybe merge keyify, fillstruct, and fillswitch?
   let [l:out, l:err] = gopher#system#tool(['fillstruct',
+        \ '-modified',
         \ '-file', bufname(''),
         \ '-offset', gopher#buf#cursor()],
         \ gopher#system#archive())
@@ -241,9 +242,6 @@ fun! gopher#frob#fillstruct() abort
   " Always one result when using -offset
   let l:json = l:json[0]
   let l:json['code'] = split(l:json['code'], "\n")
-
-  " Looks like the returned value is off by one?
-  let l:json['start'] += 1
 
   " Indent every line except the first one; makes it look nice.
   let l:indent = repeat("\t", indent(byte2line(l:json['start'])) / shiftwidth())
