@@ -88,8 +88,7 @@ fun! s:map() abort
         \ 'if':         'i',
         \ 'implement':  'm',
         \ 'return':     'r',
-        \ 'fillstruct': 's',
-        \ 'fillswitch': 'w',
+        \ 'fillstruct': 'f',
     \ }
 
   if !exists('g:gopher_map')

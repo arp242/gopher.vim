@@ -62,7 +62,6 @@ nnoremap <buffer> <Plug>(gopher-impl)       :call gopher#frob#impl()<CR>
 nnoremap <buffer> <Plug>(gopher-popup)      :call gopher#frob#popup()<CR>
 nnoremap <buffer> <Plug>(gopher-return)     :call gopher#frob#ret(0)<CR>
 nnoremap <buffer> <Plug>(gopher-fillstruct) :call gopher#frob#fillstruct(0)<CR>
-nnoremap <buffer> <Plug>(gopher-fillswitch) :call gopher#frob#fillswitch(0)<CR>
 
 inoremap <buffer> <Plug>(gopher-error)      <C-o>:call gopher#frob#ret(1)<CR>
 inoremap <buffer> <Plug>(gopher-if)         <C-o>:call gopher#frob#if()<CR>
@@ -70,7 +69,6 @@ inoremap <buffer> <Plug>(gopher-impl)       <C-o>:call gopher#frob#impl()<CR>
 inoremap <buffer> <Plug>(gopher-popup)      <C-o>:call gopher#frob#popup()<CR>
 inoremap <buffer> <Plug>(gopher-return)     <C-o>:call gopher#frob#ret(0)<CR>
 inoremap <buffer> <Plug>(gopher-fillstruct) <C-o>:call gopher#frob#fillstruct(0)<CR>
-inoremap <buffer> <Plug>(gopher-fillswitch) <C-o>:call gopher#frob#fillswitch(0)<CR>
 
 fun! s:map(key, map) abort
   let l:key = get(g:gopher_map, a:key, '')
@@ -102,7 +100,6 @@ if g:gopher_map isnot 0
     call s:map('impl',       '<Plug>(gopher-impl)')
     call s:map('return',     '<Plug>(gopher-return)')
     call s:map('fillstruct', '<Plug>(gopher-fillstruct)')
-    call s:map('fllswitch',  '<Plug>(gopher-fillswitch)')
   endif
 endif
 

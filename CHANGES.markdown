@@ -84,9 +84,6 @@ Features not in vim-go
 - `:GoFrob if` (`;i` / `<C-k>i`) toggles between single-line `if a := f(); a`
   and normal `if` statements.
 
-- `:GoFrob fillswitch` (`;w/`<C->w`) creates a type switch with all possible
-  type values.
-
 - Basic support for present files.
 
 Feature table
