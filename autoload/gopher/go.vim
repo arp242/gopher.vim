@@ -94,8 +94,24 @@ fun! gopher#go#add_build_tags(flag_list) abort
         \ + a:flag_list[l:last_flag+1:]
 endfun
 
+" Find the build tags for the current buffer; returns a list (or empty list if
+" there are none).
+fun! gopher#go#find_build_tags() abort
+  " https://golang.org/pkg/go/build/#hdr-Build_Constraints
+  for l:i in range(1, line('$'))
+    let l:line = getline(l:i)
+    if l:line =~# '^// +build '
+      return uniq(sort(gopher#list#flatten(map(split(l:line[10:], ' '), {_, v -> split(v, ',')}))))
+    endif
+
+    if l:line =~# '^package \f'
+      return []
+    endif
+  endfor
+endfun
+
 " Set b:gopher_install_package to ./cmd/[module-name] if it exists.
-fun! gopher#go#set_install_package()
+fun! gopher#go#set_install_package() abort
   if gopher#bufsetting('gopher_install_package', '') isnot ''
     return
   endif
@@ -108,8 +124,25 @@ fun! gopher#go#set_install_package()
   " TODO: maybe cache this a bit? Don't need to do it for every buffer in the
   " same directory.
   let l:name = fnamemodify(l:module, ':t')
-  if isdirectory(gopher#system#closest(l:name) . '/cmd/' . l:name)
-    let b:gopher_install_package = l:module . '/cmd/' . l:name
+  let l:pkg = gopher#system#closest(l:name) . '/cmd/' . l:name
+  if isdirectory(l:pkg) && get(b:, 'gopher_install_package', '') isnot# l:pkg
+    let b:gopher_install_package = l:pkg
+    compiler go
+  endif
+endfun
+
+" Set b:gopher_build_tags to the build tags in the current buffer.
+fun! gopher#go#set_build_tags() abort
+  " TODO: be even smarter about this: merge the g: and b: vars, and allow
+  " setting a special '%BUFFER%' so you can both set tags from vimrc and merge
+  " from file.
+  if len(gopher#bufsetting('gopher_build_tags', '')) > 0
+    return
+  endif
+
+  let l:tags = gopher#go#find_build_tags()
+  if l:tags != get(b:, 'gopher_build_tags', [])
+    let b:gopher_build_tags = l:tags
     compiler go
   endif
 endfun

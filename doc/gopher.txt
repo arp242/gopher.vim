@@ -490,7 +490,12 @@ just a command are documented in the command.
 
 *g:gopher_build_tags* = `[]`
 *b:gopher_build_tags* = (undefined)
-        List of build tags added to all commands that support it.
+        List of build tags added to all commands that support it. The
+        buffer-local variable is automatically set to the build tags in the
+        file.
+
+        Note: the buffer-local variable currently overrides the global one;
+        it's not merged.
 
 *g:gopher_build_flags* = `['-tags'] + g:gopher_build_tags`
 *b:gopher_build_flags* = (undefined)

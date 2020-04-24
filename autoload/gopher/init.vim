@@ -57,19 +57,10 @@ fun! gopher#init#config() abort
   let $PATH = s:root . '/tools/bin' . gopher#system#pathsep() . $PATH
 
   " Set defaults.
-  let g:gopher_build_tags     = get(g:, 'gopher_build_tags', [])
-  let g:gopher_build_flags    = get(g:, 'gopher_build_flags', [])
-        \ + (len(g:gopher_build_tags) > 0 ? ['-tags', join(g:gopher_build_tags, ',')] : [])
   let g:gopher_highlight      = get(g:, 'gopher_highlight', ['string-spell', 'string-fmt'])
-  let g:gopher_debug          = get(g:, 'gopher_debug', [])
   let g:gopher_tag_transform  = get(g:, 'gopher_tag_transform', 'snakecase')
   let g:gopher_tag_default    = get(g:, 'gopher_tag_default', 'json')
   let g:gopher_tag_complete   = get(g:, 'gopher_tag_complete', ['db', 'json', 'json,omitempty', 'yaml'])
-
-  if len(get(b:, 'gopher_build_tags', [])) > 0
-    let b:gopher_build_flags = get(b:, 'gopher_build_flags', [])
-        \ + ['-tags', join(b:gopher_build_tags, ',')]
-  endif
 
   call s:map()
 

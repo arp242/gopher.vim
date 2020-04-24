@@ -373,7 +373,8 @@ fun! gopher#system#join(l, ...) abort
     let l:save = &shellslash
     set noshellslash
 
-    return join(map(copy(a:l), { i, v -> shellescape(l:v, a:0 > 0 ? a:1 : '') }), ' ')
+    let l:l = filter(copy(a:l), {_, v -> v isnot v:null })
+    return join(map(l:l, {_, v -> shellescape(l:v, a:0 > 0 ? a:1 : '') }), ' ')
   finally
     let &shellslash = l:save
   endtry

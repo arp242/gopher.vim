@@ -118,4 +118,5 @@ augroup gopher.vim
   au!
 
   au BufEnter *.go call gopher#go#set_install_package()
+  au BufEnter *.go call gopher#go#set_build_tags()
 augroup end

@@ -18,6 +18,10 @@ Various common functions, or functions that don't have a place elsewhere.
     gopher#has_debug(flag)
       Report if the user enabled the given debug flag.
 
+    gopher#bufsetting(name, default)
+      Get a buffer-local b:gopher_ setting, falling back to the g: one if it's
+      undefined, and returning a:default if that's undefined too.
+
     gopher#override_vimgo()
       Override vim-go.
 
@@ -98,6 +102,14 @@ Implement :GoCoverage.
       Stop coverage mode.
 
 
+[list.vim](autoload/gopher/list.vim)
+------------------------------------
+Utilities for working with lists.
+
+    gopher#list#flatten(l)
+      Flatten a list.
+
+
 [str.vim](autoload/gopher/str.vim)
 ----------------------------------
 Utilities for working with strings.
@@ -155,8 +167,18 @@ Utilities for working with Go files.
       Get path to file in current buffer as package/path/file.go
 
     gopher#go#add_build_tags(flag_list)
-      Add g:gopher_build_tags to the flag_list; will be merged with existing tags
-      (if any).
+      Add b:gopher_build_tags or g:gopher_build_tags to the flag_list; will be
+      merged with existing tags (if any).
+
+    gopher#go#find_build_tags()
+      Find the build tags for the current buffer; returns a list (or empty list if
+      there are none).
+
+    gopher#go#set_install_package()
+      Set b:gopher_install_package to ./cmd/[module-name] if it exists.
+
+    gopher#go#set_build_tags()
+      Set b:gopher_build_tags to the build tags in the current buffer.
 
 
 [compl.vim](autoload/gopher/compl.vim)
@@ -197,6 +219,9 @@ Modify Go code.
     gopher#frob#ret(error)
       Generate a return statement with zero values.
       If error is 1 it will return 'err' and surrounded in an 'if err != nil' check.
+
+    gopher#frob#fillstruct()
+      Fill a struct.
 
     gopher#frob#popup()
       Show a popup menu with mappings to choose from.
@@ -348,6 +373,13 @@ Utilities for working with the external programs and the OS.
 
     gopher#system#cache(name, ...)
       Retrieve data from the cache.
+
+    gopher#system#closest(name)
+      Get the closest directory with this name up the tree from the current buffer's
+      path.
+      /a/b/c   c → /a/b/c
+      /a/b/c   a → /a
+      /a/b/c   x → (empty string)
 
 
 [qf.vim](autoload/gopher/qf.vim)
