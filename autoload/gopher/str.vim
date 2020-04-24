@@ -22,3 +22,8 @@ fun! gopher#str#url_encode(s) abort
     return substitute(a:s, '[^A-Za-z0-9_.~-]',
           \ '\="%".printf(''%02X'', char2nr(submatch(0)))', 'g')
 endfun
+
+" Fold multiple whitespace to a single space.
+fun! gopher#str#fold_space(s) abort
+  return substitute(a:s, '\s\+', ' ', 'g')
+endfun

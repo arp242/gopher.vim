@@ -124,8 +124,9 @@ fun! gopher#go#set_install_package() abort
   " TODO: maybe cache this a bit? Don't need to do it for every buffer in the
   " same directory.
   let l:name = fnamemodify(l:module, ':t')
-  let l:pkg = gopher#system#closest(l:name) . '/cmd/' . l:name
-  if isdirectory(l:pkg) && get(b:, 'gopher_install_package', '') isnot# l:pkg
+  let l:pkg = l:module . '/cmd/' . l:name
+  let l:path = gopher#system#closest(l:name) . '/cmd/' . l:name
+  if isdirectory(l:path) && get(b:, 'gopher_install_package', '') isnot# l:pkg
     let b:gopher_install_package = l:pkg
     compiler go
   endif
