@@ -184,6 +184,7 @@ fun! gopher#motion#function(mode) abort
 
     normal! v
     call cursor(l:info.rbrace.line, l:info.rbrace.col)
+    normal! o
     return
   elseif a:mode is# 'i'
     " Select only that portion if the function is a one liner.
@@ -191,11 +192,13 @@ fun! gopher#motion#function(mode) abort
       call cursor(l:info.lbrace.line, l:info.lbrace.col + 1)
       normal! v
       call cursor(l:info.rbrace.line, l:info.rbrace.col - 1)
+      normal! o
       return
     endif
 
     call cursor(l:info.lbrace.line + 1, 1)
     normal! V
     call cursor(l:info.rbrace.line - 1, 1)
+    normal! o
   endif
 endfun
