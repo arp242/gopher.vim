@@ -146,3 +146,79 @@ fun! gopher#go#set_build_tags() abort
     compiler go
   endif
 endfun
+
+" Get the function name the cursor is in; the return value is a list where the
+" first item is the full name and the second one is the full signature minus
+" 'func':
+"
+"   func foo()                → ['foo', 'foo()']
+"   func foo(x int) int       → ['foo', 'foo(x int) int']
+"   func (t T) foo(x int) int → ['T.foo', '(t T) foo(x int) int']
+"
+" Returns ['', ''] if there is no function.
+fun! gopher#go#current_function() abort
+  if getline('.') =~# '^func'
+    return s:line_to_fun()
+  endif
+
+  let l:save = winsaveview()
+  try
+    " Ensure we're in a function.
+    " TODO: this can be faster by checking if the closing brace after [[ is
+    " after the cursor line before the jump.
+    let [l:fname, l:tmp] = gopher#system#tmpmod()
+    let l:cmd = ['motion', '-mode', 'enclosing',
+          \ '-file',   l:fname,
+          \ '-offset', gopher#buf#cursor(),
+          \ '-format', 'vim',
+          \ ]
+    let [l:out, l:err] = gopher#system#tool(l:cmd)
+    if l:err
+      return ['', '']
+    endif
+    try
+      let l:loc = json_decode(l:out)
+    catch
+      return gopher#error(l:out)
+    endtry
+    if !has_key(l:loc, 'comment')
+      return ['', '']
+    endif
+
+    " Jump to function declaration.
+    call gopher#motion#jump('n', 'prev')
+    if getline('.') !~# '^func'
+      return ['', '']
+    endif
+    return s:line_to_fun()
+  finally
+    call winrestview(l:save)
+  endtry
+endfun
+
+fun! s:line_to_fun() abort
+  let l:sig = trim(getline('.')[4:-2])
+
+  let l:name = l:sig
+  if l:name[0] is# '('
+    let l:name = l:name[stridx(l:name, ')') + 2:]
+  endif
+  let l:name = l:name[:stridx(l:name, '(') - 1]
+
+  return [l:name, l:sig]
+endfun
+
+" TODO: Allow disabling this easily?
+fun! gopher#go#current_test() abort
+  if !gopher#go#is_test()
+    return [v:null]
+  endif
+
+  let l:f = gopher#go#current_function()[0]
+  if l:f is# '' || l:f !~# '^Test'
+    return [v:null]
+  endif
+
+  " TODO: make print makeprg in TT? add <Plug> mappings for it.
+  return ['-run', printf('^%s$', l:f)]
+endfun

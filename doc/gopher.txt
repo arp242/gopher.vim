@@ -113,6 +113,15 @@ Settings for mappings:
 The actual mappings; the defaults are shown in the first column with the
 default prefixes.
 
+                                                            *(gopher-install)*
+;;  <C-k><C-k>          Set compiler to go and |:make|.
+
+                                                               *(gopher-test)*
+;t  <C-k><C-t>          Set compiler to gotest and |:make|.
+
+                                                               *(gopher-lint)*
+;l  <C-k>l              Set compiler to golint and |:make|.
+
                                                                  *(gopher-if)*
 ;i  <C-k>i              Toggle between single-line and normal if checks. For
                         example these: >
@@ -201,6 +210,13 @@ go~
         settings below will take effect (so you'll need to use
         `:Dispatch go build ./cmd/pkg`; the package name won't be added
         automatically).
+
+                                                    *g:gopher_install_command*
+                                                    *b:gopher_install_command*
+        Command to build Go code.
+
+        Default: `install`; set to `build` if you want to run `go build`
+        instead of `go install`
 
                                                     *g:gopher_install_package*
                                                     *b:gopher_install_package*

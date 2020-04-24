@@ -46,6 +46,9 @@ You can use `:make` to compile or test the code. This is a synchronous process,
 there are plugins to make it run in the background (see "Companion plugins"
 below).
 
+There are `;;` and `;t` mappings to build and test your code; this will write
+all files, echo `makeprg`, and runs `:make.
+
 Running `go generate` or passing `-run` to `:GoTest` can be done by switching
 the `makeprg` setting:
 
@@ -62,12 +65,6 @@ You could even set `makeprg` to just `go`:
 	:make install
 	:make run main.go
 	...
-
-Setting `g:gopher_install_package` can be useful if you have a `./cmd/proj` you
-want to compile:
-
-    autocmd BufReadPre /home/martin/code/proj/*.go
-            \ let g:gopher_install_package = 'example.com/proj/cmd/proj'
 
 All motions and text objects that work in vim-go also work in gopher.vim: `[[`,
 `]]`, `af`, `ac`, etc.
@@ -149,6 +146,10 @@ Some things you can stick in your vimrc:
         " au FileType go nnoremap LL :wa<CR>:compiler golint<CR>:silent make!<CR>:redraw!<CR>
         " au FileType go nnoremap TT :wa<CR>:compiler gotest<CR>:silent make!<CR>:redraw!<CR>
 
+        " au FileType go nmap MM <Plug>(gopher-install)
+        " au FileType go nmap TT <Plug>(gopher-test)
+        " au FileType go nmap LL <Plug>(gopher-lint)
+
         " Basic lint on write.
         " autocmd BufWritePost *.go compiler golint | silent make! | redraw!
 
@@ -163,6 +164,10 @@ Some things you can stick in your vimrc:
         "             \  let s:save = winsaveview()
         "             \| exe 'keepjumps %!goimports 2>/dev/null || cat /dev/stdin'
         "             \| call winrestview(s:save)
+
+        " Compile without cgo unless explicitly enabled.
+        " autocmd BufReadPre *.go if $CGO_ENABLED is# '' | let $CGO_ENABLED=0 | endif
+
     augroup end
 
 FAQ

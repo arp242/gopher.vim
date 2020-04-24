@@ -80,6 +80,9 @@ fun! s:map() abort
         \ '_imap_ctrl':   1,
     \ }
   let l:maps = {
+        \ 'install':    ';',
+        \ 'test':       't',
+        \ 'lint':       'l',
         \ 'error':      'e',
         \ 'if':         'i',
         \ 'implement':  'm',

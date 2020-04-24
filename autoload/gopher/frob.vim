@@ -254,6 +254,9 @@ fun! gopher#frob#fillstruct() abort
 endfun
 
 let s:popup_items = [
+      \ ['install',    'Install'],
+      \ ['test',       'Test'],
+      \ ['lint',       'Lint'],
       \ ['error',      'Add return with if err != nil'],
       \ ['if',         'Toggle if style'],
       \ ['implement',  'Add interface methods'],
@@ -265,6 +268,9 @@ let s:popup_items = [
 let s:map = {}
 
 " Show a popup menu with mappings to choose from.
+"
+" TODO: move out of frob.vim to popup.vim, since it's more than just frob
+" commands now.
 fun! gopher#frob#popup() abort
   " Makes s:map and desciption list.
   let l:items = []
@@ -345,6 +351,27 @@ fun! s:run_cmd(id, cmd, ...) abort
     call gopher#frob#ret(1)
   elseif a:cmd is# 'fillstruct'
     call gopher#frob#fillstruct()
+
+  " TODO: should be in function.
+  elseif a:cmd is# 'install'
+    :silent! :wa
+    :compiler go
+    :echo &l:makeprg
+    :silent make!
+    :redraw!
+  elseif a:cmd is# 'test'
+    :silent! :wa
+    :compiler gotest
+    :echo &l:makeprg
+    :silent make!
+    :redraw!
+  elseif a:cmd is# 'lint'
+    :silent! :wa
+    :compiler golint
+    :echo &l:makeprg
+    :silent make!
+    :redraw!
+
   elseif a:cmd is# 'implement'
     if a:0 is 0
       let l:in = [input('interface? ', '', 'customlist,gopher#frob#complete')]
