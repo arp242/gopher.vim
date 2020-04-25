@@ -32,7 +32,7 @@ syn region      goComment   start="//" end="$"    contains=goCompilerDir,goGener
 
 if s:has('fold-comment')
   syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell fold
-  syn match     goComment   "\v(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell fold
+  syn match     goComment   "\v%(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell fold
 else
   syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell
 endif
@@ -50,7 +50,7 @@ syn region      goGenerate        contained matchgroup=goGenerateKW start="^//go
 " TODO: ideally this should end with "$", but then goComment breaks and the next
 "       line is highlighted as a comment even when it's not. I think this is a
 "       bug in Vim. Same applues for goDirectiveError.
-syn match       goCompilerDir     display contained "\v^//go:(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)"
+syn match       goCompilerDir     display contained "\v^//go:%(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)"
 
 " Adding a space between the // and go: is an error.
 syn match      goDirectiveError  contained "^// go:\w\+"
@@ -199,11 +199,11 @@ endif
 if s:has('fold-pkg-comment')
   " TODO: runs out of memory in mattn/go-gtk
   syn region  goPackageComment fold contains=goTodo,@Spell
-                             \ start=/\v(\/\/.*\n)+\s*package/
+                             \ start=/\v%(\/\/.*\n)+\s*package/
                              \ end=/\v\n\s*package/he=e-7,me=e-7,re=e-7
 
   syn region  goPackageComment fold contains=goTodo,@Spell
-                             \ start=/\v^\s*\/\*.*\n(.*\n)*\s*\*\/\npackage/
+                             \ start=/\v^\s*\/\*.*\n%(.*\n)*\s*\*\/\npackage/
                              \ end=/\v\*\/\n\s*package/he=e-7,me=e-7,re=e-7
 endif
 
@@ -272,6 +272,6 @@ hi def link goImaginary           Number
 hi def link goImaginaryFloat      Float
 
 " Search backwards for a global declaration to start processing the syntax.
-syn sync match goSync grouphere NONE /\v^(const|var|type|func)>/
+syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
 
 let b:current_syntax = 'go'
