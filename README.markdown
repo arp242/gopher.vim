@@ -38,20 +38,38 @@ done manually with `:GoSetup`.
 Quickstart
 ----------
 
+All gopher.vim mappings start with `;` in normal mode, or `<C-k>` in insert
+mode. The second letter is identical, so `;t` is `<C-k>t` in insert.
+
+You can change this with the `g:gopher_map` setting; see `:help g:gopher_map`
+for details.
+
 ### Compiling code
 
-Compiling code and running tests is done with the `go` and `gotest` compilers.
-By default the compiler is set to `go`; you can switch it to `gotest` with
-`:comp gotest`.
+Compiling code is done with the `go` compiler; you can then use `:make` to
+compile the code, which will run the command in `makeprg` and populate the
+quickfix with any errors.
 
-You can use `:make` to compile or test the code. This is a synchronous process,
-there are plugins to make it run in the background (see "Companion plugins"
-below).
+gopher tries to be a bit smart about what to set `makeprg` to:
 
-There are `;;` and `;t` mappings to build and test your code; this will write
-all files, echo `makeprg`, and runs `:make.
+- `gopher_install_package`
+- `gopher_build_tags`
+
+The `;;` mapping will write all files and run `:make`; specifically it runs:
+
+    :silent! :wa<CR>:compiler go<CR>:echo &l:makeprg<CR>:silent make!<CR>:redraw!<CR>
+
+Note: `:make` this is a synchronous process, usually Go compile times are fast
+enough, but there are plugins to make it run in the background (see "Companion
+plugins" below).
 
 ### Running tests
+
+Testing is done with the `gotest` compiler; you can swi
+
+- test function
+
+`;t` will run tests, like `;;`
 
 Running `go generate` or passing `-run` to `:GoTest` can be done by switching
 the `makeprg` setting:
@@ -59,19 +77,34 @@ the `makeprg` setting:
 	:comp gotest
 	:make -run TestX
 
-	:comp go
-	:set makeprg=go\ generate
-	:make
+### Running lint tools
+
+The error format is compatible with `golangci-lint`,  `staticcheck`, and `go
+vet` (other tools may also work, but are not tested):
+
+    :set makeprg=staticcheck
+    :make
+
+
+    g:gopher_lint = 'golangci-lint'
+
+### Other compiler tricks
 
 You could even set `makeprg` to just `go`:
 
+	:comp go
 	:set makeprg=go
 	:make install
 	:make run main.go
 	...
 
+	:set makeprg=go\ generate
+	:make
+
+
 ### Mappings
 
+TODO
 
 ### Other commands
 
@@ -81,8 +114,7 @@ All motions and text objects that work in vim-go also work in gopher.vim: `[[`,
 Overview of other commands:
 
 - `:GoCoverage` – Highlight code coverage.
-- `:GoFrob`     – Frob with (modify) code. Also mapped to `;` in normal mode or
-                  `<C-k>` in insert mode.
+- `:GoFrob`     – Frob with (modify) code.
 - `:GoGuru`     – Get various information using the `guru` command.
 - `:GoImport`   – Add, modify, or remove imports.
 - `:GoRename`   – Rename identifier under cursor.
