@@ -152,7 +152,13 @@ else
 endif
 
 " Single-line var, const, and import.
-syn match       goSingleDecl      /\v(^\s*)@<=(import|var|const) [^(]/me=e-2 contains=goImport,goVar,goConst
+"
+"   ^\s*\zs                  Set match start after any leading whitespace.
+"   %(import|var|const)      Keywords
+"   \ze                      Set end of match.
+"    [^)]                    Don't match if followed by " (", to prevent
+"                            conflict with go{Var,Const,Import} so it can fold
+syn match       goSingleDecl       /\v^\s*\zs%(import|var|const)\ze [^(]/    contains=goImport,goVar,goConst
 
 " Numbers.
 "
