@@ -4,9 +4,32 @@ endif
 
 " The ftplugin is loaded after the syntax file, so load it here too.
 call gopher#init#config()
-let s:has = {n -> index(g:gopher_highlight, l:n) > -1 }
+let s:has = { n -> index(g:gopher_highlight, l:n) > -1 }
 
+" Match case.
 syn case match
+
+" Search backwards for a global declaration to start processing the syntax.
+"
+" TODO: one place where this breaks is with multi-line `-strings, where the
+" opening ` is beyond the screen:
+"
+"     const x = `
+"        [.. many lines ..]
+"     `
+"
+"     func foo() {
+"         [.. code .. ]
+"         [ cursor here, opening ` out of screen ]
+"     }
+"
+" It will sync to ^func, but we really want to sync to const.
+"
+" /* .. */ has simialar issues.
+"
+" I don't know what a good solution for this is; it's a problem with
+" minlines=500 too. Need to carefully read the docs for a start.
+syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
 
 " Keywords.
 syn keyword     goPackage      package
@@ -40,7 +63,7 @@ endif
 " go:generate; see go help generate
 syn match       goGenerateKW      display contained /go:generate/
 syn match       goGenerateVars    contained /\v\$(GOARCH|GOOS|GOFILE|GOLINE|GOPACKAGE|DOLLAR)/
-syn region      goGenerate        contained matchgroup=goGenerateKW start="^//go:generate" end="$" contains=goGenerateVars,goGenerateKW
+syn region      goGenerate        contained matchgroup=goGenerateKW start="^//go:generate" end=// contains=goGenerateVars,goGenerateKW
 
 " Compiler directives.
 " https://golang.org/cmd/compile/#hdr-Compiler_Directives
@@ -80,8 +103,6 @@ syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#cgo pkg-config:%
 syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#cgo
       \ %(!?%(386|amd64|amd64p32|arm|arm64|mips|mipsle|mips64|mips64le|ppc|ppc64|ppc64le|riscv64|s390x|wasm|darwin|dragonfly|hurd|js|linux|android|solaris|freebsd|nacl|netbsd|openbsd|plan9|windows|gc|gccgo)[, ]*)*
       \%(CFLAGS|CPPFLAGS|CXXFLAGS|FFLAGS|LDFLAGS):.+/
-
-hi def link goCgoError            Error
 
 " String escapes.
 syn match       goEscapeOctal     display contained "\\[0-7]\{3}"
@@ -239,7 +260,7 @@ hi def link goStdBuildTags        Special
 hi def link goVersionBuildTags    Special
 hi def link goBuildKeyword        Special
 hi def link goCgo                 Special
-
+hi def link goCgoError            Error
 
 hi def link goEscapeOctal         goSpecialString
 hi def link goEscapeC             goSpecialString
@@ -271,8 +292,5 @@ hi def link goFloat               Float
 
 hi def link goImaginary           Number
 hi def link goImaginaryFloat      Float
-
-" Search backwards for a global declaration to start processing the syntax.
-syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
 
 let b:current_syntax = 'go'
