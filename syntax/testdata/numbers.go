@@ -9,7 +9,9 @@ var (
 	img    = 5i
 	imgexp = .12345E+5i
 	fl     = 1.123
+	fld    = .123
 	flexp  = 1.9e20
+	flexpd = .9e20
 	//flhex  = 0x1.0p-1021
 
 	neg_i   = -123

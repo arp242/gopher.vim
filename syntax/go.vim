@@ -109,18 +109,17 @@ syn match       goStructTagName   /\w\{-1,}:"/ contained containedin=goRawString
 " TODO: also highlight quote, space error: `json:foo, omitempty`
 
 if s:has('string-fmt')
-  " 1. literal % not preceded by a %.
-  " 2. any number of -, #, 0, space, or +
-  " 3. * or [n]* or any number or nothing before a .
-  " 4. * or [n]* or any number or nothing after a .
-  " 5. [n] or nothing before a verb
-  " 6. formatting verb
-  syn match       goFormatSpecifier   /\
-        \([^%]\(%%\)*\)\
+  " % not preceded by a %, followed by any of [-#0+ ]
+  " * or [n]* or any number or nothing before a .
+  " * or [n]* or any number or nothing after a .
+  " [n] or nothing before a verb
+  " formatting verb
+  syn match       goFormatSpecifier  contained containedin=goString,goRawString /\
+        \%([^%]\(%%\)*\)\
         \@<=%[-#0 +]*\
         \v%(%(%(\[\d+])?\*)|\d+)?\
         \v%(\.%(%(%(\[\d+])?\*)|\d+)?)?\
-        \v%(\[\d+])?[vTtbcdoOqxXUeEfFgGspw]/ contained containedin=goString,goRawString
+        \v%(\[\d+])?[vTtbcdoOqxXUeEfFgGspw]/
 endif
 
 " Character.
@@ -180,8 +179,10 @@ syn match       goBinaryError     /\v\c<0b[01_]*[2-9]+[0-9_]*>/
 syn match       goHexError        /\v\c<0x[0-9a-f_]*[g-z]+[0-9a-f_]*>/
 
 " Floating points.
+" The first one matches '0.6', the second '.6'; it's about a third faster to do
+" this in 2 regexps.
 syn match       goFloat           /\v\c<[0-9_]+\.[0-9_]*%(e[-+]?[0-9_]+)?>/
-syn match       goFloat           /\v\c<\.[0-9_]+%(e[-+]?[0-9_]+)?>/
+syn match       goFloat           /\v\c\.[0-9_]+%(e[-+]?[0-9_]+)?>/
 
 " Complex numbers.
 if s:has('complex')

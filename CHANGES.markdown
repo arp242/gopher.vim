@@ -45,10 +45,18 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list):
   regexps; it's smarter about various things, such as replacing `text/template`
   with `html/template`.
 
-- Several improvements to the syntax highlighting; it's much faster, adds a few
-  minor highlights (e.g. struct tags, highlight erroneous `go:generate`,
-  highlight cgo directives, few more), but also removes a few features that were
-  very slow and complex.
+- Several improvements to the syntax highlighting; it adds a few minor
+  highlights (e.g. struct tags, highlight erroneous `go:generate`, highlight cgo
+  directives, few more), but also removes a few features that were very slow,
+  complex, and not even 100% correct in all cases.
+
+  The syntax highlighting is also much faster (even faster than the standard one
+  in Vim) and should break less often:
+
+      TOTAL      COUNT
+      0.113017   101215     gopher.vim
+      0.129921   114903     vim runtime
+      0.306453   141057     vim-go
 
 - Indentation is a bit smarter.
 
