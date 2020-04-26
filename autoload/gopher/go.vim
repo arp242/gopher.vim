@@ -108,6 +108,8 @@ fun! gopher#go#find_build_tags() abort
       return []
     endif
   endfor
+
+  return []
 endfun
 
 " Set b:gopher_install_package to ./cmd/[module-name] if it exists.
