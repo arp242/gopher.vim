@@ -10,9 +10,10 @@ let s:has = { n -> index(g:gopher_highlight, l:n) > -1 }
 syn case match
 
 " Search backwards for a global declaration to start processing the syntax.
-"
-" TODO: one place where this breaks is with multi-line `-strings, where the
-" opening ` is beyond the screen:
+syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
+
+" Still keep 'minlines' here since otherwise it tends to break with multiline
+" comment blocks and `-strings where the opening is beyond the screen:
 "
 "     const x = `
 "        [.. many lines ..]
@@ -23,20 +24,20 @@ syn case match
 "         [ cursor here, opening ` out of screen ]
 "     }
 "
-" It will sync to ^func, but we really want to sync to const.
+" It will sync to ^func, the opening ` is out of the screen and sees just the
+" closing, so everything is highlighted as a string.
 "
-" /* .. */ has simialar issues.
-"
-" I don't know what a good solution for this is; it's a problem with
-" minlines=500 too. Need to carefully read the docs for a start.
-syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
+" I'm not sure if there's a better solution for this.
+syn sync minlines=200
+
 
 " Keywords.
 syn keyword     goPackage      package
 syn keyword     goImport       import    contained
 syn keyword     goVar          var       contained
 syn keyword     goConst        const     contained
-syn keyword     goDeclaration  func type struct interface
+syn keyword     goStruct       struct    contained
+syn keyword     goDeclaration  func type interface
 syn keyword     goStatement    defer go goto return break continue fallthrough
 syn keyword     goConditional  if else switch select
 syn keyword     goLabel        case default
@@ -63,20 +64,17 @@ endif
 " go:generate; see go help generate
 syn match       goGenerateKW      display contained /go:generate/
 syn match       goGenerateVars    contained /\v\$(GOARCH|GOOS|GOFILE|GOLINE|GOPACKAGE|DOLLAR)/
-syn region      goGenerate        contained matchgroup=goGenerateKW start="^//go:generate" end=// contains=goGenerateVars,goGenerateKW
+syn region      goGenerate        excludenl contained matchgroup=goGenerateKW start="^//go:generate" end=/$/ contains=goGenerateVars,goGenerateKW
 
 " Compiler directives.
 " https://golang.org/cmd/compile/#hdr-Compiler_Directives
 " pragmaValue in cmd/compile/internal/gc/lex.go
 " TODO: //go:linkname localname importpath.name
 " TODO: support line directives.
-" TODO: ideally this should end with "$", but then goComment breaks and the next
-"       line is highlighted as a comment even when it's not. I think this is a
-"       bug in Vim. Same applues for goDirectiveError.
-syn match       goCompilerDir     display contained "\v^//go:%(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)"
+syn match       goCompilerDir     excludenl display contained "\v^//go:%(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)$"
 
 " Adding a space between the // and go: is an error.
-syn match      goDirectiveError  contained "^// go:\w\+"
+syn match      goDirectiveError  excludenl contained "^// go:.\+$"
 
 " Build tags; standard build tags from cmd/dist/build.go and go doc go/build.
 syn match   goBuildKeyword        display contained "+build"
@@ -122,14 +120,18 @@ else
   syn region    goRawString       start=/`/ end=/`/
 endif
 
-" Struct tag name.
-syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2 contained containedin=goRawString
-" Spaces before or after : are an error.
-syn match       goStructTagName   /\w\{-1,}:"/ contained containedin=goRawString
-" TODO: also highlight attributes: `json:"foo,omitempty"`
-" TODO: also highlight quote, space error: `json:foo, omitempty`
+" Structs and struct tags.
+" TODO: also highlight attributes: 'omitempty' in `json:"foo,omitempty"`
+" TODO: also highlight lack of quote, and attr space error: `json:foo, omitempty`
+syn region      goStruct          start=/struct {/ end=/}/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock
+syn match       goStructTag       / `.*`$/ containedin=goStruct
+syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2 contained containedin=goStructTag
+syn match       goStructTagName   /\w\{-1,}:\ze"/ contained containedin=goStruct,goStructTag
 
 if s:has('string-fmt')
+  " TODO: this is a bit slow, but can't seem ot make it faster. Not sure if it's
+  " possible.
+  "
   " % not preceded by a %, followed by any of [-#0+ ]
   " * or [n]* or any number or nothing before a .
   " * or [n]* or any number or nothing after a .
@@ -234,6 +236,7 @@ hi def link goPackage             Statement
 hi def link goImport              Statement
 hi def link goVar                 Keyword
 hi def link goConst               Keyword
+hi def link goStruct              Keyword
 hi def link goDeclaration         Keyword
 
 hi def link goStatement           Statement
@@ -274,6 +277,7 @@ hi def link goFormatSpecifier     goSpecialString
 
 hi def link goString              String
 hi def link goRawString           String
+hi def link goStructTag           goRawString
 hi def link goStructTagName       Keyword
 hi def link goStructTagError      Error
 

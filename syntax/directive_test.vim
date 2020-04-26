@@ -5,7 +5,7 @@ fun! Test_directive() abort
         \ [
         \ [['goBuildTagStart', 1, 1], ['goBuildTag', 3, 3], ['goBuildKeyword', 4, 4], ['goBuildTag', 10, 13]],
         \ [],
-        \ [['goGenerateKW', 1, 1], ['goComment', 14, 17]],
+        \ [['goGenerateKW', 1, 1], ['goGenerate', 14, 17]],
         \ [],
         \ [['goPackage', 1, 8]],
         \ [],

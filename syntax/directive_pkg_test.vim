@@ -3,7 +3,7 @@
 fun! Test_directive_pkg() abort
     call TestSyntax(g:test_packdir . '/syntax/testdata/directive_pkg.go',
         \ [
-        \ [['goGenerateKW', 1, 1], ['goComment', 14, 23]],
+        \ [['goGenerateKW', 1, 1], ['goGenerate', 14, 23]],
         \ [['goPackage', 1, 8], ['goComment', 14, 43]],
     \ ])
 endfun

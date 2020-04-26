@@ -1,0 +1,5 @@
+#!/bin/sh
+
+for f in ./syntax/testdata/*.go; do
+  tvim gen-syn "$f" > "syntax/$(basename "${f%.go}_test.vim")"
+done
