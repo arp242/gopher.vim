@@ -114,6 +114,10 @@ endfun
 
 " Set b:gopher_install_package to ./cmd/[module-name] if it exists.
 fun! gopher#go#set_install_package() abort
+  if &buftype isnot# '' || &filetype isnot# 'go'
+    return
+  endif
+
   if gopher#bufsetting('gopher_install_package', '') isnot ''
     return
   endif
@@ -136,6 +140,10 @@ endfun
 
 " Set b:gopher_build_tags to the build tags in the current buffer.
 fun! gopher#go#set_build_tags() abort
+  if &buftype isnot# '' || &filetype isnot# 'go'
+    return
+  endif
+
   " TODO: be even smarter about this: merge the g: and b: vars, and allow
   " setting a special '%BUFFER%' so you can both set tags from vimrc and merge
   " from file.
