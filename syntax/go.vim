@@ -169,7 +169,7 @@ if s:has('fold-varconst')
   syn region    goVar             start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock
   syn region    goConst           start='const (' end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock
 else
-  syn region    goVar             start='var ('   end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock
+  syn region    goVar             start='var ('   end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagError
   syn region    goConst           start='const (' end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock
 endif
 
