@@ -1,5 +1,6 @@
 // go:generate foo
 
+// +build asd
 package main
 
 // go:nosplit

@@ -86,9 +86,13 @@ syn match   goVersionBuildTags    contained /\v<go1\.[0-9]{1,2}>[^.]/
 
 " The rs=s+2 option lets the \s*+build portion be part of the inner region
 " instead of the matchgroup so it will be highlighted as a goBuildKeyword.
-syn region  goBuildTag            contained matchgroup=goBuildTagStart
+syn region  goBuildTag            contained matchgroup=goBuildTagStart excludenl
       \ start="^//\s*+build\s"rs=s+2 end="$"
-      \ contains=goBuildKeyword,goStdBuildTags,goVersionBuildTags
+      \ contains=goBuildKeyword,goStdBuildTags,goVersionBuildTags,goBuildTagError
+
+" There needs to be a blank line, otherwise it will be ignored.
+syn match goBuildTagError contained containedin=goComment nextgroup=goPackage
+      \ "// +build.*\npackage \k\+"
 
 " cgo
 syn match goCgoError contained containedin=goComment "^\%(\/\/\)\?\s*#cgo .*"
@@ -259,6 +263,7 @@ hi def link goCompilerDir         Special
 hi def link goDirectiveError      Error
 
 hi def link goBuildTagStart       Comment
+hi def link goBuildTagError       Error
 hi def link goStdBuildTags        Special
 hi def link goVersionBuildTags    Special
 hi def link goBuildKeyword        Special
