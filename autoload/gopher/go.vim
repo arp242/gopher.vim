@@ -28,11 +28,13 @@ fun! gopher#go#module() abort
 
   try
     call chdir(expand('%:h'))
-    let [l:out, l:err] = gopher#system#run(['go', 'list', '-m'])
+    let [l:out, l:err] = gopher#system#run(['go', 'list', '-m', '-f',
+          \ "{{.Path}}\x01{{.Dir}}"])
     if l:err
-      return -1
+      return [-1, -1]
     endif
-    return l:out
+    echom printf('%s', l:out)
+    return split(l:out, "\x01")
   finally
     call chdir(l:wd)
   endtry
@@ -122,16 +124,17 @@ fun! gopher#go#set_install_package() abort
     return
   endif
 
-  let l:module = gopher#go#module()
+  " TODO: maybe cache this a bit? Don't need to do it for every buffer in the
+  " same directory.
+  let [l:module, l:modpath] = gopher#go#module()
   if l:module is# -1
     return
   endif
 
-  " TODO: maybe cache this a bit? Don't need to do it for every buffer in the
-  " same directory.
   let l:name = fnamemodify(l:module, ':t')
-  let l:pkg = l:module . '/cmd/' . l:name
-  let l:path = gopher#system#closest(l:name) . '/cmd/' . l:name
+  let l:pkg  = l:module  . '/cmd/' . l:name
+  let l:path = l:modpath . '/cmd/' . l:name
+
   if isdirectory(l:path) && get(b:, 'gopher_install_package', '') isnot# l:pkg
     let b:gopher_install_package = l:pkg
     compiler go

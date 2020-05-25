@@ -3,12 +3,10 @@ gopher.txt: plugin for the Go programming language
 ==============================================================================
 INTRODUCTION                                                          *gopher*
 
-gopher.vim is a Vim plugin for the Go programming language.
+              Listen very carefully, I shall say this only once.
 
-This plugin requires Go 1.11 or newer; older versions will not work as the
-internal vendoring uses modules.
-
-Note: see the README for a quickstart tutorial.
+gopher.vim is a Vim plugin for the Go programming language. This is the
+reference documentation; see the README for a quickstart tutorial.
 
 Table of contents~
 
