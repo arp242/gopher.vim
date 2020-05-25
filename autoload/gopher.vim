@@ -14,7 +14,7 @@ endfun
 
 " Report if the user enabled the given debug flag.
 fun! gopher#has_debug(flag) abort
-  return index(g:gopher_debug, a:flag) >= 0
+  return index(get(g:, 'gopher_debug', []), a:flag) >= 0
 endfun
 
 " Get a buffer-local b:gopher_ setting, falling back to the g: one if it's
