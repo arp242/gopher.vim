@@ -33,7 +33,6 @@ fun! gopher#go#module() abort
     if l:err
       return [-1, -1]
     endif
-    echom printf('%s', l:out)
     return split(l:out, "\x01")
   finally
     call chdir(l:wd)
