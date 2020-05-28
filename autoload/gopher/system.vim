@@ -5,6 +5,15 @@ let s:gotools = s:root . '/tools'         " Our Go tools.
 let s:gobin   = s:gotools . '/bin'
 let s:jobs    = []                        " List of running jobs.
 
+" Use either the '<plugin>/tools' directory to install things or use 
+" $GOBIN. The default is to place things in <plugin>/tools.
+let s:use_gotools = !get(g:, 'gopher_local_install', 0)
+
+" By default autodownload of tools happens. However, if
+" we want a 'local' install we can no longer have 
+" autodownload.
+let s:tool_autodownload = s:use_gotools is 1 ? 1 : 0
+
 " Command history; every item is a list with the exit code, time it took to run,
 " command that was run, its output, and a boolean to signal it was run from
 " #job(), in that order.
@@ -249,6 +258,36 @@ fun! gopher#system#pathsep() abort
   return has('win32') ? ';' : ':'
 endfun
 
+fun! gopher#system#forcedownload() abort
+  for l:name in keys(s:tools)
+    let l:tool = s:tools[l:name]
+    let l:bin = s:gobin . '/' . l:name
+
+    try
+      let l:old_gobin =  exists('$GOBIN')       ? $GOBIN       : -1
+      let l:old_gomod =  exists('$GO111MODULE') ? $GO111MODULE : -1
+
+      let $GO111MODULE = 'on'  " In case user set to 'off'
+
+      if s:use_gotools
+        let $GOBIN = s:gobin
+        let l:out = system(printf('cd %s && go install %s',
+          \ shellescape(s:gotools), shellescape(l:tool[0])))
+      else 
+        let l:out = system(printf('go install %s', shellescape(l:tool[0])))
+      endif
+      if v:shell_error
+        return gopher#error(l:out)
+      endif
+
+    finally
+      call gopher#system#restore_env('GOBIN', l:old_gobin)
+      call gopher#system#restore_env('GO111MODULE', l:old_gomod)
+    endtry
+
+  endfor
+endfun
+
 " Download, compile and install a tool if needed.
 fun! s:tool(name) abort
   if !has_key(s:tools, a:name)
@@ -260,7 +299,7 @@ fun! s:tool(name) abort
   let l:bin = s:gobin . '/' . a:name
 
   " We already ran go install and there is a binary.
-  if l:tool[1] && filereadable(l:bin)
+  if !s:tool_autodownload || (l:tool[1] && filereadable(l:bin))
     return a:name
   endif
 
