@@ -240,12 +240,41 @@ gotext gohtml~
 ==============================================================================
 COMMANDS                                                     *gopher-commands*
 
-:GoSetup                                                            *:GoSetup*
+:GoSetup [verbose]                                                  *:GoSetup*
         Make sure all dependent tools are downloaded and compiled. Normally
         this is done automatically after you start Vim so it's not required to
         manually run it.
-        It's may still be useful to run as post-install/update hook, so you
-        don't have to wait for stuff to install or update on first usage.
+
+        If [verbose] is given it will show what it's doing. Add the `setup`
+        flag to |g:gopher_debug| to always do this.
+
+        You need to set the |filetype| to `go` to run this as a post-install,
+        since it's only loaded for Go files; for example: >
+                vim +'set ft=go' +GoSetup +'q!'
+<
+        *g:gopher_setup* = `[]`
+        A list of flags to control |:GoSetup| behaviour; allowed values:
+
+        no-auto-download        Don't automatically download tools upon first
+                                use; it will be an error if a tool doesn't
+                                exist. This is useful if you run |:GoSetup|
+                                manually after installing and are _sure_ all
+                                the required tools exist and want a minor
+                                performance boost.
+
+        no-vendor-gobin         By default the tools are installed to a
+                                "vendored" `$GOBIN` in the gopher.vim
+                                directory to ensure 1) the correct versions
+                                are used and 2) to not interfere with anything
+                                else that might be installed on the system. If
+                                this is disabled it will run a "normal" `go
+                                install` without setting `$GOBIN`.
+
+        always-update           Always behave as if the [!] flag was given.
+                                Reduces performance slightly since there will
+                                be a `go install` upon first tool use in the
+                                current session, but ensures you always have
+                                the latest version.
 
 :GoDiag[!] {report, clear}                                           *:GoDiag*
         Print diagnostic information. Also see |g:gopher_debug|.
@@ -467,7 +496,9 @@ just a command are documented in the command.
 
         commands    Records all shell commands; use |:GoDiag| or
                     `gopher#system#history()` to view. The last 5 commands are
-                    always saved with limited output.
+                    always saved with limited output irregardless of this flag.
+
+        setup       Be verbose about what |:GoSetup| does.
 
 *g:gopher_override_vimgo* = (undefined)
         Override vim-go; this removes all vim-go commands, autocommands,

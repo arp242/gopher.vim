@@ -5,12 +5,12 @@ let s:gotools = s:root . '/tools'         " Our Go tools.
 let s:gobin   = s:gotools . '/bin'
 let s:jobs    = []                        " List of running jobs.
 
-" Use either the '<plugin>/tools' directory to install things or use 
+" Use either the '<plugin>/tools' directory to install things or use
 " $GOBIN. The default is to place things in <plugin>/tools.
 let s:use_gotools = !get(g:, 'gopher_local_install', 0)
 
 " By default autodownload of tools happens. However, if
-" we want a 'local' install we can no longer have 
+" we want a 'local' install we can no longer have
 " autodownload.
 let s:tool_autodownload = s:use_gotools is 1 ? 1 : 0
 
@@ -41,14 +41,17 @@ fun! s:init() abort
     call gopher#info('installing gopls; this may take a minute')
     call s:tool('gopls')
   endif
+  " goimports is similarly useful, but not directly referenced by gopher.vim
   if !executable('goimports')
-    call gopher#info('installing gopls; this may take a minute')
+    call gopher#info('installing goimports; this may take a minute')
     call s:tool('goimports')
   endif
 endfun
 
 " Setup modules and install all tools.
 fun! gopher#system#setup() abort
+  call s:setup_debug('running with g:gopher_setup flags: %s', get(g:, 'gopher_setup', []))
+
   if !s:download(1)
     return
   endif
@@ -273,7 +276,7 @@ fun! gopher#system#forcedownload() abort
         let $GOBIN = s:gobin
         let l:out = system(printf('cd %s && go install %s',
           \ shellescape(s:gotools), shellescape(l:tool[0])))
-      else 
+      else
         let l:out = system(printf('go install %s', shellescape(l:tool[0])))
       endif
       if v:shell_error
@@ -299,8 +302,21 @@ fun! s:tool(name) abort
   let l:bin = s:gobin . '/' . a:name
 
   " We already ran go install and there is a binary.
-  if !s:tool_autodownload || (l:tool[1] && filereadable(l:bin))
+  if !s:tool_autodownload
+    call s:setup_debug('%s: auto-download set; not doing anything', a:name)
     return a:name
+  endif
+
+  if l:tool[1]
+    let l:no_vendor_gobin = 0  " TODO: use actual value.
+    if l:no_vendor_gobin && exepath(a:name)
+      call s:setup_debug('%s: already in PATH; not doing anything', a:name)
+      return a:name
+    endif
+    if !l:no_vendor_gobin && filereadable(l:bin)
+      call s:setup_debug('%s: %s already exists; not doing anything', a:name, l:bin)
+      return a:name
+    endif
   endif
 
   if !s:download(0)
@@ -313,6 +329,8 @@ fun! s:tool(name) abort
 
     let $GOBIN = s:gobin
     let $GO111MODULE = 'on'  " In case user set to 'off'
+
+    call s:setup_debug('%s: running go install %s', a:name, l:tool[0])
 
     let l:out = system(printf('cd %s && go install %s',
       \ shellescape(s:gotools), shellescape(l:tool[0])))
@@ -487,6 +505,10 @@ fun! gopher#system#cache(name, ...) abort
   endif
 
   return [l:c[1], v:true]
+endfun
+
+fun! s:setup_debug(msg, ...) abort
+  call call('gopher#info', ['setup: ' . a:msg] + a:000)
 endfun
 
 
