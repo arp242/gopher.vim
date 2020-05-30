@@ -270,12 +270,6 @@ COMMANDS                                                     *gopher-commands*
                                 this is disabled it will run a "normal" `go
                                 install` without setting `$GOBIN`.
 
-        always-update           Always behave as if the [!] flag was given.
-                                Reduces performance slightly since there will
-                                be a `go install` upon first tool use in the
-                                current session, but ensures you always have
-                                the latest version.
-
 :GoDiag[!] {report, clear}                                           *:GoDiag*
         Print diagnostic information. Also see |g:gopher_debug|.
 
