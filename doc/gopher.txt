@@ -312,8 +312,7 @@ TODO: Some introduction text.
         buffer-local variable is automatically set to the build tags in the
         file.
 
-        Note: the buffer-local variable currently overrides the global one;
-        it's not merged.
+        Note: the buffer-local variable overrides the global; it's not merged.
 
                                                         *g:gopher_build_flags*
                                                         *b:gopher_build_flags*

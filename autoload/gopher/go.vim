@@ -134,6 +134,14 @@ fun! gopher#go#set_install_package() abort
   let l:pkg  = l:module  . '/cmd/' . l:name
   let l:path = l:modpath . '/cmd/' . l:name
 
+  " We're already in (possible a different) ./cmd/<name> subpackage: use this
+  " one instead of clobbering ./cmd/other with ./cmd/main
+  if gopher#str#has_prefix(bufname(''), 'cmd/')
+    let b:gopher_install_package = l:module . '/' . fnamemodify(bufname(''), ':h')
+    compiler go
+    return
+  endif
+
   if isdirectory(l:path) && get(b:, 'gopher_install_package', '') isnot# l:pkg
     let b:gopher_install_package = l:pkg
     compiler go
