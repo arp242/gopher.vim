@@ -5,6 +5,7 @@ let g:current_compiler = 'go'
 let s:save_cpo = &cpoptions
 set cpoptions-=C
 
+" CompilerSet makeprg=go
 let &l:makeprg = printf('go install %s %s',
       \ gopher#system#join(get(g:, 'gopher_build_flags', [])),
       \ get(g:, 'gopher_install_package', ''))
