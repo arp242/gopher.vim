@@ -74,7 +74,7 @@ syn region      goComment   start="//" end="$"    contains=goCompilerDir,goGener
 
 if s:has('fold-comment')
   syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell fold
-  syn match     goComment   "\v%(^\s*//.*\n)+"     contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell fold
+  syn match     goComment   "\v%(^\s*//.*\n)+"    contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell fold
 else
   syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell
 endif
@@ -172,27 +172,27 @@ syn cluster     goCharacterGroup  contains=goEscapeOctal,goEscapeC,goEscapeX,goE
 syn region      goCharacter       start=/'/ end=/'/ contains=@goCharacterGroup
 
 " Regions
-syn region      goParen           start='(' end=')' transparent
+syn region      goParen   start='(' end=')' transparent
 if s:has('fold-block')
-  syn region    goBlock           start="{" end="}" transparent fold
+  syn region    goBlock   start="{" end="}" transparent fold
 else
-  syn region    goBlock           start="{" end="}" transparent
+  syn region    goBlock   start="{" end="}" transparent
 endif
 
 " import
 if s:has('fold-import')
-  syn region    goImport          start='import (' end=')' transparent fold contains=goImport,goString,goComment
+  syn region    goImport  start='import (' end=')' transparent fold contains=goImport,goString,goComment
 else
-  syn region    goImport          start='import (' end=')' transparent contains=goImport,goString,goComment
+  syn region    goImport  start='import (' end=')' transparent contains=goImport,goString,goComment
 endif
 
 " var, const
 if s:has('fold-varconst')
-  syn region    goVar             start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock
-  syn region    goConst           start='const (' end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock
+  syn region    goVar     start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagError
+  syn region    goConst   start='const (' end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock
 else
-  syn region    goVar             start='var ('   end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagError
-  syn region    goConst           start='const (' end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock
+  syn region    goVar     start='var ('   end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagError
+  syn region    goConst   start='const (' end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock
 endif
 
 " Single-line var, const, and import.
