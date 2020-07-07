@@ -31,11 +31,19 @@ var (
 		LevelInfo: "X",
 		5:         "INFO: ",
 	}
+
+	struc = typ{
+		x: "str",
+	}
 )
 
 var m = map[int]string{
 	LevelInfo: "X",
 	5:         "INFO: ",
+}
+
+var struc = typ{
+	x: "y",
 }
 
 const x = `
