@@ -44,6 +44,24 @@ syn keyword     goLabel        case default
 syn keyword     goRepeat       for range
 syn keyword     goBoolean      true false nil iota
 
+" Ensure these are highlighted when (erroneously) used as identifiers; this
+" won't happen otherwise because they're contained above.
+"
+" They're highlighted as an error, since they're reserved words. The error
+" highlighting isn't 100% consistent like this (i.e. not everything that's an
+" error is highlighted as such), but that's okay.
+"
+" This can't be a keywords since that will take higher priority over the
+" match/range below; using it like this is a lot faster than \<\%(..|..\)
+" (.015 vs .007 for all 5)
+"
+" TODO: I don't like how this highlights 'var ' when typing regular code.
+"syn match goReserved /\<import\>/
+"syn match goReserved /\<package\>/
+"syn match goReserved /\<var\>/
+"syn match goReserved /\<const\>/
+"syn match goReserved /\<struct\>/
+
 " Predefined types.
 syn keyword     goType      chan map bool string error float32 float64 complex64 complex128
 syn keyword     goType      int int8 int16 int32 int64 rune byte uint uint8 uint16 uint32 uint64 uintptr
@@ -242,15 +260,14 @@ hi def link goVar                 Keyword
 hi def link goConst               Keyword
 hi def link goStruct              Keyword
 hi def link goDeclaration         Keyword
-
 hi def link goStatement           Statement
 hi def link goConditional         Conditional
 hi def link goLabel               Label
 hi def link goRepeat              Repeat
-
 hi def link goType                Type
 hi def link goBuiltins            Keyword
 hi def link goBoolean             Boolean
+hi def link goReserved            Error
 
 hi def link goComment             Comment
 hi def link goPackageComment      Comment
