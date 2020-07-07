@@ -142,8 +142,8 @@ if s:has('string-fmt')
   " [n] or nothing before a verb
   " formatting verb
   syn match       goFormatSpecifier  contained containedin=goString,goRawString /\
-        \%([^%]\(%%\)*\)\
-        \@<=%[-#0 +]*\
+        \%([^%]\(%%\)*\)\@<=\
+        \v\%[-#0 +]*\
         \v%(%(%(\[\d+])?\*)|\d+)?\
         \v%(\.%(%(%(\[\d+])?\*)|\d+)?)?\
         \v%(\[\d+])?[vTtbcdoOqxXUeEfFgGspw]/

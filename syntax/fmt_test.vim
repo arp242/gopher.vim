@@ -6,10 +6,11 @@ fun! Test_fmt() abort
         \ [['goPackage', 1, 8]],
         \ [],
         \ [['goVar', 1, 4]],
-        \ [['goString', 6, 6], ['goFormatSpecifier', 7, 7], ['goString', 9, 9], ['goFormatSpecifier', 11, 11], ['goString', 14, 14], ['goFormatSpecifier', 15, 15], ['goString', 20, 20]],
-        \ [['goString', 6, 6], ['goFormatSpecifier', 7, 7], ['goString', 10, 11]],
-        \ [['goString', 6, 6], ['goFormatSpecifier', 10, 10], ['goString', 12, 15]],
-        \ [['goString', 6, 6], ['goFormatSpecifier', 7, 7], ['goString', 11, 11], ['goFormatSpecifier', 13, 13], ['goString', 20, 20], ['goFormatSpecifier', 21, 21], ['goString', 24, 24], ['goFormatSpecifier', 25, 25], ['goString', 30, 30], ['goFormatSpecifier', 31, 31], ['goString', 34, 34]],
+        \ [['goString', 12, 12], ['goFormatSpecifier', 13, 13], ['goString', 15, 15], ['goFormatSpecifier', 17, 17], ['goString', 20, 20], ['goFormatSpecifier', 21, 21], ['goString', 26, 26]],
+        \ [['goString', 12, 12], ['goFormatSpecifier', 13, 13], ['goString', 16, 17]],
+        \ [['goString', 12, 12], ['goFormatSpecifier', 16, 16], ['goString', 18, 21]],
+        \ [['goString', 12, 12], ['goFormatSpecifier', 13, 13], ['goString', 17, 17], ['goFormatSpecifier', 19, 19], ['goString', 26, 26], ['goFormatSpecifier', 27, 27], ['goString', 30, 30], ['goFormatSpecifier', 31, 31], ['goString', 36, 36], ['goFormatSpecifier', 37, 37], ['goString', 40, 40]],
+        \ [['goString', 12, 29]],
         \ [],
     \ ])
 endfun
