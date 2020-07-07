@@ -4,20 +4,15 @@
 
 gopher.vim is a Vim plugin for the Go programming language.
 
-Goals:
+The idea is to to provide a "light-weight" experience by off-loading
+functionality to native Vim features or generic plugins when they offer a good
+user experience. It's not "hard-core minimalist", but does try to avoid
+re-implementing things that are always handled well by other features or plugins
+rather than duplicating them (which is what vim-go does, an approach which does
+come with some advantages by the way).
 
-- Vendor external dependencies in the plugin to avoid common version mismatch
-  problems.
-- Off-load functionality to native Vim features or generic plugins when they
-  offer a good user experience. Implement as little as reasonable.
-- Ensure that included commands are well-tested to work with as many possible
-  scenarios as possible (many vim-go commands are rather rough around the
-  edges).
-
-It's currently pre-1.0, but I've been using this as my daily workhorse for the
-last half year or so, and it works quite well for me.
-
-See [CHANGES.markdown](CHANGES.markdown) for a more detailed list of changes.
+It currently implements almost everything from vim-go. See
+[CHANGES.markdown](CHANGES.markdown) for a more detailed list of changes.
 
 Installation
 ------------
@@ -46,65 +41,61 @@ for details.
 
 ### Compiling code
 
-Compiling code is done with the `go` compiler; you can then use `:make` to
-compile the code, which will run the command in `makeprg` and populate the
-quickfix with any errors.
+Compiling code is done with the `go` compiler (that is, the Vim `:compiler`
+feature`); you can then use `:make` to run the command in `makeprg` and populate
+the quickfix with any errors.
 
-gopher tries to be a bit smart about what to set `makeprg` to:
-
-- `gopher_install_package`
-- `gopher_build_tags`
+gopher.vim tries to be a bit smart about what to set `makeprg` to: if a
+`./cmd/<module-name>` package exists then it will compile that instead of the
+current package, and build tags from the current file are automatically added.
+There's a bunch of options to tweak the behaviour: see `:help gopher-compilers`
+for detailed documentation.
 
 The `;;` mapping will write all files and run `:make`; specifically it runs:
 
     :silent! :wa<CR>:compiler go<CR>:echo &l:makeprg<CR>:silent make!<CR>:redraw!<CR>
 
-Note: `:make` this is a synchronous process, usually Go compile times are fast
-enough, but there are plugins to make it run in the background (see "Companion
+`:make` is a synchronous process, usually Go compile times are fast enough, but
+there are plugins to make it run in the background if you want (see "Companion
 plugins" below).
 
 ### Running tests
 
-Testing is done with the `gotest` compiler; you can swi
+Testing is done with the `gotest` compiler; you can run them with `;t` which
+will run the current test function if you're inside a test, or tests for the
+current package if you're not.
 
-- test function
-
-`;t` will run tests, like `;;`
-
-Running `go generate` or passing `-run` to `:GoTest` can be done by switching
-the `makeprg` setting:
-
-	:comp gotest
-	:make -run TestX
+You can pass additional to `:make`; e.g. `:make -failfast`.
 
 ### Running lint tools
 
-The error format is compatible with `golangci-lint`,  `staticcheck`, and `go
-vet` (other tools may also work, but are not tested):
+The `golint` compiler can run lint tools; the error format is compatible with
+`golangci-lint`,  `staticcheck`, and `go vet` (other tools may also work, but
+are not tested):
 
+    :compiler golint
     :set makeprg=staticcheck
     :make
 
-
-    g:gopher_lint = 'golangci-lint'
-
-### Other compiler tricks
-
-You could even set `makeprg` to just `go`:
-
-	:comp go
-	:set makeprg=go
-	:make install
-	:make run main.go
-	...
-
-	:set makeprg=go\ generate
-	:make
-
-
 ### Mappings
 
-TODO
+Map ;t to run all tests, instead of current.
+
+" let g:gopher_map = {'_nmap_prefix': '<Leader>', '_imap_prefix': '<C-g>' }
+
+        " Quicker way to make, lint, and test code.
+        " au FileType go nnoremap MM :wa<CR>:compiler go<CR>:silent make!<CR>:redraw!<CR>
+        " au FileType go nnoremap LL :wa<CR>:compiler golint<CR>:silent make!<CR>:redraw!<CR>
+        " au FileType go nnoremap TT :wa<CR>:compiler gotest<CR>:silent make!<CR>:redraw!<CR>
+
+        " au FileType go nmap MM <Plug>(gopher-install)
+        " au FileType go nmap TT <Plug>(gopher-test)
+        " au FileType go nmap LL <Plug>(gopher-lint)
+
+
+See `:help gopher_mappings`
+
+
 
 ### Other commands
 
@@ -113,12 +104,15 @@ All motions and text objects that work in vim-go also work in gopher.vim: `[[`,
 
 Overview of other commands:
 
-- `:GoCoverage` – Highlight code coverage.
-- `:GoFrob`     – Frob with (modify) code.
-- `:GoGuru`     – Get various information using the `guru` command.
-- `:GoImport`   – Add, modify, or remove imports.
-- `:GoRename`   – Rename identifier under cursor.
-- `:GoTags`     – Add or remove struct tags
+    :GoCoverage – Highlight code coverage.
+    :GoFrob     – Frob with (modify) code.
+    :GoGuru     – Get various information using the guru command.
+    :GoImport   – Add, modify, or remove imports.
+    :GoRename   – Rename identifier under cursor.
+    :GoTags     – Add or remove struct tags
+
+Note that many details are different from vim-go; gopher.vim is not intended as
+a "drop-in" replacement.
 
 See `:help gopher` for the full reference manual.
 
@@ -161,6 +155,7 @@ various plugins.
 
 - [minisnip](https://github.com/joereynolds/vim-minisnip) – Snippets.
   Alternatives:
+  [lazy.vim](https://github.com/arp242/lazy.vim),
   [UltiSnips](https://github.com/sirver/UltiSnips),
   [neosnippet.vim](https://github.com/Shougo/neosnippet.vim),
   [sonictemplate-vim](https://github.com/mattn/sonictemplate-vim).
@@ -182,21 +177,8 @@ Some things you can stick in your vimrc:
     augroup my_gopher
         au!
 
-        " Quicker way to make, lint, and test code.
-        " au FileType go nnoremap MM :wa<CR>:compiler go<CR>:silent make!<CR>:redraw!<CR>
-        " au FileType go nnoremap LL :wa<CR>:compiler golint<CR>:silent make!<CR>:redraw!<CR>
-        " au FileType go nnoremap TT :wa<CR>:compiler gotest<CR>:silent make!<CR>:redraw!<CR>
-
-        " au FileType go nmap MM <Plug>(gopher-install)
-        " au FileType go nmap TT <Plug>(gopher-test)
-        " au FileType go nmap LL <Plug>(gopher-lint)
-
         " Basic lint on write.
         " autocmd BufWritePost *.go compiler golint | silent make! | redraw!
-
-        " Put a path before GOPATH to use tools from there. Not recommended
-        " unless you have special needs or want to test a modified version.
-        " autocmd Filetype go let $PATH = $HOME . '/go/bin:' . $PATH
 
         " Format buffer on write; need to make a motion for the entire buffer to
         " make this work.
@@ -208,7 +190,6 @@ Some things you can stick in your vimrc:
 
         " Compile without cgo unless explicitly enabled.
         " autocmd BufReadPre *.go if $CGO_ENABLED is# '' | let $CGO_ENABLED=0 | endif
-
     augroup end
 
 FAQ
@@ -232,12 +213,12 @@ now 120 lines shorter while also fixing a few bugs and adding features.
 
 There is also a user interface aspect: if I ask Vim to do something then I want
 that done now. When it's run in the background feedback is often poor. Is it
-still running? Did I miss a message? Who knows, messages are sometimes lost. How
-do you cancel a background job from the UI? Often you can't. What if I switch
+still running? Did I miss a message? Who knows, messages are often lost. How do
+you cancel a background job from the UI? Often you can't. What if I switch
 buffers or modify a file? *Weird Stuff*™ happens.
 
 This doesn't mean I'm against async, just not for every last thing. Some things
-in gopher.vim are still async. It's a trade-off. If you have a good case for
+in gopher.vim are still async; it's a trade-off. If you have a good case for
 something to be async then feel free to open an issue.
 
 ### The syntax has fewer colours, it's so boring!

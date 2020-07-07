@@ -113,13 +113,13 @@ fun! gopher#go#find_build_tags() abort
   return []
 endfun
 
-" Set b:gopher_install_package to ./cmd/[module-name] if it exists.
-fun! gopher#go#set_install_package() abort
+" Set b:gopher_build_package to ./cmd/[module-name] if it exists.
+fun! gopher#go#set_build_package() abort
   if &buftype isnot# '' || &filetype isnot# 'go'
     return
   endif
 
-  if gopher#bufsetting('gopher_install_package', '') isnot ''
+  if gopher#bufsetting('gopher_build_package', '') isnot ''
     return
   endif
 
@@ -137,13 +137,13 @@ fun! gopher#go#set_install_package() abort
   " We're already in (possible a different) ./cmd/<name> subpackage: use this
   " one instead of clobbering ./cmd/other with ./cmd/main
   if gopher#str#has_prefix(bufname(''), 'cmd/')
-    let b:gopher_install_package = l:module . '/' . fnamemodify(bufname(''), ':h')
+    let b:gopher_build_package = l:module . '/' . fnamemodify(bufname(''), ':h')
     compiler go
     return
   endif
 
-  if isdirectory(l:path) && get(b:, 'gopher_install_package', '') isnot# l:pkg
-    let b:gopher_install_package = l:pkg
+  if isdirectory(l:path) && get(b:, 'gopher_build_package', '') isnot# l:pkg
+    let b:gopher_build_package = l:pkg
     compiler go
   endif
 endfun
@@ -229,17 +229,61 @@ fun! s:line_to_fun() abort
   return [l:name, l:sig]
 endfun
 
-" TODO: Allow disabling this easily?
-fun! gopher#go#current_test() abort
+" Get the current test name as ['TestFoo'), or an empty list if the cursor isn't
+" inside a test function.
+"
+" If a:run is non-0 it will return the name as ['-run', '^TestFoo$'], for
+" passing to a 'go test' command.
+fun! gopher#go#current_test(run) abort
   if !gopher#go#is_test()
-    return [v:null]
+    return []
   endif
 
   let l:f = gopher#go#current_function()[0]
   if l:f is# '' || l:f !~# '^Test'
-    return [v:null]
+    return []
   endif
 
-  " TODO: make print makeprg in TT? add <Plug> mappings for it.
-  return ['-run', printf('^%s$', l:f)]
+  if a:run
+    return ['-run', printf('^%s$', l:f)]
+  endif
+  return l:f
+endfun
+
+" Run the go compiler.
+fun! gopher#go#run_install() abort
+  silent! wa
+  compiler go
+  echo &l:makeprg
+  silent make!
+  redraw!
+endfun
+
+" Run go test for the current package.
+fun! gopher#go#run_test() abort
+  silent! wa
+  compiler gotest
+  echo &l:makeprg
+  silent make!
+  redraw!
+endfun
+
+" Run go test for the current function.
+fun! gopher#go#run_test_current() abort
+  silent! wa
+  compiler gotest
+
+  let l:t = gopher#system#join(gopher#go#current_test(1))
+  echo &l:makeprg . ' ' . l:t
+  exe 'silent make! ' . l:t
+  redraw!
+endfun
+
+" Run lint tool for the current package.
+fun! gopher#go#run_lint() abort
+  silent! wa
+  compiler golint
+  echo &l:makeprg
+  silent make!
+  redraw!
 endfun

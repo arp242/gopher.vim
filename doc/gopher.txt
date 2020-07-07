@@ -83,12 +83,16 @@ MAPPINGS                                                     *gopher-mappings*
         is a string. Use a list to map different keys for normal and insert
         mode. Use an empty string to not map a key.
 
-            Map                      Default value ~
-            |(gopher-error)|           e
-            |(gopher-if)|              i
-            |(gopher-implement)|       m
-            |(gopher-return)|          r
-            |(gopher-fillstruct)|      f
+                Map                      Default value ~
+                |(gopher-install)|         ;
+                |(gopher-test-current)|    t
+                |(gopher-test)|            T
+                |(gopher-lint)|            l
+                |(gopher-error)|           e
+                |(gopher-if)|              i
+                |(gopher-implement)|       m
+                |(gopher-return)|          r
+                |(gopher-fillstruct)|      f
 
         Some examples:
 
@@ -108,9 +112,9 @@ MAPPINGS                                                     *gopher-mappings*
             Use `<Leader>i` and `<C-g>i`; >
                 let g:gopher_map = {'_nmap_prefix': '<Leader>', '_imap_prefix': '<C-g>'}
 <
-            A more complex example which 1) doesn't map any defaults, 2) doesn't
-            use a prefix for normal mode mappings, maps to `<F1>` and `<F2>`,
-            and 4) doesn't map anything in insert mode: >
+            A more complex example which 1) doesn't map any defaults, 2)
+            doesn't use a prefix for normal mode mappings, maps to `<F1>` and
+            `<F2>`, and 4) doesn't map anything in insert mode: >
                 let g:gopher_map = {
                                 \ '_default':      0,
                                 \ '_nmap_prefix':  '',
@@ -146,17 +150,22 @@ MAPPINGS                                                     *gopher-mappings*
         The uppercase variant will be merged with the lowercase variant if
         both are defined.
 
-The actual mappings; the defaults are shown in the first column with the
-default prefixes.
+The mappings that gopher.vim defines; the defaults are shown in the first
+column with the default prefixes.
 
                                                             *(gopher-install)*
-;;  <C-k><C-k>          Set compiler to go and |:make|.
+;;  <C-k><C-k>          Set compiler to `go` and |:make|.
 
                                                                *(gopher-test)*
-;t  <C-k><C-t>          Set compiler to gotest and |:make|.
+;T  <C-k><C-T>          Set compiler to `gotest` and |:make|.
+
+                                                       *(gopher-test-current)*
+;t  <C-k><C-t>          Set compiler to `gotest` and |:make| with
+                        `-run TestCurrentFunction` added if the cursor is
+                        inside a test function.
 
                                                                *(gopher-lint)*
-;l  <C-k>l              Set compiler to golint and |:make|.
+;l  <C-k>l              Set compiler to `golint` and |:make|.
 
                                                                  *(gopher-if)*
 ;i  <C-k>i              Toggle between single-line and normal if checks. For
@@ -186,8 +195,8 @@ default prefixes.
 
                                                               *(gopher-error)*
 ;e  <C-k>e              Generate a return statement with the appropriate zero
-                        values for the current function, wrapped in an 'err !=
-                        nil' check.
+                        values for the current function, wrapped in an
+                        `err != nil` check.
 
                                                          *(gopher-fillstruct)*
 ;f  <C-k>f              Fill a struct with all missing entries.
@@ -200,12 +209,12 @@ FILETYPES                                                   *gopher-filetypes*
 go~
         The go filetype sets the following settings:
 
-                'equalprg'     `gofmt 2>/dev/null || cat /dev/stdin`
+                'equalprg'      `gofmt 2>/dev/null || cat /dev/stdin`
                                 A simple/native way to format code with gofmt
                                 while ignoring errors. Use ALE or Syntastic
-                                for a more advances experience.
+                                for a more advanced experience.
 
-                                Note: goimports is not used here as it can't
+                                Note: `goimports` is not used here as it can't
                                 operate over a partial file (e.g a line or
                                 function). See the snippet in the README on
                                 how to format with goimports on write.
@@ -260,34 +269,48 @@ COMPILERS                                                   *gopher-compilers*
         Several compilers are supported; you can select one with the
         |:compiler| command.
 
-                go                      |'makeprg'| defaults to `go install`
-                                        but `go build` or `go run` also work.
-                gotest                  `go test`
-                golint                  `golangci-lint`
+                go              `go install`
+                gotest          `go test`
+                golint          `golangci-lint`
 
         The compilers are compatible with vim-dispatch, but none of the
         settings below will take effect (so you'll need to use
         `:Dispatch go build ./cmd/pkg`; the package name won't be added
         automatically).
 
-        Instead of adding new `:GoBuild`, `:GoTest`, etc. commands use a
-        compiler.
-        TODO: document more.
-
                                                           *gopher-compiler-go*
 go ~
 
-TODO: Some introduction text.
 
-                                                    *g:gopher_install_command*
-                                                    *b:gopher_install_command*
+        gopher.vim tries to be a bit smart about what to set `makeprg` to:
+
+        go
+
+        gopher_build_command
+
+        gopher_build_flags
+
+        gopher_build_tags
+
+        gopher_build_package
+
+
+
+        if a `./cmd/<module-name>` package exists then it will compile that
+        instead of the current package, and build tags from the current file
+        are automatically added. There's a bunch of options to tweak the
+        behaviour: see `:help gopher-compilers` for detailed documentation.
+
+
+                                                    *g:gopher_build_command*
+                                                    *b:gopher_build_command*
         Command to build Go code.
 
         Default: `install`; set to `build` if you want to run `go build`
         instead of `go install`
 
-                                                    *g:gopher_install_package*
-                                                    *b:gopher_install_package*
+                                                    *g:gopher_build_package*
+                                                    *b:gopher_build_package*
         Can be set to a package name to install with |:make|; default is to set
         the buffer-local setting to `[module]/cmd/[module-name]` if the
         package exists.
@@ -295,7 +318,7 @@ TODO: Some introduction text.
         You typically want to set this per-project with an |autocmd|:
 >
             autocmd BufReadPre /home/martin/code/proj/*.go
-                        \ let b:gopher_install_package = 'example.com/proj/cmd/xxx'
+                        \ let b:gopher_build_package = 'example.com/proj/cmd/xxx'
 <
         This ensures that the `example.com/proj/cmd/xxx` package is installed
         with |:make| regardless of the current directory or file you have
@@ -585,8 +608,8 @@ Options documented elsewhere:
 
         |g:gopher_build_flags|         Flags to go install/test/build.
         |g:gopher_build_tags|
-        |g:gopher_install_command|
-        |g:gopher_install_package|
+        |g:gopher_build_command|
+        |g:gopher_build_package|
 
         |g:gopher_gorename_flags|      Flags to various external tools.
         |g:gopher_guru_scope|

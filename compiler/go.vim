@@ -7,11 +7,11 @@ set cpoptions-=C
 
 " CompilerSet makeprg=go
 let &l:makeprg = gopher#str#fold_space(printf('go %s %s %s %s',
-      \ gopher#bufsetting('gopher_install_command', 'install'),
+      \ gopher#bufsetting('gopher_build_command', 'install'),
       \ gopher#system#join(gopher#bufsetting('gopher_build_flags', [])),
       \ gopher#bufsetting('gopher_build_tags', -1) is# -1 ? '' :
       \     gopher#system#join(['-tags', join(gopher#bufsetting('gopher_build_tags', []), ',')]),
-      \ gopher#bufsetting('gopher_install_package', '')))
+      \ gopher#bufsetting('gopher_build_package', '')))
 
 setl errorformat =%-G#\ %.%#                   " Ignore lines beginning with '#' ('# command-line-arguments' line sometimes appears?)
 setl errorformat+=%-G%.%#panic:\ %m            " Ignore lines containing 'panic: message'

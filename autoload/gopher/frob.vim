@@ -254,14 +254,15 @@ fun! gopher#frob#fillstruct() abort
 endfun
 
 let s:popup_items = [
-      \ ['install',    'Install'],
-      \ ['test',       'Test'],
-      \ ['lint',       'Lint'],
-      \ ['error',      'Add return with if err != nil'],
-      \ ['if',         'Toggle if style'],
-      \ ['implement',  'Add interface methods'],
-      \ ['return',     'Add return'],
-      \ ['fillstruct', 'Fill struct with keyed fields'],
+      \ ['install',      'Install current package or ./cmd/<modname>'],
+      \ ['test-current', 'Test current function'],
+      \ ['test',         'Test current package'],
+      \ ['lint',         'Lint current package'],
+      \ ['error',        'Add return with if err != nil'],
+      \ ['if',           'Toggle if style'],
+      \ ['implement',    'Add interface methods'],
+      \ ['return',       'Add return'],
+      \ ['fillstruct',   'Fill struct with keyed fields'],
   \ ]
 
 " key -> action mapping (reverse of g:gopher_map).
@@ -351,27 +352,14 @@ fun! s:run_cmd(id, cmd, ...) abort
     call gopher#frob#ret(1)
   elseif a:cmd is# 'fillstruct'
     call gopher#frob#fillstruct()
-
-  " TODO: should be in function.
   elseif a:cmd is# 'install'
-    :silent! :wa
-    :compiler go
-    :echo &l:makeprg
-    :silent make!
-    :redraw!
+    call gopher#go#run_install()
   elseif a:cmd is# 'test'
-    :silent! :wa
-    :compiler gotest
-    :echo &l:makeprg
-    :silent make!
-    :redraw!
+    call gopher#go#run_test()
+  elseif a:cmd is# 'test-current'
+    call gopher#go#run_test_current()
   elseif a:cmd is# 'lint'
-    :silent! :wa
-    :compiler golint
-    :echo &l:makeprg
-    :silent make!
-    :redraw!
-
+    call gopher#go#run_lint()
   elseif a:cmd is# 'implement'
     if a:0 is 0
       let l:in = [input('interface? ', '', 'customlist,gopher#frob#complete')]

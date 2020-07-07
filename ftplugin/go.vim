@@ -63,10 +63,10 @@ nnoremap <buffer> <Plug>(gopher-popup)      :call gopher#frob#popup()<CR>
 nnoremap <buffer> <Plug>(gopher-return)     :call gopher#frob#ret(0)<CR>
 nnoremap <buffer> <Plug>(gopher-fillstruct) :call gopher#frob#fillstruct(0)<CR>
 
-" TODO: rhs in a function.
-nnoremap <buffer> <silent> <Plug>(gopher-install) :silent! :wa<CR>:compiler go<CR>:echo &l:makeprg<CR>:silent make!<CR>:redraw!<CR>
-nnoremap <buffer> <silent> <Plug>(gopher-test)    :silent! :wa<CR>:compiler gotest<CR>:echo &l:makeprg<CR>:silent make!<CR>:redraw!<CR>
-nnoremap <buffer> <silent> <Plug>(gopher-lint)    :silent! :wa<CR>:compiler golint<CR>:echo &l:makeprg<CR>:silent make!<CR>:redraw!<CR>
+nnoremap <buffer> <silent> <Plug>(gopher-install)      :call gopher#go#run_install()<CR>
+nnoremap <buffer> <silent> <Plug>(gopher-test)         :call gopher#go#run_test()<CR>
+nnoremap <buffer> <silent> <Plug>(gopher-test-current) :call gopher#go#run_test_current()<CR>
+nnoremap <buffer> <silent> <Plug>(gopher-lint)         :call gopher#go#run_lint()<CR>
 
 inoremap <buffer> <Plug>(gopher-error)      <C-o>:call gopher#frob#ret(1)<CR>
 inoremap <buffer> <Plug>(gopher-if)         <C-o>:call gopher#frob#if()<CR>
@@ -100,14 +100,15 @@ if g:gopher_map isnot 0
     exe printf('nmap %s <Plug>(gopher-popup)', g:gopher_map['_nmap_prefix'])
     exe printf('imap %s <Plug>(gopher-popup)', g:gopher_map['_imap_prefix'])
   else
-    call s:map('install',    '<Plug>(gopher-install)')
-    call s:map('test',       '<Plug>(gopher-test)')
-    call s:map('lint',       '<Plug>(gopher-lint)')
-    call s:map('error',      '<Plug>(gopher-error)')
-    call s:map('if',         '<Plug>(gopher-if)')
-    call s:map('impl',       '<Plug>(gopher-impl)')
-    call s:map('return',     '<Plug>(gopher-return)')
-    call s:map('fillstruct', '<Plug>(gopher-fillstruct)')
+    call s:map('install',      '<Plug>(gopher-install)')
+    call s:map('test',         '<Plug>(gopher-test)')
+    call s:map('test-current', '<Plug>(gopher-test-current)')
+    call s:map('lint',         '<Plug>(gopher-lint)')
+    call s:map('error',        '<Plug>(gopher-error)')
+    call s:map('if',           '<Plug>(gopher-if)')
+    call s:map('impl',         '<Plug>(gopher-impl)')
+    call s:map('return',       '<Plug>(gopher-return)')
+    call s:map('fillstruct',   '<Plug>(gopher-fillstruct)')
   endif
 endif
 

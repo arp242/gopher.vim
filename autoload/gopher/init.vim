@@ -80,14 +80,15 @@ fun! s:map() abort
         \ '_imap_ctrl':   1,
     \ }
   let l:maps = {
-        \ 'install':    ';',
-        \ 'test':       't',
-        \ 'lint':       'l',
-        \ 'error':      'e',
-        \ 'if':         'i',
-        \ 'implement':  'm',
-        \ 'return':     'r',
-        \ 'fillstruct': 'f',
+        \ 'install':      ';',
+        \ 'test-current': 't',
+        \ 'test':         'T',
+        \ 'lint':         'l',
+        \ 'error':        'e',
+        \ 'if':           'i',
+        \ 'implement':    'm',
+        \ 'return':       'r',
+        \ 'fillstruct':   'f',
     \ }
 
   if !exists('g:gopher_map')
