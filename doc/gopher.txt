@@ -240,13 +240,13 @@ gotext gohtml~
 ==============================================================================
 COMMANDS                                                     *gopher-commands*
 
-:GoSetup [verbose]                                                  *:GoSetup*
+:GoSetup                                                            *:GoSetup*
         Make sure all dependent tools are downloaded and compiled. Normally
         this is done automatically after you start Vim so it's not required to
         manually run it.
 
-        If [verbose] is given it will show what it's doing. Add the `setup`
-        flag to |g:gopher_debug| to always do this.
+        Add the `setup` flag to |g:gopher_debug| to show more information
+        about what it's doing.
 
         You need to set the |filetype| to `go` to run this as a post-install
         script, since it's only loaded for Go files; for example: >

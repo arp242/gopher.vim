@@ -5,10 +5,6 @@ let s:gotools = s:root . '/tools'         " Our Go tools.
 let s:gobin   = s:gotools . '/bin'
 let s:jobs    = []                        " List of running jobs.
 
-" Use either the '<plugin>/tools' directory to install things or use
-" $GOBIN. The default is to place things in <plugin>/tools.
-let s:use_gotools = !get(g:, 'gopher_local_install', 0)
-
 " Command history; every item is a list with the exit code, time it took to run,
 " command that was run, its output, and a boolean to signal it was run from
 " #job(), in that order.
@@ -475,7 +471,9 @@ fun! gopher#system#cache(name, ...) abort
 endfun
 
 fun! s:setup_debug(msg, ...) abort
-  call call('gopher#info', ['setup: ' . a:msg] + a:000)
+  if gopher#has_debug('setup')
+    call call('gopher#info', ['setup: ' . a:msg] + a:000)
+  endif
 endfun
 
 
