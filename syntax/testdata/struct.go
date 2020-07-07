@@ -17,6 +17,12 @@ type x struct {
 	F int `json:"tag, omitempty"` // TODO: hl extra space
 }
 
+const x = `highlight multi-line strings
+x
+`
+
+var y = `don't highlight between two raw strings` + x + `B`
+
 // Don't highlight inside regular strings, maps, etc.
 const LevelInfo = 1
 

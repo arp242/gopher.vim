@@ -128,7 +128,7 @@ endif
 " TODO: also highlight attributes: 'omitempty' in `json:"foo,omitempty"`
 " TODO: also highlight lack of quote, and attr space error: `json:foo, omitempty`
 syn region      goStruct          start=/struct \?{/ end=/}/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock
-syn match       goStructTag       / `.*`$/ containedin=goStruct
+syn match       goStructTag       / `.*`$/ contained containedin=goStruct
 syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2 contained containedin=goStructTag
 syn match       goStructTagName   /\w\{-1,}:\ze"/ contained containedin=goStruct,goStructTag
 
