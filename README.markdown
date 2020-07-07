@@ -105,6 +105,8 @@ various plugins.
   [ALE](https://github.com/dense-analysis/ale).
 
 - [vim-makejob](https://git.danielmoch.com/vim-makejob) – Async `:make`.
+  Alternatives:
+  [vim-dispatch](https://github.com/tpope/vim-dispatch)
 
 - [switchy.vim](https://github.com/arp242/switchy.vim) – Switch to `_test.go`
   files. Alternatives:

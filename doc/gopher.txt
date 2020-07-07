@@ -197,6 +197,11 @@ go~
                 gotest                  `go test`
                 golint                  `golangci-lint`
 
+        The compilers are compatible with vim-dispatch, but none of the
+        settings below will take effect (so you'll need to use
+        `:Dispatch go build ./cmd/pkg`; the package name won't be added
+        automatically).
+
                                                     *g:gopher_install_package*
         Can be set to a package name to install with |:make|; default is to
         use the current directory. This is especially useful if the main

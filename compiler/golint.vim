@@ -5,6 +5,7 @@ let g:current_compiler = 'golint'
 let s:save_cpo = &cpoptions
 set cpoptions-=C
 
+" CompilerSet makeprg=golangci-lint
 let &l:makeprg = 'golangci-lint run --out-format tab'
 if len(get(g:, 'gopher_build_tags', [])) > 0
   let &l:makeprg .= printf(' --build-tags "%s"', join(g:gopher_build_tags, ' '))
