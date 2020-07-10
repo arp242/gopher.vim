@@ -32,14 +32,17 @@ fun! s:init() abort
     call gopher#info('installing gopls; this may take a minute')
     call s:tool('gopls')
   endif
+  " goimports is similarly useful, but not directly referenced by gopher.vim
   if !executable('goimports')
-    call gopher#info('installing gopls; this may take a minute')
+    call gopher#info('installing goimports; this may take a minute')
     call s:tool('goimports')
   endif
 endfun
 
 " Setup modules and install all tools.
 fun! gopher#system#setup() abort
+  call s:setup_debug('running with g:gopher_setup flags: %s', get(g:, 'gopher_setup', []))
+
   if !s:download(1)
     return
   endif
@@ -256,12 +259,23 @@ fun! s:tool(name) abort
     return ''
   endif
 
-  let l:tool = s:tools[a:name]
-  let l:bin = s:gobin . '/' . a:name
-
-  " We already ran go install and there is a binary.
-  if l:tool[1] && filereadable(l:bin)
+  if index(get(g:, 'gopher_setup', []), 'no-auto-install') > -1
     return a:name
+  endif
+
+  let l:no_vendor_gobin = index(get(g:, 'gopher_setup', []), 'no-vendor-gobin') > -1
+  let l:tool            = s:tools[a:name]
+  let l:bin             = s:gobin . '/' . a:name
+
+  if l:tool[1]
+    if l:no_vendor_gobin && exepath(a:name)
+      call s:setup_debug('%s: already in PATH; not doing anything', a:name)
+      return a:name
+    endif
+    if !l:no_vendor_gobin && filereadable(l:bin)
+      call s:setup_debug('%s: %s already exists; not doing anything', a:name, l:bin)
+      return a:name
+    endif
   endif
 
   if !s:download(0)
@@ -269,11 +283,15 @@ fun! s:tool(name) abort
   endif
 
   try
-    let l:old_gobin =  exists('$GOBIN')       ? $GOBIN       : -1
-    let l:old_gomod =  exists('$GO111MODULE') ? $GO111MODULE : -1
+    if !l:no_vendor_gobin
+      let l:old_gobin = exists('$GOBIN') ? $GOBIN : -1
+      let $GOBIN = s:gobin
+    endif
 
-    let $GOBIN = s:gobin
+    let l:old_gomod =  exists('$GO111MODULE') ? $GO111MODULE : -1
     let $GO111MODULE = 'on'  " In case user set to 'off'
+
+    call s:setup_debug('%s: running go install %s', a:name, l:tool[0])
 
     let l:out = system(printf('cd %s && go install %s',
       \ shellescape(s:gotools), shellescape(l:tool[0])))
@@ -284,7 +302,9 @@ fun! s:tool(name) abort
     " Record go install ran.
     let s:tools[a:name][1] = 1
   finally
-    call gopher#system#restore_env('GOBIN', l:old_gobin)
+    if !l:no_vendor_gobin
+      call gopher#system#restore_env('GOBIN', l:old_gobin)
+    endif
     call gopher#system#restore_env('GO111MODULE', l:old_gomod)
   endtry
 
@@ -448,6 +468,12 @@ fun! gopher#system#cache(name, ...) abort
   endif
 
   return [l:c[1], v:true]
+endfun
+
+fun! s:setup_debug(msg, ...) abort
+  if gopher#has_debug('setup')
+    call call('gopher#info', ['setup: ' . a:msg] + a:000)
+  endif
 endfun
 
 
