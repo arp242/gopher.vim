@@ -9,7 +9,7 @@ require (
 	github.com/fatih/gomodifytags v1.4.0
 	github.com/fatih/motion v1.1.0
 	github.com/fatih/structtag v1.2.0 // indirect
-	github.com/josharian/impl v0.0.0-20191119165012-6b9658ad00c7
-	golang.org/x/tools v0.0.0-20200422022333-3d57cf2e726e
-	golang.org/x/tools/gopls v0.4.0
+	github.com/josharian/impl v1.0.0
+	golang.org/x/tools v0.0.0-20200831203904-5a2aa26beb65
+	golang.org/x/tools/gopls v0.4.4
 )
