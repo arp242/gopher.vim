@@ -29,7 +29,7 @@ endfun
 " Check if the 'go version' output is a version we support.
 fun! gopher#init#version_check(v) abort
   for l:line in split(a:v, '\n')
-    if l:line !~# '^go version \(devel\|go1\.\d\d\(\.\d\d\?\)\?\) .\+/.\+$'
+    if l:line !~# '^go version \(devel\|go1\.\d\d\(\.\d\d\?\)\?\)\(beta\d\)\? .\+/.\+$'
       continue
     endif
 
