@@ -1,49 +1,15 @@
-" gopher.vim: Various common functions, or functions that don't have a place elsewhere.
+" msg.vim: Various common functions, or functions that don't have a place elsewhere.
 
 " Output an error message to the screen. The message can be either a list or a
 " string; every line will be echomsg'd separately.
-fun! gopher#error(msg, ...) abort
+fun! go#coverage#msg#error(msg, ...) abort
   call s:echo(a:msg, 'ErrorMsg', a:000)
 endfun
 
 " Output an informational message to the screen. The message can be either a
 " list or a string; every line will be echomsg'd separately.
-fun! gopher#info(msg, ...) abort
+fun! go#coverage#msg#info(msg, ...) abort
   call s:echo(a:msg, 'Debug', a:000)
-endfun
-
-" Report if the user enabled the given debug flag.
-fun! gopher#has_debug(flag) abort
-  return index(g:gopher_debug, a:flag) >= 0
-endfun
-
-let s:overriden = 0
-
-" Override vim-go.
-fun! gopher#override_vimgo() abort
-  if s:overriden
-    return
-  end
-
-  let g:go_loaded_install = 1
-  unlet b:did_ftplugin
-  unlet b:current_syntax
-
-  let &rtp = substitute(&rtp, ',[/\\a-zA-Z0-9_.\-]*[/\\]vim-go', '', '')
-
-  au! vim-go
-  au! vim-go-buffer
-  au! vim-go-hi
-
-  let l:comm = map(split(execute('comm Go'), "\n"), { i, v ->
-        \ split(trim(substitute(l:v, '^\!', ' ', '')), ' ')[0]
-        \ })[1:]
-  for l:c in l:comm
-    exe 'delcommand ' . l:c
-  endfor
-
-  let s:overriden = 1
-  edit
 endfun
 
 " Echo a message to the screen and highlight it with the group in a:hi.
@@ -68,7 +34,7 @@ fun! s:echo(msg, hi, ...) abort
 
   exe 'echohl ' . a:hi
   for l:line in l:msg
-    echom 'gopher.vim: ' . l:line
+    echom 'msg.vim: ' . l:line
   endfor
   echohl None
 

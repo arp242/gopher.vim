@@ -1,7 +1,0 @@
-#!/bin/sh
-
-tvim gen-syn ./syntax/testdata/* > ./syntax/go_test.vim
-
-sed -E 's/(Test_)(.*?)/\1all_\2\nlet g:gopher_highlight = ["string-spell", "string-fmt", "fold-block", "fold-import", "fold-pkg-comment", "fold-varconst"]\ntry/' ./syntax/go_test.vim > ./syntax/go_all_test.vim
-
-sed -i 's/^endfun$/finally\n    let gopher_highlight = ["string-spell", "string-fmt"]\nendtry\nendfun/' ./syntax/go_all_test.vim

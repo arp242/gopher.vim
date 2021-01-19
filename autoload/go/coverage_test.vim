@@ -1,5 +1,5 @@
 scriptencoding utf-8
-call gopher#init#config()
+call go#coverage#init#config()
 
 fun! Test_highlight() abort
   let l:in = [
@@ -28,7 +28,7 @@ fun! Test_highlight() abort
   call setline(1, l:in)
   silent w a.go
 
-  call gopher#coverage#do()
+  call go#coverage#do()
 
   let l:want = [
         \ {'group': 'goCoverageCovered', 'priority': 10, 'pos1': [5, 10, 20]},
@@ -44,6 +44,6 @@ fun! Test_highlight() abort
     call Errorf("want: %s\ngot:  %s\n", l:want, l:got)
   endif
 
-  call gopher#coverage#do('clear')
+  call go#coverage#do('clear')
   call assert_equal([], getmatches())
 endfun

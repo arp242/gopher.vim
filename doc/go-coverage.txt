@@ -1,0 +1,54 @@
+go-coverage.txt: plugin to show the coverages for the Go programming language
+
+==============================================================================
+INTRODUCTION                                                     *go-coverage*
+
+go-coverage.vim is a Vim plugin to show the coverages for the Go programming
+language.
+
+This plugin is extracted from
+[gopher.vim](https://github.com/arp242/gopher.vim). See `LICENSE`.
+
+==============================================================================
+COMMANDS                                                *go-coverage-commands*
+
+:GoCoverage [flags]                                              *:GoCoverage*
+        Run `go test -cover` and highlight lines reported as covered and
+        uncovered.
+
+        [flags] are passed to the `go test` command; there are two special
+        flags:
+
+        clear        Clear all existing highlighting.
+        toggle       Toggle display of highlighting.
+
+                                 *hl-goCoverageCovered* *hl-goCoverageUncover*
+        Note: it's impossible to highlight the background with a colour that
+        is guaranteed to work well with all colour schemes. The default is to
+        use something that works well with the default one and – hopefully –
+        most common ones.
+
+        Override the goCoverageCovered and/or goCoverageUncover highlight
+        groups if the defaults don't work well for you.
+>
+                augroup my-go-coverage
+                        au!
+                        au Syntax go hi goCoverageCovered guibg=blue
+                        au Syntax go hi goCoverageUncover guibg=brown
+                augroup end
+<
+
+==============================================================================
+OPTIONS                                                  *go-coverage-options*
+
+General options or options that affect many commands; options specific for
+just a command are documented in the command.
+
+*g:go_coverage_build_tags* = `[]`
+        List of build tags added to all commands that support it.
+
+*g:go_coverage_build_flags* = `['-tags'] + g:go_coverage_build_tags`
+        List of flags to add to all `go` commands.
+
+
+vim:tw=78:ts=8:sts=8:sw=8:ft=help:norl:expandtab
