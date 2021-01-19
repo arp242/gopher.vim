@@ -1,7 +1,7 @@
-if exists('b:did_ftplugin')
+if exists('b:did_go_coverage_ftplugin')
   finish
 endif
-let b:did_ftplugin = 1
+let b:did_go_coverage_ftplugin = 1
 
 call go#coverage#init#config()
 
