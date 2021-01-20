@@ -100,11 +100,11 @@ fun! gopher#coverage#stop() abort
         continue
       endif
 
-      silent exe l:b . 'buf'
+      silent exe l:b . 'sbuf'
       call gopher#coverage#clear_hi()
     endfor
   finally
-    silent exe 'buf ' . l:s
+    silent exe 'sbuf ' . l:s
     let &lazyredraw = l:lz
     let &switchbuf = l:swb
   endtry
@@ -148,13 +148,13 @@ fun! s:apply(profile) abort
         continue
       endif
 
-      silent exe l:b . 'buf'
+      silent exe l:b . 'sbuf'
       for l:cov in get(s:coverage, gopher#go#packagepath(), [])
         call gopher#coverage#_highlight_(l:cov)
       endfor
     endfor
   finally
-    silent exe 'buf ' . l:s
+    silent exe 'sbuf ' . l:s
     let &lazyredraw = l:lz
     let &switchbuf = l:swb
   endtry
