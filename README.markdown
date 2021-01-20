@@ -18,7 +18,7 @@ Installation
 ------------
 
 Installation can be done using the usual methods. You will **need Go 1.11** and
-**Vim 8.1.1705** or **Neovim 0.4.4**. Older versions will *not* work due to
+**Vim 8.1.1803** or **Neovim 0.4.4**. Older versions will *not* work due to
 missing features.
 
 Installation of external tools is done automatically on first usage, but can be
