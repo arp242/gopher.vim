@@ -17,13 +17,9 @@ It currently implements almost everything from vim-go. See
 Installation
 ------------
 
-Installation can be done using the usual methods. You will **need Go 1.11**
-and **Vim 8.0.1630** or **Neovim 0.3.2**. Older versions will *not* work due to
+Installation can be done using the usual methods. You will **need Go 1.11** and
+**Vim 8.1.1705** or **Neovim 0.4.4**. Older versions will *not* work due to
 missing features.
-
-**Vim 8.1.1513** is recommended, mainly for the popup feature, which vastly
-improves the UX for key mappings. [How can I get a newer version of Vim on
-Ubuntu?][new] might be useful.
 
 Installation of external tools is done automatically on first usage, but can be
 done manually with `:GoSetup`.
