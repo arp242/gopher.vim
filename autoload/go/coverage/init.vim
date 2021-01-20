@@ -9,9 +9,10 @@ fun! go#coverage#init#config() abort
   endif
 
   " Set defaults.
-  let g:go_coverage_build_tags     = get(g:, 'go_coverage_build_tags', [])
-  let g:go_coverage_build_flags    = get(g:, 'go_coverage_build_flags', [])
-        \ + (len(g:go_coverage_build_tags) > 0 ? ['-tags', join(g:go_coverage_build_tags, ' ')] : [])
+  let g:go_coverage_highlight      = get(g:, 'go_coverage_highlight', ['string-spell', 'string-fmt'])
+  let g:go_coverage_tag_transform  = get(g:, 'go_coverage_tag_transform', 'snakecase')
+  let g:go_coverage_tag_default    = get(g:, 'go_coverage_tag_default', 'json')
+  let g:go_coverage_tag_complete   = get(g:, 'go_coverage_tag_complete', ['db', 'json', 'json,omitempty', 'yaml'])
 
   let s:config_done = 1
 endfun

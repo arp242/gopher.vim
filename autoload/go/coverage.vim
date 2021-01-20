@@ -211,3 +211,10 @@ fun! s:parse_line(line) abort
         \ 'cnt':       str2nr(l:m[7]),
         \ }
 endfun
+
+" Get a buffer-local b:go_coverage_ setting, falling back to the g: one if it's
+" undefined, and returning a:default if that's undefined too.
+fun! go#coverage#bufsetting(name, default) abort
+  return get(b:, a:name, get(g:, a:name, a:default))
+endfun
+

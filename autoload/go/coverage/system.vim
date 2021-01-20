@@ -1,5 +1,5 @@
 " system.vim: Utilities for working with the external programs and the OS.
-"
+
 " Run an external command.
 "
 " cmd must be a list, one argument per item. Every list entry will be
@@ -53,7 +53,8 @@ fun! go#coverage#system#join(l, ...) abort
     let l:save = &shellslash
     set noshellslash
 
-    return join(map(copy(a:l), { i, v -> shellescape(l:v, a:0 > 0 ? a:1 : '') }), ' ')
+    let l:l = filter(copy(a:l), {_, v -> v isnot v:null })
+    return join(map(l:l, {_, v -> shellescape(l:v, a:0 > 0 ? a:1 : '') }), ' ')
   finally
     let &shellslash = l:save
   endtry
