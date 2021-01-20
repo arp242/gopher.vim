@@ -7,7 +7,7 @@ fun! go#coverage#go#package() abort
     if l:out[0] is# '_' || go#coverage#str#has_suffix(l:out, 'cannot import absolute path')
       let l:out = 'cannot determine module path (outside GOPATH, no go.mod)'
     endif
-    call go#msg#error(l:out)
+    call go#coverage#msg#error(l:out)
     return ''
   endif
 
@@ -31,7 +31,7 @@ fun! go#coverage#go#add_build_tags(flag_list) abort
   endif
 
   if type(a:flag_list) isnot v:t_list
-    call go#msg#error('add_build_tags: not a list: %s', a:flag_list)
+    call go#coverage#msg#error('add_build_tags: not a list: %s', a:flag_list)
     return a:flag_list
   endif
 
