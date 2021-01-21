@@ -15,14 +15,16 @@ fun! s:hi() abort
 endfun
 call s:hi()
 
+" Highlights added with matchadd() are set on the window, and not the buffer. So
+" when switching windows we need to clear and reset this.
 fun! s:au() abort
   augroup gopher.vim-coverage
     au!
     au ColorScheme *    call s:hi()
-    au BufWinLeave *.go call gopher#coverage#clear_hi()
+    au BufWinLeave *.go call gopher#coverage#clear_hi(0)
     au BufWinEnter *.go
           \  for s:cov in get(s:coverage, gopher#go#packagepath(), [])
-          \|   call gopher#coverage#_highlight_(s:cov)
+          \|   call gopher#coverage#_highlight_(0, s:cov)
           \| endfor
   augroup end
 endfun
@@ -70,11 +72,20 @@ fun! gopher#coverage#is_visible() abort
   return s:visible
 endfun
 
-" Clear any existing highlights for the current buffer.
-fun! gopher#coverage#clear_hi() abort
-  for l:m in getmatches()
+" Clear any existing highlights for the given window ID, or the current window
+" if 0.
+fun! gopher#coverage#clear_hi(winid) abort
+  let l:winid = a:winid is 0 ? win_getid() : a:winid
+
+  " The current buffer is different from the buffer being unloaded; this
+  " probably means we closed a tab, and we don't need to do anything.
+  if expand('<afile>') isnot# expand('%')
+    return
+  endif
+
+  for l:m in getmatches(l:winid)
     if l:m.group is# 'goCoverageCovered' || l:m.group is# 'goCoverageUncover'
-      call matchdelete(l:m.id)
+      call matchdelete(l:m.id, l:winid)
     endif
   endfor
 endfun
@@ -85,32 +96,12 @@ fun! gopher#coverage#stop() abort
   let s:coverage = {}
   silent! au! gopher-coverage
 
-  call gopher#coverage#clear_hi()
-
-  " TODO: Not sure why gopher#buf#doall() doesn't work here?
-  let l:s = bufnr('%')
-  let l:lz = &lazyredraw
-  let l:swb = &switchbuf
-  try
-    set lazyredraw
-    set switchbuf=useopen,usetab,newtab
-
-    for l:b in gopher#buf#list()
-      if l:b is l:s || !bufloaded(l:b)
-        continue
-      endif
-
-      silent exe l:b . 'sbuf'
-      call gopher#coverage#clear_hi()
-    endfor
-  finally
-    silent exe 'sbuf ' . l:s
-    let &lazyredraw = l:lz
-    let &switchbuf = l:swb
-  endtry
+  for l:w in gopher#win#list()
+    call gopher#coverage#clear_hi(l:w)
+  endfor
 endfun
 
-" Read the coverprofile file and annotate all loaded buffers.
+" Read the coverprofile file and annotate all loaded windows.
 fun! s:apply(profile) abort
   let l:path = gopher#go#packagepath()
   if l:path is# ''
@@ -121,47 +112,27 @@ fun! s:apply(profile) abort
   let s:visible = 1
   let s:coverage = {}  " Script-local so it can be accessed from autocmd.
 
+  " Split coverage per-file.
   for l:line in a:profile[1:]
     let l:cov = s:parse_line(l:line)
-
-    if l:path is# l:cov.file
-      call gopher#coverage#_highlight_(l:cov)
-      "continue
-    endif
-
-    " Highlight other buffers later to prevent switching back and forth.
     if get(s:coverage, l:cov.file) is 0
       let s:coverage[l:cov.file] = []
     endif
     call add(s:coverage[l:cov.file], l:cov)
   endfor
 
-  " Highlight all the other buffers.
-  let l:s = bufnr('%')
-  let l:lz = &lazyredraw
-  let l:swb = &switchbuf
-  try
-    set lazyredraw
-    set switchbuf=useopen,usetab,newtab
-    for l:b in gopher#buf#list()
-      if l:b is l:s || !bufloaded(l:b)
-        continue
-      endif
-
-      silent exe l:b . 'sbuf'
-      for l:cov in get(s:coverage, gopher#go#packagepath(), [])
-        call gopher#coverage#_highlight_(l:cov)
-      endfor
+  " Highlight all windows.
+  for l:w in gopher#win#list()
+    for l:cov in get(s:coverage, gopher#go#packagepath(), [])
+      call gopher#coverage#_highlight_(l:w, l:cov)
     endfor
-  finally
-    silent exe 'sbuf ' . l:s
-    let &lazyredraw = l:lz
-    let &switchbuf = l:swb
-  endtry
+  endfor
 endfun
 
-" Highlight the buffer described in cov.
-fun! gopher#coverage#_highlight_(cov) abort
+" Highlight the window ID as described in cov.
+fun! gopher#coverage#_highlight_(winid, cov) abort
+  let l:winid = {'window': a:winid is 0 ? win_getid() : a:winid}
+
   let l:color = 'goCoverageCovered'
   if a:cov.cnt is 0
     let l:color = 'goCoverageUncover'
@@ -178,23 +149,25 @@ fun! gopher#coverage#_highlight_(cov) abort
   if a:cov.startline is# a:cov.endline
     call matchaddpos(l:color, [[a:cov.startline,
           \ l:startcol,
-          \ a:cov.endcol - a:cov.startcol]])
+          \ a:cov.endcol - a:cov.startcol]],
+          \ 10, -1, l:winid)
     return
   endif
 
   " First line.
   call matchaddpos(l:color, [[a:cov.startline, l:startcol,
-        \ len(getline(a:cov.startline)) - l:startcol]])
+        \ len(getline(a:cov.startline)) - l:startcol]],
+        \ 10, -1, l:winid)
 
   " Fill lines in between.
   let l:l = a:cov.startline
   while l:l < a:cov.endline
     let l:l += 1
-    call matchaddpos(l:color, [l:l])
+    call matchaddpos(l:color, [l:l], 10, -1, l:winid)
   endwhile
 
   " Last line.
-  call matchaddpos(l:color, [[a:cov.endline, a:cov.endcol - 1]])
+  call matchaddpos(l:color, [[a:cov.endline, a:cov.endcol - 1]], 10, -1, l:winid)
 endfun
 
 " Parses a single line in to a more readable dict.
