@@ -21,8 +21,6 @@ fun! s:au() abort
   augroup gopher.vim-coverage
     au!
     au ColorScheme *    call s:hi()
-    " TODO: when closing tab then cur window will be the new window?
-    " NOTE: When this autocommand is executed, the current buffer "%" may be different from the buffer being unloaded "<afile>".
     au BufWinLeave *.go call gopher#coverage#clear_hi(0)
     au BufWinEnter *.go
           \  for s:cov in get(s:coverage, gopher#go#packagepath(), [])
@@ -78,6 +76,12 @@ endfun
 " if 0.
 fun! gopher#coverage#clear_hi(winid) abort
   let l:winid = a:winid is 0 ? win_getid() : a:winid
+
+  " The current buffer is different from the buffer being unloaded; this
+  " probably means we closed a tab, and we don't need to do anything.
+  if expand('<afile>') isnot# expand('%')
+    return
+  endif
 
   for l:m in getmatches(l:winid)
     if l:m.group is# 'goCoverageCovered' || l:m.group is# 'goCoverageUncover'
