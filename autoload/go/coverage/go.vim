@@ -11,7 +11,11 @@ fun! go#coverage#go#module() abort
     if l:err
       return [-1, -1]
     endif
-    return split(l:out, "\x01")
+    let l:out_list = split(l:out, "\x01")
+    if len(l:out_list) != 2
+      return [-1, -1]
+    endif
+    return l:out_list
   finally
     call chdir(l:wd)
   endtry

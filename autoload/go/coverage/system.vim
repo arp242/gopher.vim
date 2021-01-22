@@ -8,10 +8,12 @@
 " An optional second argument is passed to stdin.
 fun! go#coverage#system#run(cmd, ...) abort
   if type(a:cmd) isnot v:t_list
-    return go#coverage#error('go#coverage#system#run: must pass a list')
+    call go#coverage#msg#error('go#coverage#system#run: must pass a list')
+    return ['', 1]
   endif
   if len(a:000) > 1
-    return go#coverage#error('go#coverage#system#run: can only pass one optional argument')
+    call go#coverage#msg#error('go#coverage#system#run: can only pass one optional argument')
+    return ['', 1]
   endif
 
   let l:cmd = go#coverage#system#join(go#coverage#system#sanitize_cmd(a:cmd))
