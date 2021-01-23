@@ -34,7 +34,7 @@ fun! s:echo(msg, hi, ...) abort
 
   exe 'echohl ' . a:hi
   for l:line in l:msg
-    echom 'msg.vim: ' . l:line
+    echom 'go-coverage: ' . l:line
   endfor
   echohl None
 
