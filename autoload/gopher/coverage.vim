@@ -79,7 +79,7 @@ fun! gopher#coverage#clear_hi(winid) abort
 
   " The current buffer is different from the buffer being unloaded; this
   " probably means we closed a tab, and we don't need to do anything.
-  if expand('<afile>') isnot# expand('%')
+  if !!expand('<afile>') && expand('<afile>') isnot# expand('%')
     return
   endif
 
