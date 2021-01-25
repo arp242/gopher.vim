@@ -37,6 +37,7 @@ fun! Test_highlight() abort
         \ {'group': 'goCoverageCovered', 'priority': 10, 'pos1': [8]},
         \ {'group': 'goCoverageCovered', 'priority': 10, 'pos1': [9]},
         \ {'group': 'goCoverageCovered', 'priority': 10, 'pos1': [9, 1, 1]}]
+
   " Remove id as it's not stable.
   let l:got = map(getmatches(), {i, v -> remove(l:v, 'id') is '' ? {} : l:v })
 

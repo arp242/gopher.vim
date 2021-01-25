@@ -94,7 +94,7 @@ endfun
 fun! gopher#coverage#stop() abort
   let s:visible = 0
   let s:coverage = {}
-  silent! au! gopher-coverage
+  silent! au! gopher.vim-coverage
 
   for l:w in gopher#win#list()
     call gopher#coverage#clear_hi(l:w)
