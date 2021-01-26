@@ -77,12 +77,6 @@ endfun
 fun! gopher#coverage#clear_hi(winid) abort
   let l:winid = a:winid is 0 ? win_getid() : a:winid
 
-  " The current buffer is different from the buffer being unloaded; this
-  " probably means we closed a tab, and we don't need to do anything.
-  if expand('<afile>') isnot# expand('%')
-    return
-  endif
-
   for l:m in getmatches(l:winid)
     if l:m.group is# 'goCoverageCovered' || l:m.group is# 'goCoverageUncover'
       call matchdelete(l:m.id, l:winid)
