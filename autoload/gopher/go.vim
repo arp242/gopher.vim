@@ -27,7 +27,7 @@ fun! gopher#go#module() abort
   let l:wd = getcwd()
 
   try
-    call chdir(expand('%:h'))
+    call gopher#system#cd(expand('%:h'))
     let [l:out, l:err] = gopher#system#run(['go', 'list', '-m', '-f',
           \ "{{.Path}}\x01{{.Dir}}"])
     if l:err
@@ -35,7 +35,7 @@ fun! gopher#go#module() abort
     endif
     return split(l:out, "\x01")
   finally
-    call chdir(l:wd)
+    call gopher#system#cd(l:wd)
   endtry
 endfun
 
