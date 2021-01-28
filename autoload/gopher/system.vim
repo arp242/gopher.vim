@@ -500,7 +500,7 @@ fun! gopher#system#closest(name) abort
 endfun
 
 " Change the current directory to path.
-fun! gophor#system#cd(path) abort
+fun! gopher#system#cd(path) abort
   if exists('*chdir')
     call chdir(a:path)
   else
