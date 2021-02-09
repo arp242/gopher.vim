@@ -1,0 +1,8 @@
+:GoCoverage	go-coverage.txt	/*:GoCoverage*
+g:go_coverage_build_flags	go-coverage.txt	/*g:go_coverage_build_flags*
+g:go_coverage_build_tags	go-coverage.txt	/*g:go_coverage_build_tags*
+go-coverage	go-coverage.txt	/*go-coverage*
+go-coverage-commands	go-coverage.txt	/*go-coverage-commands*
+go-coverage-options	go-coverage.txt	/*go-coverage-options*
+hl-goCoverageCovered	go-coverage.txt	/*hl-goCoverageCovered*
+hl-goCoverageUncover	go-coverage.txt	/*hl-goCoverageUncover*
