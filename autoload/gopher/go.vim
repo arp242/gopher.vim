@@ -33,10 +33,22 @@ fun! gopher#go#module() abort
     if l:err
       return [-1, -1]
     endif
-    return split(l:out, "\x01")
+    let l:s = split(l:out, "\x01")
+    if len(l:s) isnot# 2
+      return [-1, -1]
+    endif
+    return l:s
   finally
     call chdir(l:wd)
   endtry
+endfun
+
+" Strip version (/v2, /v3 etc.) from a package name.
+"
+"   example.com/pkg/v3 → example.com/pkg
+"   example.com/pkg    → example.com/pkg
+fun! gopher#go#remove_version(pkg) abort
+  return substitute(a:pkg, '/v\d\+$', '', '')
 endfun
 
 " Get the package path for the file in the current buffer.
@@ -130,7 +142,7 @@ fun! gopher#go#set_build_package() abort
     return
   endif
 
-  let l:name = fnamemodify(l:module, ':t')
+  let l:name = fnamemodify(gopher#go#remove_version(l:module), ':t')
   let l:pkg  = l:module  . '/cmd/' . l:name
   let l:path = l:modpath . '/cmd/' . l:name
 
