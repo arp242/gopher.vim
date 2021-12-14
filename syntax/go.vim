@@ -70,11 +70,11 @@ syn keyword     goBuiltins  make new panic print println real recover
 
 " Comment blocks.
 syn keyword     goTodo      contained TODO FIXME XXX BUG
-syn region      goComment   start="//" end="$"    contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell
+syn region      goComment   start="//" end="$"    contains=goCompilerDir,goGenerate,goBuild,goDirectiveError,goBuildTag,goTodo,@Spell
 
 if s:has('fold-comment')
   syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell fold
-  syn match     goComment   "\v%(^\s*//.*\n)+"    contains=goCompilerDir,goGenerate,goDirectiveError,goBuildTag,goTodo,@Spell fold
+  syn match     goComment   "\v%(^\s*//.*\n)+"    contains=goCompilerDir,goGenerate,goBuild,goDirectiveError,goBuildTag,goTodo,@Spell fold
 else
   syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell
 endif
@@ -84,12 +84,17 @@ syn match       goGenerateKW      display contained /go:generate/
 syn match       goGenerateVars    contained /\v\$(GOARCH|GOOS|GOFILE|GOLINE|GOPACKAGE|DOLLAR)/
 syn region      goGenerate        excludenl contained matchgroup=goGenerateKW start="^//go:generate" end=/$/ contains=goGenerateVars,goGenerateKW
 
+" go:build
+syn match       goBuildKW      display contained /go:build/
+syn match       goBuildSpecial contained /\vgo1\.\d{1,2}/
+syn region      goBuild        excludenl contained matchgroup=goBuildKW start="^//go:build" end=/$/ contains=goBuildKW
+
 " Compiler directives.
 " https://golang.org/cmd/compile/#hdr-Compiler_Directives
 " pragmaValue in cmd/compile/internal/gc/lex.go
 " TODO: //go:linkname localname importpath.name
 " TODO: support line directives.
-syn match       goCompilerDir     excludenl display contained "\v^//go:%(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap)$"
+syn match       goCompilerDir     excludenl display contained "\v^//go:%(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap|embed .*)$"
 
 " Adding a space between the // and go: is an error.
 syn match      goDirectiveError  excludenl contained "^// go:.\+$"
@@ -145,6 +150,8 @@ endif
 " Structs and struct tags.
 " TODO: also highlight attributes: 'omitempty' in `json:"foo,omitempty"`
 " TODO: also highlight lack of quote, and attr space error: `json:foo, omitempty`
+" " TODO: doesn't work if there's a comment:
+" Role          string       `db:"role" json:"-"` // TODO: unused
 syn region      goStruct          start=/struct \?{/ end=/}/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock
 syn match       goStructTag       / `.*`$/ contained containedin=goStruct
 syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2 contained containedin=goStructTag
@@ -275,6 +282,9 @@ hi def link goTodo                Todo
 
 hi def link goGenerateKW          Special
 hi def link goGenerateVars        Special
+
+hi def link goBuildKW             Special
+hi def link goBuildSpecial        Special
 
 hi def link goCompilerDir         Special
 hi def link goDirectiveError      Error

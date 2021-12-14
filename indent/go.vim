@@ -10,29 +10,37 @@ if exists('*GoIndent')
   finish
 endif
 
+" TODO: this will de-indent if you insert a ":" on the second line:
+"
+"   gctest.StoreHits(ctx, t, false,
+"       goatcounter.Hit{Site: sID, Path: "/test", CreatedAt: now},
+"   )
+
 fun! GoIndent(n) abort
-  let l:pn = prevnonblank(a:n - 1)
-  if l:pn is 0  " Top of file.
+  let pn = prevnonblank(a:n - 1)
+  if pn is 0  " Top of file.
     return 0
   endif
 
   " Grab the previous and current line, stripping comments and whitespace.
-  let l:pline = trim(substitute(getline(l:pn), '//.*$', '', ''))
-  let l:line = trim(substitute(getline(a:n), '//.*$', '', ''))
-  let l:indent = indent(l:pn)
-  let l:ppn = prevnonblank(a:n - 2)
-  if l:ppn > 0
-    let l:ppline = trim(substitute(getline(l:ppn), '//.*$', '', ''))
+  let pline  = trim(substitute(getline(pn), '//.*$', '', ''))
+  let line   = trim(substitute(getline(a:n), '//.*$', '', ''))
+
+  " Start with the indentation of the previous (non-blank) line.
+  let indent = indent(pn)
+  let ppn = prevnonblank(a:n - 2)
+  if ppn > 0
+    let ppline = trim(substitute(getline(ppn), '//.*$', '', ''))
   endif
 
   " Opened a ( or { block; indent except if we already indented extra because of
   " a multi-line block.
-  if l:pline =~# '[({]$' && (l:ppn is 0 || l:ppline !~# '[+\-*/%&|^<>=!.]$')
-    let l:indent += shiftwidth()
+  if pline =~# '[({]$' && (ppn is 0 || ppline !~# '[+\-*/%&|^<>=!.]$')
+    let indent += shiftwidth()
 
   " Part of a switch statement.
-  elseif l:pline =~# '^\(case .\+\|default\):$'
-    let l:indent += shiftwidth()
+  elseif pline =~# '^\(case .\+\|default\):$'
+    let indent += shiftwidth()
 
   " Function invocation split over multiple lines.
   " \h        Head of word
@@ -45,32 +53,32 @@ fun! GoIndent(n) abort
 
   " TODO: two conditions as I think that will be faster, but need to benchmark it!
   " TODO: #21, 2nd comment
-  " elseif l:pline[len(l:pline) - 1] is# ',' && l:pline =~# '\h\w*(.*[^)],$'
-  "   let l:indent += shiftwidth()
+  " elseif pline[len(pline) - 1] is# ',' && pline =~# '\h\w*(.*[^)],$'
+  "   let indent += shiftwidth()
 
   " Ended with an operator.
-  elseif l:pline =~# '[+\-*/%&|^<>=!.]$' && (l:ppn is 0 || l:ppline !~# '[+\-*/%&|^<>=!.]$')
-    let l:indent += shiftwidth()
+  elseif pline =~# '[+\-*/%&|^<>=!.]$' && (ppn is 0 || ppline !~# '[+\-*/%&|^<>=!.]$')
+    let indent += shiftwidth()
   endif
 
   " Closed a block.
-  if l:line =~# '^[)}]'
-    let l:indent -= shiftwidth()
+  if line =~# '^[)}]'
+    let indent -= shiftwidth()
 
   " Closed function call that was extra indented.
-  elseif l:pline[len(l:pline) - 1] is# ')' && (l:ppline[len(l:ppline) - 1] is# ',' || l:ppline[len(l:ppline) - 1] is# '(')
-    let l:indent -= shiftwidth()
+  elseif pline[len(pline) - 1] is# ')' && (ppline[len(ppline) - 1] is# ',' || ppline[len(ppline) - 1] is# '(')
+    let indent -= shiftwidth()
 
   " Label
   " TODO: Breaks struct fields, see #21, 1st comment
-  " elseif l:line =~# '^\k\+:$'
-  "   let l:indent -= shiftwidth()
+  " elseif line =~# '^\k\+:$'
+  "   let indent -= shiftwidth()
 
   " Switch case.
-  elseif l:line =~# '^\(case .*\|default\):$'
-    let l:indent -= shiftwidth()
+  elseif line =~# '^\(case .*\|default\):$'
+    let indent -= shiftwidth()
 
   endif
 
-  return l:indent
+  return indent
 endfun

@@ -9,6 +9,6 @@ require (
 	github.com/fatih/gomodifytags v1.16.0
 	github.com/fatih/motion v1.1.0
 	github.com/josharian/impl v1.1.0
-	golang.org/x/tools v0.1.7
-	golang.org/x/tools/gopls v0.7.2
+	golang.org/x/tools v0.1.8
+	golang.org/x/tools/gopls v0.7.3
 )
