@@ -56,7 +56,7 @@ hi def link     goImaginary  Number
 
 " Token groups
 syn cluster     gotplLiteral     contains=goString,goRawString,goCharacter,@goInt,goFloat,goImaginary
-syn keyword     gotplControl     contained   if else end range with template
+syn keyword     gotplControl     contained   if else end range with template break continue
 syn keyword     gotplFunctions   contained   and html index js len not or print printf println urlquery eq ne lt le gt ge
 syn match       gotplVariable    contained   /\$[a-zA-Z0-9_]*\>/
 syn match       goTplIdentifier  contained   /\.[^\s}]+\>/
