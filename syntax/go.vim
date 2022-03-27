@@ -65,6 +65,7 @@ syn keyword     goBoolean      true false nil iota
 " Predefined types.
 syn keyword     goType      chan map bool string error float32 float64 complex64 complex128
 syn keyword     goType      int int8 int16 int32 int64 rune byte uint uint8 uint16 uint32 uint64 uintptr
+syn keyword     goType      any comparable
 syn keyword     goBuiltins  append cap close complex copy delete imag len
 syn keyword     goBuiltins  make new panic print println real recover
 
