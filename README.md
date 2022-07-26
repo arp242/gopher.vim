@@ -1,7 +1,3 @@
-[![This project is considered stable](https://img.shields.io/badge/Status-stable-green.svg)](https://arp242.net/status/stable)
-[![Build Status](https://travis-ci.org/arp242/gopher.vim.svg?branch=master)](https://travis-ci.org/arp242/gopher.vim)
-[![codecov](https://codecov.io/gh/arp242/gopher.vim/branch/master/graph/badge.svg)](https://codecov.io/gh/arp242/gopher.vim)
-
 gopher.vim is a Vim plugin for the Go programming language.
 
 The idea is to to provide a "light-weight" experience by off-loading
