@@ -28,7 +28,7 @@ syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
 " closing, so everything is highlighted as a string.
 "
 " I'm not sure if there's a better solution for this.
-syn sync minlines=200
+syn sync minlines=500
 
 
 " Keywords.
