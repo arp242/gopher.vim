@@ -15,8 +15,8 @@ fun! gopher#init#version() abort
   let l:v = system('go version')
   if v:shell_error > 0
     let l:msg = "Go doesn't seem installed correctly? 'go version' failed with:\n" . l:v
-  else
-      let l:msg = gopher#init#version_check(l:v)
+  " else
+  "     let l:msg = gopher#init#version_check(l:v)
   endif
 
   if l:msg isnot# ''
@@ -29,7 +29,7 @@ endfun
 " Check if the 'go version' output is a version we support.
 fun! gopher#init#version_check(v) abort
   for l:line in split(a:v, '\n')
-    if l:line !~# '^go version \(devel\|go1\.\d\d\(\.\d\d\?\)\?\)\(beta\d\)\? .\+/.\+$'
+    if l:line !~# '^go version \(devel\|go1\.\d\d\(\.\d\d\?\)\?\)\(beta\d\|rc\d\)\? .\+/.\+$'
       continue
     endif
 
