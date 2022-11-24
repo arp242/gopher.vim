@@ -8,7 +8,7 @@ require (
 	github.com/davidrjenni/reftools v0.0.0-20210213085015-40322ffdc2e4
 	github.com/fatih/gomodifytags v1.16.0
 	github.com/fatih/motion v1.1.0
-	github.com/josharian/impl v1.1.0
-	golang.org/x/tools v0.1.12-0.20220713141851-7464a5a40219
-	golang.org/x/tools/gopls v0.9.1
+	github.com/josharian/impl v1.2.0
+	golang.org/x/tools v0.2.1-0.20221101170700-b5bc717366b2
+	golang.org/x/tools/gopls v0.10.1
 )

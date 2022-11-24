@@ -13,5 +13,5 @@ compiler go
 augroup gopher.vim
   au!
 
-  au BufEnter go.mod call gopher#go#set_build_package()
+  au BufEnter go.work call gopher#go#set_build_package()
 augroup end

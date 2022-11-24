@@ -243,9 +243,9 @@ go~
         Note: you will need to reload the syntax file with `:set syntax=go`
         for changes to take effect when changing it at runtime.
 
-                                                                    *ft-gomod*
-gomod~
-                        go.mod file; there are no options.
+                                                        *ft-gomod* *ft-gowork*
+gomod gowork~
+                        go.mod and go.work files; there are no options.
 
                                                                 *ft-gopresent*
 gopresent~

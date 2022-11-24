@@ -4,6 +4,7 @@ au BufRead,BufNewFile *.gohtml set filetype=gohtml.html
 au BufRead,BufNewFile *.gotxt  set filetype=gotxt
 au BufRead,BufNewFile *.slide  set filetype=gopresent
 au BufRead,BufNewFile go.mod   call s:gomod()
+au BufRead,BufNewFile go.work  setl filetype=gowork fileencoding=utf-8 fileformat=unix
 
 " These settings are global, but we want to override them when reading Go files,
 " as they're always UTF-8.
@@ -31,7 +32,7 @@ au BufReadPost *.go let &fileformats = s:ffs | let &fileencodings = s:fencs
 fun! s:gomod()
   for l:i in range(1, line('$'))
     if getline(l:i) =~# '^go 1\.\d\+'
-      unlet b:did_ftplugin
+      silent! unlet b:did_ftplugin
       set ft=gomod
       setl fileencoding=utf-8 fileformat=unix
       break
