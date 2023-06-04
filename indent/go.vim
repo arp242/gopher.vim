@@ -4,7 +4,7 @@ endif
 let b:did_indent = 1
 
 " Vim's C indentation doesn't work (mainly due to :=) so define out own.
-setlocal nolisp autoindent indentexpr=GoIndent(v:lnum) indentkeys+=<:>,0=},0=)
+setlocal nolisp autoindent indentexpr=GoIndent(v:lnum) indentkeys+=0=},0=)
 
 if exists('*GoIndent')
   finish

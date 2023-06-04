@@ -154,6 +154,10 @@ endfun
 "   if err := e(); err != nil {
 "
 " This works for all variables, not just error checks.
+"
+" TODO: also make this work for switches:
+"
+" switch cmd, err := f.ShiftCommand("help", "collect", "logs", "serve"); cmd {
 fun! gopher#frob#if() abort
   let l:line = getline('.')
   if match(l:line, 'if ') is -1
