@@ -4,7 +4,7 @@ endif
 
 syntax case match
 
-syn keyword     gomodKeywords     module require exclude replace toolchain
+syn keyword     gomodKeywords     module require exclude replace retract toolchain
 syn match       gomodKeywords     /^go/
 syn region      gomodComment      start="//" end=/$/ contains=@Spell
 syn match       gomodIndirect     " // indirect$"
