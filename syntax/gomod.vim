@@ -4,11 +4,11 @@ endif
 
 syntax case match
 
-syn keyword     gomodKeywords     module require exclude replace
+syn keyword     gomodKeywords     module require exclude replace toolchain
 syn match       gomodKeywords     /^go/
 syn region      gomodComment      start="//" end=/$/ contains=@Spell
 syn match       gomodIndirect     " // indirect$"
-syn match       gomodReplace      /=>/  " original => replace
+syn match       gomodReplace      /=>/
 
 " Semver as 'v1.1.1' and versions as 'v.0.0.0-date-commit'.
 syn match       gomodVersion      /\vv\d+\.\d+\.\d+(-\d{14}-[0-9a-f]{12})?%(\+incompatible)?/
