@@ -499,5 +499,14 @@ fun! gopher#system#closest(name) abort
   endwhile
 endfun
 
+" Change the current directory to path.
+fun! gopher#system#cd(path) abort
+  if exists('*chdir')
+    call chdir(a:path)
+  else
+    silent execute 'lcd' fnameescape(a:path)
+  endif
+endfun
+
 
 call s:init()  " At end so entire file is parsed.
