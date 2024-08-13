@@ -114,8 +114,7 @@ A list of useful companion plugins; this is not an exhaustive list, but rather a
 "most useful" list. For many alternatives exist as well; I didn't test all
 options.
 
-See [PLUGINS.markdown](PLUGINS.markdown) for some configuration hints for
-various plugins.
+See [PLUGINS.md](PLUGINS.md) for some configuration hints for various plugins.
 
 - [vim-lsc](https://github.com/natebosch/vim-lsc) – LSP client.
   Alternatives:
