@@ -4,7 +4,7 @@ endif
 
 syntax case match
 
-syn match       gomodKeywords     /\v^%(go|module|require|exclude|replace|retract|toolchain|godebug)/
+syn match       gomodKeywords     /\v^%(go|module|require|exclude|replace|retract|toolchain|godebug|tool)/
 syn region      gomodComment      start="//" end=/$/ contains=@Spell
 syn match       gomodIndirect     " // indirect$"
 syn match       gomodReplace      /=>/
