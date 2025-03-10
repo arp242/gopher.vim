@@ -370,13 +370,17 @@ endfun
 " Join a list of commands to a string, escaping any shell meta characters.
 fun! gopher#system#join(l, ...) abort
   try
-    let l:save = &shellslash
-    set noshellslash
+    if has('+shellslash')  " NeoVim will error setting shellslash on non-Windows
+      let l:save = &shellslash
+      set noshellslash
+    endif
 
     let l:l = filter(copy(a:l), {_, v -> v isnot v:null })
     return join(map(l:l, {_, v -> shellescape(l:v, a:0 > 0 ? a:1 : '') }), ' ')
   finally
-    let &shellslash = l:save
+    if exists('+shellslash')
+      let &shellslash = l:save
+    endif
   endtry
 endfun
 
