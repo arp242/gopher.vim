@@ -6,7 +6,8 @@ let s:save_cpo = &cpoptions
 set cpoptions-=C
 
 " CompilerSet makeprg=golangci-lint
-let &l:makeprg = 'golangci-lint run --out-format tab'
+"let &l:makeprg = 'golangci-lint run --out-format tab'
+let &l:makeprg = 'staticcheck ./...'
 if len(get(g:, 'gopher_build_tags', [])) > 0
   let &l:makeprg .= printf(' --build-tags "%s"', join(gopher#bufsetting('gopher_build_tags', []) ' '))
 endif
