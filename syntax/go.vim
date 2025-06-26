@@ -149,14 +149,12 @@ else
 endif
 
 " Structs and struct tags.
-" TODO: also highlight attributes: 'omitempty' in `json:"foo,omitempty"`
 " TODO: also highlight lack of quote, and attr space error: `json:foo, omitempty`
-" " TODO: doesn't work if there's a comment:
-" Role          string       `db:"role" json:"-"` // TODO: unused
 syn region      goStruct          start=/struct \?{/ end=/}/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock
-syn match       goStructTag       / `.*`$/ contained containedin=goStruct
-syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2 contained containedin=goStructTag
-syn match       goStructTagName   /\w\{-1,}:\ze"/ contained containedin=goStruct,goStructTag
+syn match       goStructTag       / `.*`\%(\s\|$\)/          contained containedin=goStruct
+syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2     contained containedin=goStructTag
+syn match       goStructTagName   /\w\{-1,}:\ze"/            contained containedin=goStruct,goStructTag
+syn match       goStructTagOpt    /,\zs[^,"]\+/              contained containedin=goStructTag
 
 if s:has('string-fmt')
   " TODO: this is a bit slow, but can't seem ot make it faster. Not sure if it's
@@ -311,7 +309,8 @@ hi def link goFormatSpecifier     goSpecialString
 hi def link goString              String
 hi def link goRawString           String
 hi def link goStructTag           goRawString
-hi def link goStructTagName       Keyword
+hi def link goStructTagName       Type
+hi def link goStructTagOpt        goSpecialString
 hi def link goStructTagError      Error
 
 hi def link goCharacter           Character

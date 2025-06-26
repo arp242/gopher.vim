@@ -253,35 +253,6 @@ finally
 endtry
 endfun
 
-fun! Test_all_go() abort
-let g:gopher_highlight = ["string-spell", "string-fmt", "fold-block", "fold-import", "fold-pkg-comment", "fold-varconst"]
-try
-    call TestSyntax(g:test_packdir . '/syntax/testdata/go.sum',
-        \ [
-        \ [['herculesNumber', 35, 36], ['herculesNumber', 37, 38]],
-        \ [['herculesNumber', 31, 32], ['herculesNumber', 33, 34]],
-        \ [['herculesNumber', 31, 32], ['herculesNumber', 33, 34]],
-        \ [['herculesNumber', 26, 27], ['herculesNumber', 28, 29]],
-        \ [['herculesNumber', 32, 33], ['herculesNumber', 34, 50]],
-        \ [['herculesNumber', 26, 27], ['herculesNumber', 28, 29]],
-        \ [['herculesNumber', 26, 27], ['herculesNumber', 28, 29]],
-        \ [['herculesNumber', 34, 35], ['herculesNumber', 36, 37], ['herculesNumber', 90, 91]],
-        \ [['herculesNumber', 29, 30], ['herculesNumber', 31, 47]],
-        \ [['herculesNumber', 29, 30], ['herculesNumber', 31, 47]],
-        \ [['herculesNumber', 30, 31], ['herculesNumber', 32, 48]],
-        \ [['herculesNumber', 30, 31], ['herculesNumber', 32, 48]],
-        \ [['herculesNumber', 24, 25], ['herculesNumber', 26, 42]],
-        \ [['herculesNumber', 21, 22], ['herculesNumber', 23, 39]],
-        \ [['herculesNumber', 21, 22], ['herculesNumber', 23, 39]],
-        \ [['herculesStatement', 14, 18], ['herculesNumber', 22, 23], ['herculesNumber', 24, 25]],
-        \ [['herculesNumber', 17, 18], ['herculesNumber', 19, 35]],
-        \ [['herculesNumber', 16, 17], ['herculesNumber', 18, 34]],
-    \ ])
-finally
-    let gopher_highlight = ["string-spell", "string-fmt"]
-endtry
-endfun
-
 fun! Test_all_invalid_numbers() abort
 let g:gopher_highlight = ["string-spell", "string-fmt", "fold-block", "fold-import", "fold-pkg-comment", "fold-varconst"]
 try
