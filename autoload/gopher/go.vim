@@ -127,7 +127,7 @@ endfun
 
 " Set b:gopher_build_package to ./cmd/[module-name] if it exists.
 fun! gopher#go#set_build_package() abort
-  if &buftype isnot# '' || &filetype isnot# 'go'
+  if !(&buftype ==# '' || &filetype ==# 'go' || &filetype ==# 'gohtml.html' || &filetype ==# 'gotxt')
     return
   endif
 
