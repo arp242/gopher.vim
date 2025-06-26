@@ -1,17 +1,10 @@
 if exists(':GoDef') >= 2
-  if get(g:, 'gopher_override_vimgo', 0)
-    call gopher#override_vimgo()
-  else
-    echohl Error
-    echom 'It looks like vim-go is installed; running both vim-go and gopher.vim will not'
-    echom 'work well, so GOPHER.VIM WILL NOT LOAD.'
-    echom 'Add this to your vimrc to override vim-go:'
-    echom '   let g:gopher_override_vimgo = 1'
-    echom 'This is only recommended for testing/experimenting.'
-    echohl None
-    sleep 2
-    finish
-  endif
+  echohl Error
+  echom 'It looks like vim-go is installed; running both vim-go and gopher.vim will not'
+  echom 'work well, so GOPHER.VIM WILL NOT LOAD.'
+  echohl None
+  sleep 2
+  finish
 endif
 
 if exists('b:did_ftplugin')

@@ -22,9 +22,6 @@ Various common functions, or functions that don't have a place elsewhere.
       Get a buffer-local b:gopher_ setting, falling back to the g: one if it's
       undefined, and returning a:default if that's undefined too.
 
-    gopher#override_vimgo()
-      Override vim-go.
-
 
 [coverage.vim](autoload/gopher/coverage.vim)
 --------------------------------------------

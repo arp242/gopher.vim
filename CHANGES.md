@@ -1,8 +1,7 @@
 Quick overview of changes and features, compared to vim-go.
 
-See [README.markdown](README.markdown) for more detailed information to get
-started and `:help gopher` for the full reference manual. This is just a quick
-overview.
+See [README.md](README.md) for more detailed information to get started and
+`:help gopher` for the full reference manual. This is just a quick overview.
 
 Changes from vim-go
 -------------------

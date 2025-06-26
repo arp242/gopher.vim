@@ -626,13 +626,5 @@ Options documented elsewhere:
 
         setup       Be verbose about what |:GoSetup| does.
 
-*g:gopher_override_vimgo* = (undefined)
-        Override vim-go; this removes all vim-go commands, autocommands,
-        unsets b:did_ftplugin and b:current_syntax, and removes vim-go from
-        'runtimepath'.
-
-        This is only recommended for testing/experimenting; and not guaranteed
-        to be 100% reliable.
-
 
 vim:tw=78:ts=8:sts=8:sw=8:ft=help:norl:expandtab

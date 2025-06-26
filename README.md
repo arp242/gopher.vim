@@ -8,7 +8,7 @@ rather than duplicating them (which is what vim-go does, an approach which does
 come with some advantages by the way).
 
 It currently implements almost everything from vim-go. See
-[CHANGES.markdown](CHANGES.markdown) for a more detailed list of changes.
+[CHANGES.md](CHANGES.md) for a more detailed list of changes.
 
 Installation
 ------------
@@ -190,8 +190,7 @@ FAQ
 
 That's probably intentional. An important reason for this plugin's existence is
 to remove features better handled with native Vim features or generic external
-plugins.
-See the [feature table in CHANGES.markdown](CHANGES.markdown#feature-table).
+plugins. See the [feature table in CHANGES.md](CHANGES.md#feature-table).
 
 If you think there's a good reason for something from vim-go to exist in
 gopher.vim then feel free to open an issue with an explanation why existing Vim
