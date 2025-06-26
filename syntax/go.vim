@@ -139,7 +139,7 @@ endif
 
 " Structs and struct tags.
 " TODO: also highlight lack of quote, and attr space error: `json:foo, omitempty`
-syn region      goStruct          start=/struct \?{/ end=/}/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock
+syn region      goStruct          start=/struct \?{/ end=/}/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock,goStructTagOpt
 syn match       goStructTag       / `.*`\%(\s\|$\)/          contained containedin=goStruct
 syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2     contained containedin=goStructTag
 syn match       goStructTagName   /\w\{-1,}:\ze"/            contained containedin=goStruct,goStructTag
