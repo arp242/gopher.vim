@@ -30,7 +30,6 @@ syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
 " I'm not sure if there's a better solution for this.
 syn sync minlines=500
 
-
 " Keywords.
 syn keyword     goPackage      package
 syn keyword     goImport       import    contained
@@ -71,11 +70,11 @@ syn keyword     goBuiltins  make new panic print println real recover min max
 
 " Comment blocks.
 syn keyword     goTodo      contained TODO FIXME XXX BUG
-syn region      goComment   start="//" end="$"    contains=goCompilerDir,goGenerate,goBuild,goDirectiveError,goBuildTag,goTodo,@Spell
+syn region      goComment   start="//" end="$"    contains=goCompilerDir,goGenerate,goBuild,goDirectiveError,goOldBuildTag,goTodo,@Spell
 
 if s:has('fold-comment')
   syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell fold
-  syn match     goComment   "\v%(^\s*//.*\n)+"    contains=goCompilerDir,goGenerate,goBuild,goDirectiveError,goBuildTag,goTodo,@Spell fold
+  syn match     goComment   "\v%(^\s*//.*\n)+"    contains=goCompilerDir,goGenerate,goBuild,goDirectiveError,goOldBuildTag,goTodo,@Spell fold
 else
   syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell
 endif
@@ -101,22 +100,12 @@ syn match       goCompilerDir     excludenl display contained "\v^//go:%(nointer
 syn match      goDirectiveError  excludenl contained "^// go:.\+$"
 
 " Build tags; standard build tags from cmd/dist/build.go and go doc go/build.
-syn match   goBuildKeyword        display contained "+build"
+syn match   goOldBuildTag         display contained "^// +build.*"
 syn keyword goStdBuildTags        contained
       \ 386 amd64 amd64p32 arm arm64 mips mipsle mips64 mips64le ppc ppc64 ppc64le
       \ riscv64 s390x wasm darwin dragonfly hurd js linux android solaris
       \ freebsd nacl netbsd openbsd plan9 windows gc gccgo cgo race
 syn match   goVersionBuildTags    contained /\v<go1\.[0-9]{1,2}>[^.]/
-
-" The rs=s+2 option lets the \s*+build portion be part of the inner region
-" instead of the matchgroup so it will be highlighted as a goBuildKeyword.
-syn region  goBuildTag            contained matchgroup=goBuildTagStart excludenl
-      \ start="^//\s*+build\s"rs=s+2 end="$"
-      \ contains=goBuildKeyword,goStdBuildTags,goVersionBuildTags,goBuildTagError
-
-" There needs to be a blank line, otherwise it will be ignored.
-syn match goBuildTagError contained containedin=goComment nextgroup=goPackage
-      \ "// +build.*\npackage \k\+"
 
 " cgo
 syn match goCgoError contained containedin=goComment "^\%(\/\/\)\?\s*#cgo .*"
@@ -288,8 +277,7 @@ hi def link goBuildSpecial        Special
 hi def link goCompilerDir         Special
 hi def link goDirectiveError      Error
 
-hi def link goBuildTagStart       Comment
-hi def link goBuildTagError       Error
+hi def link goOldBuildTag         Error
 hi def link goStdBuildTags        Special
 hi def link goVersionBuildTags    Special
 hi def link goBuildKeyword        Special
