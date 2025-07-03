@@ -65,11 +65,6 @@ Some of the biggest changes/improvements from vim-go (not a comprehensive list):
   useful to me. Also renamed the filetypes to `gohtml` and `gotxt` instead of
   `gohtmltmpl` and `gotxttmpl`.
 
-- All the `go guru` commands are now in just one command: `:GoGuru`. Use e.g.
-  `:GoGuru whicherrs` instead of `:GoWhichErrs`. Note: `guru` doesn't always
-  work well with modules, and `gopls` is expected to replace much of it
-  eventually.
-
 - `:GoAddTags` and `:GoRemoveTags` is now `:GoTags`. Use `:GoTags -rm json` to
   remove a tag.
 

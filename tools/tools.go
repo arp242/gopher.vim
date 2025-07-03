@@ -14,6 +14,5 @@ import (
 	_ "github.com/fatih/motion"
 	_ "github.com/josharian/impl"
 	_ "golang.org/x/tools/cmd/goimports"
-	_ "golang.org/x/tools/cmd/guru"
 	_ "golang.org/x/tools/gopls"
 )

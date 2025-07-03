@@ -442,66 +442,6 @@ COMMANDS                                                     *gopher-commands*
 
                 implement       One or more interface name.
 
-:GoGuru [flags] {command}                                            *:GoGuru*
-        Get information about Go code. {command} can be any of:
-
-                callees     Show targets of function call.
-                            This is useful especially if the function call is
-                            an interface.
-                callers     Show locations where the current function is
-                            called from.
-                callstack   Show path from callgraph root to the current
-                            function.
-                definition  Show declaration of identifier.
-                describe    Show detailed description of selected syntax.
-                freevars    Show free variables of selection, meaning
-                            variables which are referenced but not defined
-                            within the selection.
-                implements  Show which interfaces a type of method implements.
-                peers       Show locations where data is sent or read to/from
-                            a channel.
-                pointsto    Show variables the selected pointer may point to.
-                referrers   Show all references to an identifier.
-                what        Basic information about the selected syntax.
-                whicherrs   Get possible values of an error variable.
-
-        See the guru manual for a full description and usage examples:
-        http://golang.org/s/using-guru
-
-        Note: `guru` is not fully modules-aware. Use a LSP client for gopls'
-        module-aware code insight features (not all of `guru`'s features are
-        supported in LSP though).
-
-        [flags] are passed to the `guru` command; commons ones are:
-
-                -reflect      Analyse reflection soundly (slow).
-                -scope [pkg]  Comma-separated list of packages the analysis
-                              should be limited to; overrides
-                              |g:gopher_guru_scope|.
-
-        *g:gopher_guru_scope* = `gopher#go#package()`
-        *b:gopher_guru_scope* = (undefined)
-                Limit the analysis to these package, comma-separated list.
-
-                Some guru commands are slow and expensive, so for reasons of
-                efficiency the analysis is limited to a limited set of
-                packages.
-                The default is to use the package the current buffer belongs
-                to; but this may not always be correct. For example for the
-                file example.com/pkg/a/a.go the scope will be set to
-                example.com/pkg/a, but you probably want example.com/pkg.
-
-                With this option a more extensive scope can be given. Some
-                examples:
-
-                        golang.org/x/tools/cmd/guru A single package
-                        golang.org/x/tools/...      All packages under dir
-                        ...                         The entire workspace.
-
-                You can set it from an |:autocmd|: >
-                        autocmd BufRead /code/example.com/*.go
-                                let g:gopher_guru_scope = 'example.com/pkg'
-<
 :GoImport [flags]                                                  *:GoImport*
         Add, modify, or remove imports.
 
@@ -593,7 +533,6 @@ Options documented elsewhere:
         |g:gopher_build_command|
         |g:gopher_build_package|
 
-        |g:gopher_guru_scope|
         |g:gopher_tag_complete|
         |g:gopher_tag_default|
         |g:gopher_tag_transform|

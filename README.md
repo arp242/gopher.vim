@@ -98,7 +98,6 @@ Overview of other commands:
 
     :GoCoverage – Highlight code coverage.
     :GoFrob     – Frob with (modify) code.
-    :GoGuru     – Get various information using the guru command.
     :GoImport   – Add, modify, or remove imports.
     :GoTags     – Add or remove struct tags
 

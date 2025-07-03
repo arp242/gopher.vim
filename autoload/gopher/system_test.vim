@@ -1,16 +1,6 @@
 scriptencoding utf-8
 call gopher#init#config()
 
-fun! Test_tool() abort
-  let [l:out, l:err] = gopher#system#tool(['guru'])
-  if !l:err
-    call add(v:errors, printf('l:err is not set: %s', l:out))
-    return
-  endif
-
-  call assert_equal("Run 'guru -help' for more information.", l:out)
-endfun
-
 fun! Test_run() abort
   let [l:out, l:err] = gopher#system#run(['echo', 'one', 'two"'])
   if l:err

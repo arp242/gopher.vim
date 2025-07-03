@@ -264,17 +264,6 @@ Utilities for working with lists.
       Flatten a list.
 
 
-[guru.vim](autoload/gopher/guru.vim)
-------------------------------------
-implement the :GoGuru command.
-
-    gopher#guru#complete(lead, cmdline, cursor)
-
-
-    gopher#guru#do(...)
-
-
-
 [buf.vim](autoload/gopher/buf.vim)
 ----------------------------------
 Utilities for working with buffers.
