@@ -1,44 +1,34 @@
 gopher.vim is a Vim plugin for the Go programming language.
 
-The idea is to to provide a "light-weight" experience by off-loading
+The idea is to to provide a "light-weight" experience by offloading
 functionality to native Vim features or generic plugins when they offer a good
 user experience. It's not "hard-core minimalist", but does try to avoid
 re-implementing things that are always handled well by other features or plugins
 rather than duplicating them (which is what vim-go does, an approach which does
 come with some advantages by the way).
 
-It currently implements almost everything from vim-go. See
-[CHANGES.md](CHANGES.md) for a more detailed list of changes.
-
 Installation
 ------------
-
-Installation can be done using the usual methods. You will **need Go 1.11** and
-**Vim 8.1.1803** or **Neovim 0.4.4**. Older versions will *not* work due to
-missing features.
+Installation can be done using the usual methods. You will need Go 1.21.
 
 Installation of external tools is done automatically on first usage, but can be
 done manually with `:GoSetup`.
 
-[new]: https://vi.stackexchange.com/q/10817/51
-
 Quickstart
 ----------
-
-All gopher.vim mappings start with `;` in normal mode, or `<C-k>` in insert
-mode. The second letter is identical, so `;t` is `<C-k>t` in insert.
+All gopher.vim mappings start with `;` in normal mode or `<C-k>` in insert mode.
+The second letter is identical, so `;t` is `<C-k>t` in insert.
 
 You can change this with the `g:gopher_map` setting; see `:help g:gopher_map`
 for details.
 
 ### Compiling code
-
 Compiling code is done with the `go` compiler (that is, the Vim `:compiler`
 feature`); you can then use `:make` to run the command in `makeprg` and populate
 the quickfix with any errors.
 
 gopher.vim tries to be a bit smart about what to set `makeprg` to: if a
-`./cmd/<module-name>` package exists then it will compile that instead of the
+`./cmd/«module-name»` package exists then it will compile that instead of the
 current package, and build tags from the current file are automatically added.
 There's a bunch of options to tweak the behaviour: see `:help gopher-compilers`
 for detailed documentation.
@@ -52,7 +42,6 @@ there are plugins to make it run in the background if you want (see "Companion
 plugins" below).
 
 ### Running tests
-
 Testing is done with the `gotest` compiler; you can run them with `;t` which
 will run the current test function if you're inside a test, or tests for the
 current package if you're not.
@@ -60,7 +49,6 @@ current package if you're not.
 You can pass additional to `:make`; e.g. `:make -failfast`.
 
 ### Running lint tools
-
 The `golint` compiler can run lint tools; the error format is compatible with
 `golangci-lint`,  `staticcheck`, and `go vet` (other tools may also work, but
 are not tested):
@@ -70,27 +58,23 @@ are not tested):
     :make
 
 ### Mappings
+Map `;t` to run all tests, instead of current:
 
-Map ;t to run all tests, instead of current.
+    " let g:gopher_map = {'_nmap_prefix': '<Leader>', '_imap_prefix': '<C-g>' }
 
-" let g:gopher_map = {'_nmap_prefix': '<Leader>', '_imap_prefix': '<C-g>' }
+    " Quicker way to make, lint, and test code.
+    " au FileType go nnoremap MM :wa<CR>:compiler go<CR>:silent make!<CR>:redraw!<CR>
+    " au FileType go nnoremap LL :wa<CR>:compiler golint<CR>:silent make!<CR>:redraw!<CR>
+    " au FileType go nnoremap TT :wa<CR>:compiler gotest<CR>:silent make!<CR>:redraw!<CR>
 
-        " Quicker way to make, lint, and test code.
-        " au FileType go nnoremap MM :wa<CR>:compiler go<CR>:silent make!<CR>:redraw!<CR>
-        " au FileType go nnoremap LL :wa<CR>:compiler golint<CR>:silent make!<CR>:redraw!<CR>
-        " au FileType go nnoremap TT :wa<CR>:compiler gotest<CR>:silent make!<CR>:redraw!<CR>
-
-        " au FileType go nmap MM <Plug>(gopher-install)
-        " au FileType go nmap TT <Plug>(gopher-test)
-        " au FileType go nmap LL <Plug>(gopher-lint)
+    " au FileType go nmap MM <Plug>(gopher-install)
+    " au FileType go nmap TT <Plug>(gopher-test)
+    " au FileType go nmap LL <Plug>(gopher-lint)
 
 
 See `:help gopher_mappings`
 
-
-
 ### Other commands
-
 All motions and text objects that work in vim-go also work in gopher.vim: `[[`,
 `]]`, `af`, `ac`, etc.
 
@@ -107,12 +91,9 @@ a "drop-in" replacement.
 See `:help gopher` for the full reference manual.
 
 ### Companion plugins
-
 A list of useful companion plugins; this is not an exhaustive list, but rather a
 "most useful" list. For many alternatives exist as well; I didn't test all
 options.
-
-See [PLUGINS.md](PLUGINS.md) for some configuration hints for various plugins.
 
 - [vim-lsc](https://github.com/natebosch/vim-lsc) – LSP client.
   Alternatives:
@@ -185,17 +166,15 @@ FAQ
 ---
 
 ### I'm missing X from vim-go
-
 That's probably intentional. An important reason for this plugin's existence is
 to remove features better handled with native Vim features or generic external
-plugins. See the [feature table in CHANGES.md](CHANGES.md#feature-table).
+plugins.
 
 If you think there's a good reason for something from vim-go to exist in
 gopher.vim then feel free to open an issue with an explanation why existing Vim
 features or generic plugins aren't enough.
 
 ### Some things that were async in vim-go are no longer, what gives?
-
 Async can be nice but it's also hard. For example the code for `:GoCoverage` is
 now 120 lines shorter while also fixing a few bugs and adding features.
 
@@ -210,7 +189,6 @@ in gopher.vim are still async; it's a trade-off. If you have a good case for
 something to be async then feel free to open an issue.
 
 ### The syntax has fewer colours, it's so boring!
-
 I removed a whole bunch of the extra options as it's hard to maintain and not
 all that useful. It doesn't even work all that well because enabling all options
 would slow everything down to a crawl and testing all the combinations is
@@ -224,14 +202,12 @@ You can still copy vim-go's `syntax/go.vim` file to your `~/.vim/syntax`
 directory if you want your Christmas tree back 🎄
 
 ### Why do some commands conflict with vim-go? Why not prefix commands with `:Gopher`?
-
 This is what I originally did, and found it annoying as it's so much work to
 type, man! Being compatible probably isn't too useful anyway, so I changed it.
 
 Functions, mappings, settings, etc. are all prefixed with `gopher`.
 
 History and rationale
----------------------
 
 I started this repository as a test case for internally vendoring of tools; in
 vim-go confusion due to using the wrong version of an external tool (too old or
