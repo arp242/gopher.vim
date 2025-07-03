@@ -6,14 +6,12 @@ endif
 call gopher#init#config()
 let s:has = { n -> index(g:gopher_highlight, l:n) > -1 }
 
-" Match case.
-syn case match
-
-" Search backwards for a global declaration to start processing the syntax.
-syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
-
-" Still keep 'minlines' here since otherwise it tends to break with multiline
-" comment blocks and `-strings where the opening is beyond the screen:
+" Sync from start; I can't get match to work; for example with:
+"
+"    syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
+"
+" Breaks highlights with multiline comment blocks and `-strings where the
+" opening is beyond the screen:
 "
 "     const x = `
 "        [.. many lines ..]
@@ -27,8 +25,12 @@ syn sync match goSync grouphere NONE /\v^%(const|var|type|func)>/
 " It will sync to ^func, the opening ` is out of the screen and sees just the
 " closing, so everything is highlighted as a string.
 "
-" I'm not sure if there's a better solution for this.
-syn sync minlines=500
+" I'm not sure if there's a better solution for this. But the highlight file
+" should be fast enough to just sync from start.
+syn sync fromstart
+
+" Match case.
+syn case match
 
 " Keywords.
 syn keyword     goPackage      package
@@ -42,24 +44,6 @@ syn keyword     goConditional  if else switch select
 syn keyword     goLabel        case default
 syn keyword     goRepeat       for range
 syn keyword     goBoolean      true false nil iota
-
-" Ensure these are highlighted when (erroneously) used as identifiers; this
-" won't happen otherwise because they're contained above.
-"
-" They're highlighted as an error, since they're reserved words. The error
-" highlighting isn't 100% consistent like this (i.e. not everything that's an
-" error is highlighted as such), but that's okay.
-"
-" This can't be a keywords since that will take higher priority over the
-" match/range below; using it like this is a lot faster than \<\%(..|..\)
-" (.015 vs .007 for all 5)
-"
-" TODO: I don't like how this highlights 'var ' when typing regular code.
-"syn match goReserved /\<import\>/
-"syn match goReserved /\<package\>/
-"syn match goReserved /\<var\>/
-"syn match goReserved /\<const\>/
-"syn match goReserved /\<struct\>/
 
 " Predefined types.
 syn keyword     goType      chan map bool string error float32 float64 complex64 complex128
