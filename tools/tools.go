@@ -1,3 +1,4 @@
+//go:build tools
 // +build tools
 
 package tools
@@ -13,7 +14,6 @@ import (
 	_ "github.com/fatih/motion"
 	_ "github.com/josharian/impl"
 	_ "golang.org/x/tools/cmd/goimports"
-	_ "golang.org/x/tools/cmd/gorename"
 	_ "golang.org/x/tools/cmd/guru"
 	_ "golang.org/x/tools/gopls"
 )

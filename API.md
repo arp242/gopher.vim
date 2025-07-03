@@ -264,19 +264,6 @@ Utilities for working with lists.
       Flatten a list.
 
 
-[rename.vim](autoload/gopher/rename.vim)
-----------------------------------------
-Implement :GoRename.
-
-    gopher#rename#complete(lead, cmdline, cursor)
-      Commandline completion: original, unexported camelCase, and exported
-      CamelCase.
-
-    gopher#rename#do(...)
-      Rename the identifier under the cursor to the identifier in the first
-      argument.
-
-
 [guru.vim](autoload/gopher/guru.vim)
 ------------------------------------
 implement the :GoGuru command.

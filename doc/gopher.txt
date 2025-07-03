@@ -517,24 +517,6 @@ COMMANDS                                                     *gopher-commands*
         With `-replace html/template` the existing `text/template` import is
         replaced.
 
-:GoRename [new-ident]                                              *:GoRename*
-        Rename the identifier under the cursor.
-
-        if [new-ident] is omitted the new identifier is based on the following
-        rules:
-
-          - All caps identifiers are CamelCased (FOO_BAR -> FooBar).
-          - Exported are unexported (FooBar -> fooBar).
-          - Unexported are exported (fooBar -> FooBar).
-
-        Tab completion includes the exported and unexported version.
-
-        Note: this only works for packages in GOPATH. Use a LSP client for
-        gopls' module-aware rename feature.
-
-        *g:gopher_gorename_flags* = `[]`
-                List of flags to add to the `gorename` command.
-
 :GoReplace [module] [path]                                        *:GoReplace*
 
         Add a `replace` directive in the project's go.mod. This currently only
@@ -611,7 +593,6 @@ Options documented elsewhere:
         |g:gopher_build_command|
         |g:gopher_build_package|
 
-        |g:gopher_gorename_flags|      Flags to various external tools.
         |g:gopher_guru_scope|
         |g:gopher_tag_complete|
         |g:gopher_tag_default|

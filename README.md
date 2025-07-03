@@ -100,7 +100,6 @@ Overview of other commands:
     :GoFrob     – Frob with (modify) code.
     :GoGuru     – Get various information using the guru command.
     :GoImport   – Add, modify, or remove imports.
-    :GoRename   – Rename identifier under cursor.
     :GoTags     – Add or remove struct tags
 
 Note that many details are different from vim-go; gopher.vim is not intended as
