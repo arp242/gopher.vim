@@ -15,14 +15,14 @@ let s:history = []
 " been run this Vim session.
 let s:tools = {}
 
-" Build s:tools from tools.go; this is run when this file is loaded.
+" Build s:tools from go.mod; this is run when this file is loaded.
 fun! s:init() abort
-  for l:line in readfile(s:gotools . '/tools.go')
-    if l:line !~# "^\t_ \""
+  for l:line in readfile(s:gotools . '/go.mod')
+    if l:line !~# "^tool "
       continue
     endif
 
-    let l:line = split(l:line, '"')[1]
+    let l:line = split(l:line, ' ')[1]
     let s:tools[fnamemodify(l:line, ':t')] = [l:line, 0]
   endfor
 
