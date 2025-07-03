@@ -60,7 +60,7 @@ fun! gopher#init#config() abort
   let g:gopher_highlight      = get(g:, 'gopher_highlight', ['string-spell', 'string-fmt'])
   let g:gopher_tag_transform  = get(g:, 'gopher_tag_transform', 'snakecase')
   let g:gopher_tag_default    = get(g:, 'gopher_tag_default', 'json')
-  let g:gopher_tag_complete   = get(g:, 'gopher_tag_complete', ['db', 'json', 'json,omitempty', 'yaml'])
+  let g:gopher_tag_complete   = get(g:, 'gopher_tag_complete', ['db', 'json', 'toml', 'yaml'])
 
   call s:map()
 

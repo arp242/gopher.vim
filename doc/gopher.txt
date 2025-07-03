@@ -504,7 +504,7 @@ COMMANDS                                                     *gopher-commands*
                 any valid set of arguments for |:GoTags| (for example
                 `json,omitempty -rm yaml`).
 
-        *g:gopher_tag_complete* = `['db', 'json', 'json,omitempty', 'yaml']`
+        *g:gopher_tag_complete* = `['db', 'json', 'toml', 'yaml']`
                 Values for tab-completion.
 
         *g:gopher_tag_transform* = `'snakecase'`
