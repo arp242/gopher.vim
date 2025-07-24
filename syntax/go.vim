@@ -65,7 +65,7 @@ endif
 
 " go:generate; see go help generate
 syn match       goGenerateKW      display contained /go:generate/
-syn match       goGenerateVars    contained /\v\$(GOARCH|GOOS|GOFILE|GOLINE|GOPACKAGE|DOLLAR)/
+syn match       goGenerateVars    contained /\v\$(GOARCH|GOOS|GOFILE|GOLINE|GOPACKAGE|GOROOT|DOLLAR|PATH)/
 syn region      goGenerate        excludenl contained matchgroup=goGenerateKW start="^//go:generate" end=/$/ contains=goGenerateVars,goGenerateKW
 
 " go:build
@@ -83,13 +83,14 @@ syn match       goCompilerDir     excludenl display contained "\v^//go:%(nointer
 " Adding a space between the // and go: is an error.
 syn match      goDirectiveError  excludenl contained "^// go:.\+$"
 
-" Build tags; standard build tags from cmd/dist/build.go and go doc go/build.
+" Build tags:
+"   go tool dist list | sed 's!/!\n!' | sort -u | tr '\n' ' '
 syn match   goOldBuildTag         display contained "^// +build.*"
-syn keyword goStdBuildTags        contained
-      \ 386 amd64 amd64p32 arm arm64 mips mipsle mips64 mips64le ppc ppc64 ppc64le
-      \ riscv64 s390x wasm darwin dragonfly hurd js linux android solaris
-      \ freebsd nacl netbsd openbsd plan9 windows gc gccgo cgo race
 syn match   goVersionBuildTags    contained /\v<go1\.[0-9]{1,2}>[^.]/
+syn keyword goStdBuildTags        contained
+      \ gc gccgo cgo race
+      \ 386 aix amd64 android arm arm64 darwin dragonfly freebsd illumos ios js linux loong64 mips mips64
+      \ mips64le mipsle netbsd openbsd plan9 ppc64 ppc64le riscv64 s390x solaris wasip1 wasm windows
 
 " cgo
 syn match goCgoError contained containedin=goComment "^\%(\/\/\)\?\s*#cgo .*"
@@ -100,7 +101,7 @@ syn match goCgo contained containedin=goComment /^\%(\/\/\)\?\s*#\s*include [<"]
 syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#\s*%(ifdef \w+|ifndef \w+|else|endif)/
 syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#cgo pkg-config:%( \f+)+/
 syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#cgo
-      \ %(!?%(386|amd64|amd64p32|arm|arm64|mips|mipsle|mips64|mips64le|ppc|ppc64|ppc64le|riscv64|s390x|wasm|darwin|dragonfly|hurd|js|linux|android|solaris|freebsd|nacl|netbsd|openbsd|plan9|windows|gc|gccgo)[, ]*)*
+      \ %(!?%(386|aix|amd64|android|arm|arm64|darwin|dragonfly|freebsd|illumos|ios|js|linux|loong64|mips|mips64|mips64le|mipsle|netbsd|openbsd|plan9|ppc64|ppc64le|riscv64|s390x|solaris|wasip1|wasm|windows|gc|gccgo)[, ]*)*
       \%(CFLAGS|CPPFLAGS|CXXFLAGS|FFLAGS|LDFLAGS):.+/
 
 " String escapes.
@@ -122,15 +123,16 @@ else
 endif
 
 " Structs and struct tags.
-" TODO: also highlight lack of quote, and attr space error: `json:foo, omitempty`
 syn region      goStruct          start=/struct \?{/ end=/}/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock,goStructTagOpt
 syn match       goStructTag       / `.*`\%(\s\|$\)/          contained containedin=goStruct
-syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2     contained containedin=goStructTag
+syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2     contained containedin=goStructTag   " Space before/after :
 syn match       goStructTagName   /\w\{-1,}:\ze"/            contained containedin=goStruct,goStructTag
+syn match       goStructTagError  /\w\{-1,}:[^" ]\+/         contained containedin=goStructTag   " Missing start quote
+syn match       goStructTagError  /\w\{-1,}:"[^" ]\+ /       contained containedin=goStructTag   " Missing end quote
 syn match       goStructTagOpt    /,\zs[^,"]\+/              contained containedin=goStructTag
 
 if s:has('string-fmt')
-  " TODO: this is a bit slow, but can't seem ot make it faster. Not sure if it's
+  " This is a bit slow, but can't seem ot make it faster. Not sure if it's
   " possible.
   "
   " % not preceded by a %, followed by any of [-#0+ ]
