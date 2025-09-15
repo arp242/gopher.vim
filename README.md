@@ -24,7 +24,7 @@ for details.
 
 ### Compiling code
 Compiling code is done with the `go` compiler (that is, the Vim `:compiler`
-feature`); you can then use `:make` to run the command in `makeprg` and populate
+feature); you can then use `:make` to run the command in `makeprg` and populate
 the quickfix with any errors.
 
 gopher.vim tries to be a bit smart about what to set `makeprg` to: if a
