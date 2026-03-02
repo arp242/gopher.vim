@@ -35,21 +35,6 @@ fun! Test_job() abort
   call assert_equal(1, l:done_called)
 endfun
 
-fun! Test_restore_env() abort
-  let $GOPHER_ENV1 = 'w00t'
-  let $GOPHER_ENV2 = 'w00t'
-
-  call gopher#system#restore_env('GOPHER_ENV1', 'original')
-  call gopher#system#restore_env('GOPHER_ENV2', '')
-
-  call assert_equal('original', $GOPHER_ENV1)
-  " TODO: check that it's unset.
-  call assert_equal('', $GOPHER_ENV2)
-
-  call gopher#system#restore_env('GOPHER_ENV1', "quote '\"")
-  call assert_equal("quote '\"", $GOPHER_ENV1)
-endfun
-
 fun! Test_tmpmod() abort
   try
     e x

@@ -1,55 +1,34 @@
 " system.vim: Utilities for working with the external programs and the OS.
 
-let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.
-let s:gotools = s:root . '/tools'         " Our Go tools.
-let s:gobin   = s:gotools . '/bin'
-let s:jobs    = []                        " List of running jobs.
+let s:jobs = []  " List of running jobs.
 
 " Command history; every item is a list with the exit code, time it took to run,
 " command that was run, its output, and a boolean to signal it was run from
 " #job(), in that order.
 let s:history = []
 
-" List of all tools we know about. The key is the binary name, the value is a
-" 2-tuple with the full package name and a boolean to signal that go install has
-" been run this Vim session.
-let s:tools = {}
+let s:tools = [
+    \ 'arp242.net/goimport@latest',
+    \ 'zgo.at/gosodoff@latest',
+    \ 'github.com/davidrjenni/reftools/cmd/fillstruct@latest',
+    \ 'github.com/fatih/gomodifytags@latest',
+    \ 'github.com/fatih/motion@latest',
+    \ 'github.com/josharian/impl@latest',
+    \ 'golang.org/x/tools/cmd/goimports@latest',
+    \ 'golang.org/x/tools/gopls@latest',
+\ ]
 
-" Build s:tools from go.mod; this is run when this file is loaded.
-fun! s:init() abort
-  for l:line in readfile(s:gotools . '/go.mod')
-    if l:line !~# "^tool "
-      continue
-    endif
-
-    let l:line = split(l:line, ' ')[1]
-    let s:tools[fnamemodify(l:line, ':t')] = [l:line, 0]
-  endfor
-
-  " Make sure gopls is available, otherwise external LSP servers are going to
-  " error out.
-  if !executable('gopls')
-    call gopher#info('installing gopls; this may take a minute')
-    call s:tool('gopls')
-  endif
-  " goimports is similarly useful, but not directly referenced by gopher.vim
-  if !executable('goimports')
-    call gopher#info('installing goimports; this may take a minute')
-    call s:tool('goimports')
-  endif
-endfun
-
-" Setup modules and install all tools.
+" Install all tools
 fun! gopher#system#setup() abort
-  call s:setup_debug('running with g:gopher_setup flags: %s', get(g:, 'gopher_setup', []))
-
-  if !s:download(1)
-    return
-  endif
-
-  for l:tool in keys(s:tools)
-    call s:tool(l:tool)
+  for tool in s:tools
+    call gopher#info('running go install %s', tool)
+    let [out, err] = gopher#system#run(['go', 'install', tool])
+    if err
+      return gopher#error(out)
+    endif
   endfor
+
+  redraw! " Clear message.
 endfun
 
 " Get command history (only populated if 'commands' is in the g:gopher_debug)
@@ -68,20 +47,6 @@ endfun
 " about a job.
 fun! gopher#system#jobs() abort
   return s:jobs
-endfun
-
-" Restore an environment variable back to its original value.
-fun! gopher#system#restore_env(name, val) abort
-  if a:val is -1
-    if has('patch-8.0.1832')
-      exe printf('unlet $%s', a:name)
-    else
-      " Best effort for older Vim.
-      exe printf('let $%s = ""', a:name)
-    endif
-  else
-    exe printf('let $%s = %s', a:name, s:escape_single_quote(a:val))
-  endif
 endfun
 
 " Write unsaved buffer to a temp file when modified, so tools that operate on
@@ -120,11 +85,10 @@ fun! gopher#system#tool(cmd, ...) abort
     return gopher#error('gopher#system#tool: can only pass one optional argument')
   endif
 
-  let l:bin = s:tool(a:cmd[0])
-  if l:bin is? ''
-    return [printf('unknown tool: "%s"', a:cmd[0]), 1]
+  let bin = exepath(a:cmd[0])
+  if bin == ''
+    return gopher#error('"%s" not found in $PATH (maybe run :GoSetup?)', a:cmd)
   endif
-
   return call('gopher#system#run', [[l:bin] + a:cmd[1:]] + a:000)
 endfun
 
@@ -134,11 +98,10 @@ fun! gopher#system#tool_job(done, cmd) abort
     return gopher#error('must pass a list')
   endif
 
-  let l:bin = s:tool(a:cmd[0])
-  if l:bin is? ''
-    call go#internal#error('unknown tool: "%s"')
+  let bin = exepath(a:cmd[0])
+  if bin == ''
+    return gopher#error('"%s" not found in $PATH (maybe run :GoSetup?)', a:cmd)
   endif
-
   call gopher#system#job(a:done, [l:bin] + a:cmd[1:])
 endfun
 
@@ -252,88 +215,8 @@ fun! gopher#system#pathsep() abort
   return has('win32') ? ';' : ':'
 endfun
 
-" Download, compile and install a tool if needed.
-fun! s:tool(name) abort
-  if !has_key(s:tools, a:name)
-    call gopher#error('unknown tool: ' . a:name)
-    return ''
-  endif
-
-  if index(get(g:, 'gopher_setup', []), 'no-auto-install') > -1
-    return a:name
-  endif
-
-  let l:no_vendor_gobin = index(get(g:, 'gopher_setup', []), 'no-vendor-gobin') > -1
-  let l:tool            = s:tools[a:name]
-  let l:bin             = s:gobin . '/' . a:name
-
-  if l:tool[1]
-    if l:no_vendor_gobin && exepath(a:name)
-      call s:setup_debug('%s: already in PATH; not doing anything', a:name)
-      return a:name
-    endif
-    if !l:no_vendor_gobin && filereadable(l:bin)
-      call s:setup_debug('%s: %s already exists; not doing anything', a:name, l:bin)
-      return a:name
-    endif
-  endif
-
-  if !s:download(0)
-    return
-  endif
-
-  try
-    if !l:no_vendor_gobin
-      let l:old_gobin = exists('$GOBIN') ? $GOBIN : -1
-      let $GOBIN = s:gobin
-    endif
-
-    let l:old_gomod =  exists('$GO111MODULE') ? $GO111MODULE : -1
-    let $GO111MODULE = 'on'  " In case user set to 'off'
-
-    call s:setup_debug('%s: running go install %s', a:name, l:tool[0])
-
-    let l:out = system(printf('cd %s && go install %s',
-      \ shellescape(s:gotools), shellescape(l:tool[0])))
-    if v:shell_error
-      return gopher#error(l:out)
-    endif
-
-    " Record go install ran.
-    let s:tools[a:name][1] = 1
-  finally
-    if !l:no_vendor_gobin
-      call gopher#system#restore_env('GOBIN', l:old_gobin)
-    endif
-    call gopher#system#restore_env('GO111MODULE', l:old_gomod)
-  endtry
-
-  return a:name
-endfun
-
 fun! s:escape_single_quote(s) abort
   return "'" . substitute(a:s, "'", "' . \"'\" . '", '') . "'"
-endfun
-
-let s:ran_mod_download = 0
-" Run go mod download; only need to run this once per Vim session.
-fun! s:download(force) abort
-  if s:ran_mod_download && !a:force
-    return 1
-  endif
-
-  call gopher#info('running "go mod download"; this may take a few seconds')
-  let l:out = system(printf('cd %s && go mod download', s:gotools))
-  if v:shell_error
-    call gopher#error(l:out)
-    return 0
-  endif
-
-  " Clear message.
-  redraw!
-
-  let s:ran_mod_download = 1
-  return 1
 endfun
 
 " Add item to history.
@@ -342,9 +225,9 @@ fun! gopher#system#_hist_(cmd, start, exit, out, job) abort
     " Full path is too noisy.
     let l:debug_cmd = a:cmd
     let l:debug_cmd[0] = substitute(a:cmd[0], "'", '', '')
-    if l:debug_cmd[0][:len(s:gobin) - 1] is# s:gobin
-      let l:debug_cmd[0] = 's:gobin/' . l:debug_cmd[0][len(s:gobin) + 1:]
-    endif
+    "if l:debug_cmd[0][:len(s:gobin) - 1] is# s:gobin
+    "  let l:debug_cmd[0] = 's:gobin/' . l:debug_cmd[0][len(s:gobin) + 1:]
+    "endif
 
     let l:out = a:out
     if !gopher#has_debug('commands')
@@ -476,12 +359,6 @@ fun! gopher#system#cache(name, ...) abort
   return [l:c[1], v:true]
 endfun
 
-fun! s:setup_debug(msg, ...) abort
-  if gopher#has_debug('setup')
-    call call('gopher#info', ['setup: ' . a:msg] + a:000)
-  endif
-endfun
-
 " Get the closest directory with this name up the tree from the current buffer's
 " path.
 "
@@ -502,6 +379,3 @@ fun! gopher#system#closest(name) abort
     let l:dir = fnamemodify(l:dir, ':h')
   endwhile
 endfun
-
-
-call s:init()  " At end so entire file is parsed.
