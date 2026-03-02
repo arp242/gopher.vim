@@ -1,22 +1,25 @@
 " pkg.vim: Utilities for working with Go packages.
 
-" List all 'importable' packages; this is the stdlib + GOPATH or modules.
+" List all 'importable' packages; this is the stdlib, modules in go.mod, and
+" this module's packages.
 fun! gopher#pkg#list_importable() abort
-  let l:m = gopher#go#module()
-  let l:cache = 'list_import' . (l:m isnot -1 ? l:m : getcwd())
+  let m = gopher#go#module()
+  let cache = 'list_import' . (l:m isnot -1 ? l:m[0] : getcwd())
 
-  let [l:out, l:ok] = gopher#system#cache(l:cache)
-  if !l:ok
-    let [l:out, l:err] = gopher#system#run(['go', 'list', '...'])
-    if l:err
-      call gopher#error(l:out)
-      return []
-    endif
-    let l:out =  split(l:out, "\n")
-    call gopher#system#store_cache(l:out, l:cache)
+  let [ret, ok] = gopher#system#cache(l:cache)
+  if !ok
+    let ret = []
+    for l in [['std'], ['-f', '{{.Path}}', '-m', 'all'], ['./...']]
+      let [out, err] = gopher#system#run(['go', 'list']->extend(l))
+      if err
+        call gopher#error(out)
+        return []
+      endif
+      call extend(ret, out->split("\n"))
+    endfor
+    call gopher#system#store_cache(ret, cache)
   endif
-
-  return l:out
+  return ret
 endfun
 
 " List all interfaces for a Go package.
