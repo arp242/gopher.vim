@@ -125,10 +125,7 @@ endif
 " Structs and struct tags.
 syn region      goStruct          start=/struct \?{/ end=/}/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock,goStructTagOpt
 syn match       goStructTag       / `.*`\%(\s\|$\)/          contained containedin=goStruct
-syn match       goStructTagError  /\w\{-1,} *: *"/he=e-2     contained containedin=goStructTag   " Space before/after :
 syn match       goStructTagName   /\w\{-1,}:\ze"/            contained containedin=goStruct,goStructTag
-syn match       goStructTagError  /\w\{-1,}:[^" ]\+/         contained containedin=goStructTag   " Missing start quote
-syn match       goStructTagError  /\w\{-1,}:"[^" ]\+ /       contained containedin=goStructTag   " Missing end quote
 syn match       goStructTagOpt    /,\zs[^,"]\+/              contained containedin=goStructTag
 
 if s:has('string-fmt')
@@ -169,10 +166,10 @@ endif
 
 " var, const
 if s:has('fold-varconst')
-  syn region    goVar     start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagError,goStructTagOpt
+  syn region    goVar     start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt
   syn region    goConst   start='const (' end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock
 else
-  syn region    goVar     start='var ('   end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagError,goStructTagOpt
+  syn region    goVar     start='var ('   end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt
   syn region    goConst   start='const (' end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock
 endif
 
@@ -285,7 +282,6 @@ hi def link goRawString           String
 hi def link goStructTag           goRawString
 hi def link goStructTagName       Type
 hi def link goStructTagOpt        goSpecialString
-hi def link goStructTagError      Error
 
 hi def link goCharacter           Character
 
