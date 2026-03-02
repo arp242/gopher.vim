@@ -5,23 +5,6 @@ fun! gopher#go#is_test() abort
   return expand('%')[-8:] is# '_test.go'
 endfun
 
-" Report if the current buffer is inside GOPATH.
-fun! gopher#go#in_gopath() abort
-  let [l:out, l:err] = gopher#system#run(['go', 'env', 'GOPATH'])
-  if l:err
-    return gopher#error(l:out)
-  endif
-
-  let l:path = expand('%:p')
-  for l:gopath in split(l:out, gopher#system#pathsep())
-    if gopher#str#has_prefix(l:path, l:out)
-      return 1
-    endif
-  endfor
-
-  return 0
-endfun
-
 " Get the Go module name, or -1 if there is none.
 fun! gopher#go#module() abort
   let l:wd = getcwd()
