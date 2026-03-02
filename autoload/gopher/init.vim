@@ -11,12 +11,10 @@ fun! gopher#init#version() abort
     let l:msg = 'gopher.vim requires Vim 8.0.1630 or newer'
   endif
 
-  " Ensure people have Go installed correctly.
+  " Ensure the go binary works.
   let l:v = system('go version')
   if v:shell_error > 0
     let l:msg = "Go doesn't seem installed correctly? 'go version' failed with:\n" . l:v
-  " else
-  "     let l:msg = gopher#init#version_check(l:v)
   endif
 
   if l:msg isnot# ''
@@ -24,23 +22,6 @@ fun! gopher#init#version() abort
       echoerr l:l
     endfor
   endif
-endfun
-
-" Check if the 'go version' output is a version we support.
-fun! gopher#init#version_check(v) abort
-  for l:line in split(a:v, '\n')
-    if l:line !~# '^go version \(devel\|go1\.\d\d\(\.\d\d\?\)\?\)\(beta\d\|rc\d\)\? .\+/.\+$'
-      continue
-    endif
-
-    if l:line[:15] isnot# 'go version devel' && str2nr(l:line[15:], 10) < 11
-      return "gopher.vim needs Go 1.11 or newer; reported version was:\n" . l:line
-    endif
-
-    return ''
-  endfor
-
-  return "gopher.vim needs Go 1.11 or newer; reported version was:\n" . a:v
 endfun
 
 let s:root    = expand('<sfile>:p:h:h:h') " Root dir of this plugin.

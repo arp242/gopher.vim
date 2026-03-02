@@ -159,8 +159,7 @@ endfun
 "          out   stdout and stderr output as string, interleaved in correct
 "                order (hopefully).
 "
-" TODO: Don't run multiple jobs that modify the buffer at the same time. For
-" some tools (like gorename) we need a global lock.
+" TODO: Don't run multiple jobs that modify the buffer at the same time.
 fun! gopher#system#job(done, cmd) abort
   if type(a:cmd) isnot v:t_list
     return gopher#error('must pass a list')
