@@ -11,8 +11,7 @@ Installation
 ------------
 Installation can be done using the usual methods. You will need Go 1.21.
 
-Installation of external tools is done automatically on first usage, but can be
-done manually with `:GoSetup`.
+Run `:GoSetup` to install the required dependencies.
 
 Quickstart
 ----------
