@@ -144,50 +144,51 @@ fun! s:get_type() abort
 endfun
 
 
-" Toggle between 'single-line' and 'normal' if checks:
+" Toggle between 'single-line' and 'normal' if and switch checks:
 "
 "   err := e()
 "   if err != nil {
+"
+"   cmd, err := f()
+"   switch cmd {
 "
 " and:
 "
 "   if err := e(); err != nil {
 "
+"   switch cmd, err := f(); cmd {
+"
 " This works for all variables, not just error checks.
-"
-" TODO: also make this work for switches:
-"
-" switch cmd, err := f.ShiftCommand("help", "collect", "logs", "serve"); cmd {
 fun! gopher#frob#if() abort
   let l:line = getline('.')
-  if match(l:line, 'if ') is -1
+  if match(l:line, '\%(if\|switch\) ') is -1
     " Try line below current one too.
     let l:line = getline(line('.') + 1)
-    if match(l:line, 'if ') is -1
-      return gopher#error('No if statement on current or next line')
+    if match(l:line, '\%(if\|switch\) ') is -1
+      return gopher#error('No if or switch statement on current or next line')
     endif
-
     normal! j
   endif
 
   let l:line = substitute(l:line, '^\s*', '', '')
   let l:indent = repeat("\t", indent('.') / 4)
+  let kw = match(l:line, 'switch') is -1 ? 'if' : 'switch'
 
   " Convert 'if .. {' to 'if ..; err != nil {'.
   if match(l:line, ';') is -1
     let l:decl = substitute(getline(line('.') - 1), '^\s*', '', '')
     if match(l:decl, '=') is# -1
-      return gopher#error('No variable declaration on the line above if')
+      return gopher#error('No variable declaration on the line above %s', kw)
     endif
 
     execute ':' . (line('.') - 1) . 'd _'
-    call setline('.', printf('%sif %s; %s', l:indent, l:decl, trim(getline('.'))[3:]))
+    call setline('.', printf('%s%s %s; %s', indent, kw, decl, trim(getline('.'))[kw->len():]))
   " Convert 'if ..; err != nil {' to 'if .. {'.
   else
     let [l:prev_line, l:line] = split(l:line, '; ')
-    let l:prev_line = substitute(l:prev_line, '^\s*', '', '')[3:]
-    call setline('.', printf('%sif %s', l:indent, l:line))
-    call append(line('.') - 1, printf('%s%s', l:indent, l:prev_line))
+    let l:prev_line = substitute(l:prev_line, '^\s*', '', '')[kw->len():]
+    call setline('.', printf('%s%s %s', indent, kw, line))
+    call append(line('.') - 1, printf('%s%s', indent, prev_line))
   endif
 endfun
 
@@ -263,7 +264,7 @@ let s:popup_items = [
       \ ['test',         'Test current package'],
       \ ['lint',         'Lint current package'],
       \ ['error',        'Add return with if err != nil'],
-      \ ['if',           'Toggle if style'],
+      \ ['if',           'Toggle if/switch style'],
       \ ['implement',    'Add interface methods'],
       \ ['return',       'Add return'],
       \ ['fillstruct',   'Fill struct with keyed fields'],
