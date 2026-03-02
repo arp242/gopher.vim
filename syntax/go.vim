@@ -123,10 +123,10 @@ else
 endif
 
 " Structs and struct tags.
-syn region      goStruct          start=/struct \?{/ end=/}/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock,goStructTagOpt
-syn match       goStructTag       / `.*`\%(\s\|$\)/          contained containedin=goStruct
-syn match       goStructTagName   /\w\{-1,}:\ze"/            contained containedin=goStruct,goStructTag
-syn match       goStructTagOpt    /,\zs[^,"]\+/              contained containedin=goStructTag
+syn region      goStruct          start=/struct \?{/ end=/}$/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock,goStructTagOpt
+syn match       goStructTag       / `.*`\%(\s\|$\)/           contained containedin=goStruct
+syn match       goStructTagName   /\w\{-1,}:\ze"/             contained containedin=goStruct,goStructTag
+syn match       goStructTagOpt    /,\zs[^,"]\+/               contained containedin=goStructTag
 
 if s:has('string-fmt')
   " This is a bit slow, but can't seem ot make it faster. Not sure if it's
