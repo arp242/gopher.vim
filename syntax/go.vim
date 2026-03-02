@@ -86,8 +86,8 @@ syn match      goDirectiveError  excludenl contained "^// go:.\+$"
 " Build tags:
 "   go tool dist list | sed 's!/!\n!' | sort -u | tr '\n' ' '
 syn match   goOldBuildTag         display contained "^// +build.*"
-syn match   goVersionBuildTags    contained /\v<go1\.[0-9]{1,2}>[^.]/
-syn keyword goStdBuildTags        contained
+syn match   goVersionBuildTags    contained containedin=goBuild /\v<go1\.[0-9]{1,2}>/
+syn keyword goStdBuildTags        contained containedin=goBuild
       \ gc gccgo cgo race
       \ 386 aix amd64 android arm arm64 darwin dragonfly freebsd illumos ios js linux loong64 mips mips64
       \ mips64le mipsle netbsd openbsd plan9 ppc64 ppc64le riscv64 s390x solaris wasip1 wasm windows
@@ -166,11 +166,11 @@ endif
 
 " var, const
 if s:has('fold-varconst')
-  syn region    goVar     start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt
-  syn region    goConst   start='const (' end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock
+  syn region    goVar     start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt,goVersionBuildTags,goStdBuildTags
+  syn region    goConst   start='const (' end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt,goVersionBuildTags,goStdBuildTags
 else
-  syn region    goVar     start='var ('   end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt
-  syn region    goConst   start='const (' end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock
+  syn region    goVar     start='var ('   end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt,goVersionBuildTags,goStdBuildTags
+  syn region    goConst   start='const (' end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt,goVersionBuildTags,goStdBuildTags
 endif
 
 " Single-line var, const, and import.
