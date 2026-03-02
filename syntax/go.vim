@@ -129,7 +129,7 @@ syn match       goStructTagName   /\w\{-1,}:\ze"/             contained containe
 syn match       goStructTagOpt    /,\zs[^,"]\+/               contained containedin=goStructTag
 
 if s:has('string-fmt')
-  " This is a bit slow, but can't seem ot make it faster. Not sure if it's
+  " This is a bit slow, but can't seem to make it faster. Not sure if it's
   " possible.
   "
   " % not preceded by a %, followed by any of [-#0+ ]
@@ -137,12 +137,13 @@ if s:has('string-fmt')
   " * or [n]* or any number or nothing after a .
   " [n] or nothing before a verb
   " formatting verb
-  syn match       goFormatSpecifier  contained containedin=goString,goRawString /\
+  syn match       goFormatSpecifier /\
         \%([^%]\(%%\)*\)\@<=\
         \v\%[-#0 +]*\
         \v%(%(%(\[\d+])?\*)|\d+)?\
         \v%(\.%(%(%(\[\d+])?\*)|\d+)?)?\
         \v%(\[\d+])?[vTtbcdoOqxXUeEfFgGspw]/
+    \ contained containedin=goString,goRawString
 endif
 
 " Character.
