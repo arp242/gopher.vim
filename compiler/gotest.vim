@@ -10,6 +10,7 @@ set cpoptions-=C
 " CompilerSet makeprg=go\ test
 let &l:makeprg = gopher#str#fold_space(printf('go test %s',
       \ gopher#system#join(gopher#bufsetting('gopher_build_flags', []))))
+exe 'CompilerSet makeprg='..escape(&l:makeprg, ' \|"')
 
 let s:goroot = system('go env s:goroot')[:-2]
 
@@ -180,6 +181,7 @@ let &l:errorformat .= ",%G%\\t%m"
 let &l:errorformat .= ',%-C%.%#'
 " Match and ignore everything else not in a multi-line message:
 let &l:errorformat .= ',%-G%.%#'
+exe 'CompilerSet errorformat='..escape(&l:errorformat, ' \|"')
 
 """ vim-go end """
 
