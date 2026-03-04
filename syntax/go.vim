@@ -41,29 +41,28 @@ syn keyword     goStruct       struct    contained
 syn keyword     goDeclaration  func type interface
 syn keyword     goStatement    defer go goto return break continue fallthrough
 syn keyword     goConditional  if else switch select
-syn keyword     goLabel        case default
+syn keyword     goCase         case default
 syn keyword     goRepeat       for range
 syn keyword     goBoolean      true false nil iota
 
 " Predefined types.
-syn keyword     goType      chan map bool string error float32 float64 complex64 complex128
-syn keyword     goType      int int8 int16 int32 int64 rune byte uint uint8 uint16 uint32 uint64 uintptr
-syn keyword     goType      any comparable
-syn keyword     goBuiltins  append cap close complex copy delete imag len clear
-syn keyword     goBuiltins  make new panic print println real recover min max
+syn keyword     goType      any comparable chan map bool string error float32 float64 complex64 complex128
+                          \ int int8 int16 int32 int64 rune byte uint uint8 uint16 uint32 uint64 uintptr
+syn keyword     goBuiltins  append cap close complex copy delete imag len clear make new panic print
+                          \ println real recover min max
 
 " Comment blocks.
 syn keyword     goTodo      contained TODO FIXME XXX BUG
 syn region      goComment   start="//" end="$"    contains=goCompilerDir,goGenerate,goBuild,goDirectiveError,goOldBuildTag,goTodo,@Spell
 
 if s:has('fold-comment')
-  syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell fold
-  syn match     goComment   "\v%(^\s*//.*\n)+"    contains=goCompilerDir,goGenerate,goBuild,goDirectiveError,goOldBuildTag,goTodo,@Spell fold
+  syn region    goComment   start="/\*" end="\*/" fold contains=goTodo,@Spell
+  syn match     goComment   "\v%(^\s*//.*\n)+"    fold contains=goCompilerDir,goGenerate,goBuild,goDirectiveError,goOldBuildTag,goTodo,@Spell
 else
-  syn region    goComment   start="/\*" end="\*/" contains=goTodo,@Spell
+  syn region    goComment   start="/\*" end="\*/"      contains=goTodo,@Spell
 endif
 
-" go:generate; see go help generate
+" go:generate
 syn match       goGenerateKW      display contained /go:generate/
 syn match       goGenerateVars    contained /\v\$(GOARCH|GOOS|GOFILE|GOLINE|GOPACKAGE|GOROOT|DOLLAR|PATH)/
 syn region      goGenerate        excludenl contained matchgroup=goGenerateKW start="^//go:generate" end=/$/ contains=goGenerateVars,goGenerateKW
@@ -73,9 +72,8 @@ syn match       goBuildKW      display contained /go:build/
 syn match       goBuildSpecial contained /\vgo1\.\d{1,2}/
 syn region      goBuild        excludenl contained matchgroup=goBuildKW start="^//go:build" end=/$/ contains=goBuildKW
 
-" Compiler directives.
-" https://golang.org/cmd/compile/#hdr-Compiler_Directives
-" pragmaValue in cmd/compile/internal/gc/lex.go
+" Compiler directives; https://golang.org/cmd/compile/#hdr-Compiler_Directives
+" and pragmaValue in cmd/compile/internal/gc/lex.go
 " TODO: //go:linkname localname importpath.name
 " TODO: support line directives.
 syn match       goCompilerDir     excludenl display contained "\v^//go:%(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap|embed .*)$"
@@ -83,8 +81,8 @@ syn match       goCompilerDir     excludenl display contained "\v^//go:%(nointer
 " Adding a space between the // and go: is an error.
 syn match      goDirectiveError  excludenl contained "^// go:.\+$"
 
-" Build tags:
-"   go tool dist list | sed 's!/!\n!' | sort -u | tr '\n' ' '
+" Build tags
+" go tool dist list | sed 's!/!\n!' | sort -u | tr '\n' ' '
 syn match   goOldBuildTag         display contained "^// +build.*"
 syn match   goVersionBuildTags    contained containedin=goBuild /\v<go1\.[0-9]{1,2}>/
 syn keyword goStdBuildTags        contained containedin=goBuild
@@ -95,12 +93,11 @@ syn keyword goStdBuildTags        contained containedin=goBuild
 " cgo
 syn match goCgoError contained containedin=goComment "^\%(\/\/\)\?\s*#cgo .*"
 syn match goCgoError contained containedin=goComment "^\%(\/\/\)\?\s*#\s*include .*"
-
-syn match goCgo contained containedin=goComment "//export \i\+"
-syn match goCgo contained containedin=goComment /^\%(\/\/\)\?\s*#\s*include [<"]\f\+\.h[>"]/
-syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#\s*%(ifdef \w+|ifndef \w+|else|endif)/
-syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#cgo pkg-config:%( \f+)+/
-syn match goCgo contained containedin=goComment /\v^%(\/\/)?\s*#cgo
+syn match goCgo      contained containedin=goComment "//export \i\+"
+syn match goCgo      contained containedin=goComment /^\%(\/\/\)\?\s*#\s*include [<"]\f\+\.h[>"]/
+syn match goCgo      contained containedin=goComment /\v^%(\/\/)?\s*#\s*%(ifdef \w+|ifndef \w+|else|endif)/
+syn match goCgo      contained containedin=goComment /\v^%(\/\/)?\s*#cgo pkg-config:%( \f+)+/
+syn match goCgo      contained containedin=goComment /\v^%(\/\/)?\s*#cgo
       \ %(!?%(386|aix|amd64|android|arm|arm64|darwin|dragonfly|freebsd|illumos|ios|js|linux|loong64|mips|mips64|mips64le|mipsle|netbsd|openbsd|plan9|ppc64|ppc64le|riscv64|s390x|solaris|wasip1|wasm|windows|gc|gccgo)[, ]*)*
       \%(CFLAGS|CPPFLAGS|CXXFLAGS|FFLAGS|LDFLAGS):.+/
 
@@ -123,7 +120,7 @@ else
 endif
 
 " Structs and struct tags.
-syn region      goStruct          start=/struct \?{/ end=/}$/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock,goStructTagOpt,goRawString
+syn region      goStruct          start=/struct \?{/ end=/\%(}$\|^\s*}{\)/ transparent containedin=goBlock contains=ALLBUT,goParen,goBlock,goStructTagOpt,goRawString
 syn match       goStructTag       / `.*`\%(\s\|$\)/           contained containedin=goStruct
 syn match       goStructTagName   /\w\{-1,}:\ze"/             contained containedin=goStruct,goStructTag
 syn match       goStructTagOpt    /,\zs[^,"]\+/               contained containedin=goStructTag
@@ -160,18 +157,18 @@ endif
 
 " import
 if s:has('fold-import')
-  syn region    goImport  start='import (' end=')' transparent fold contains=goImport,goString,goComment
+  syn region    goImport  start='import (' end=')' transparent contains=goImport,goString,goComment fold
 else
   syn region    goImport  start='import (' end=')' transparent contains=goImport,goString,goComment
 endif
 
 " var, const
 if s:has('fold-varconst')
-  syn region    goVar     start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt,goVersionBuildTags,goStdBuildTags
-  syn region    goConst   start='const (' end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt,goVersionBuildTags,goStdBuildTags
+  syn region    goVar     start='var ('   end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagName,goStructTagOpt,goVersionBuildTags,goStdBuildTags
+  syn region    goConst   start='const (' end='^\s*)$' transparent fold contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagName,goStructTagOpt,goVersionBuildTags,goStdBuildTags
 else
-  syn region    goVar     start='var ('   end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt,goVersionBuildTags,goStdBuildTags
-  syn region    goConst   start='const (' end='^\s*)$' transparent contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagOpt,goVersionBuildTags,goStdBuildTags
+  syn region    goVar     start='var ('   end='^\s*)$' transparent      contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagName,goStructTagOpt,goVersionBuildTags,goStdBuildTags
+  syn region    goConst   start='const (' end='^\s*)$' transparent      contains=ALLBUT,goParen,goBlock,goStructTag,goStructTagName,goStructTagOpt,goVersionBuildTags,goStdBuildTags
 endif
 
 " Single-line var, const, and import.
@@ -241,7 +238,7 @@ hi def link goStruct              Keyword
 hi def link goDeclaration         Keyword
 hi def link goStatement           Statement
 hi def link goConditional         Conditional
-hi def link goLabel               Label
+hi def link goCase                Label
 hi def link goRepeat              Repeat
 hi def link goType                Type
 hi def link goBuiltins            Keyword
