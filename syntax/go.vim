@@ -145,7 +145,7 @@ endif
 
 " Character.
 syn cluster     goCharacterGroup  contains=goEscapeOctal,goEscapeC,goEscapeX,goEscapeU,goEscapeBigU
-syn region      goCharacter       start=/'/ end=/'/ contains=@goCharacterGroup
+syn region      goCharacter       start=/'/ skip=/\\\\\|\\'/ end=/'/ contains=@goCharacterGroup
 
 " Regions
 syn region      goParen   start='(' end=')' transparent
