@@ -76,7 +76,7 @@ syn region      goBuild        excludenl contained matchgroup=goBuildKW start="^
 " and pragmaValue in cmd/compile/internal/gc/lex.go
 " TODO: //go:linkname localname importpath.name
 " TODO: support line directives.
-syn match       goCompilerDir     excludenl display contained "\v^//go:%(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap|embed .*)$"
+syn match       goCompilerDir     excludenl display contained "\v^//go:%(nointerface|noescape|norace|nosplit|noinline|systemstack|nowritebarrier|nowritebarrierrec|yeswritebarrierrec|cgo_unsafe_args|uintptrescapes|notinheap|embed .*|fix inline)$"
 
 " Adding a space between the // and go: is an error.
 syn match      goDirectiveError  excludenl contained "^// go:.\+$"
