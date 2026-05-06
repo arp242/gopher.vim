@@ -11,6 +11,7 @@ let &l:makeprg = 'staticcheck ./...'
 if len(get(g:, 'gopher_build_tags', [])) > 0
   let &l:makeprg .= printf(' --build-tags "%s"', join(gopher#bufsetting('gopher_build_tags', []) ' '))
 endif
+exe 'CompilerSet makeprg='..escape(&l:makeprg, ' \|"')
 
 " golangci-lint:
 "   benchmark_test.go:34:2   deadcode  `valFormT2` is unused
@@ -23,6 +24,7 @@ endif
 "   # zgo.at/goatcounter
 "   ./hit.go:38:2: struct field tag `db: "id" json:"-"` not compatible with reflect.StructTag.Get: bad syntax for struct tag value
 let &l:errorformat = '%-G# %.%#,%f:%l:%c:\\? %m'
+exe 'CompilerSet errorformat='..escape(&l:errorformat, ' \|"')
 
 let &cpoptions = s:save_cpo
 unlet s:save_cpo
